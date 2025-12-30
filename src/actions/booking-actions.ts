@@ -56,7 +56,7 @@ export async function bookTicket(
       full_name: extraData.fullName,
       email: user.email,
       phone_number: extraData.phone,   // SĐT người dùng nhập
-      // student_id: extraData.studentId, // (Bỏ comment nếu DB có cột này)
+      student_id: extraData.studentId, // (Bỏ comment nếu DB có cột này)
       // notes: extraData.notes           // (Bỏ comment nếu DB có cột này)
       
     }).select().single();
