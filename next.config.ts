@@ -2,11 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  
+
   // 1. Bỏ qua lỗi ESLint (Biến chưa dùng, v.v...)
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // eslint: {
+  //   ignoreDuringBuilds: true,
+  // },
 
   // 2. Bỏ qua lỗi TypeScript (Sai kiểu dữ liệu, any...)
   typescript: {

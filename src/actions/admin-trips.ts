@@ -15,7 +15,7 @@ async function uploadTripImage(file: File, oldUrl?: string) {
 
   // Upload vào bucket 'trip-images'
   const { error } = await supabase.storage.from('trip-images').upload(fileName, file);
-  
+
   if (error) {
     console.error('Upload lỗi:', error);
     // Nếu lỗi upload thì vẫn trả về link cũ để không bị mất ảnh
@@ -31,7 +31,7 @@ async function uploadTripImage(file: File, oldUrl?: string) {
 export async function createTrip(formData: FormData) {
   try {
     const supabase = createAdminClient();
-    
+
     // 👇 SỬA ĐOẠN NÀY: Xử lý upload ảnh trước
     const imageFile = formData.get('image') as File; // Lấy file từ input name="image"
     const imageUrl = await uploadTripImage(imageFile); // Upload và lấy link
@@ -41,6 +41,7 @@ export async function createTrip(formData: FormData) {
       destination: formData.get('destination') as string,
       departure_time: formData.get('departure_time') as string,
       price: Number(formData.get('price')),
+      capacity: Number(formData.get('capacity')), // 👇 Thêm số lượng vé
       image_url: imageUrl,                    // 👇 Lưu link ảnh vừa upload
       route_details: formData.get('route_details') as string,
       waypoints: formData.get('waypoints') as string,
@@ -69,11 +70,11 @@ export async function createTrip(formData: FormData) {
 export async function updateTrip(tripId: number, formData: FormData) {
   try {
     const supabase = createAdminClient();
-    
+
     // 👇 SỬA ĐOẠN NÀY: Xử lý upload ảnh mới hoặc giữ ảnh cũ
     const newImageFile = formData.get('image') as File;
     const oldImageUrl = formData.get('old_image_url') as string;
-    
+
     // Hàm này sẽ tự quyết định: Có ảnh mới thì up, không thì trả về oldImageUrl
     const imageUrl = await uploadTripImage(newImageFile, oldImageUrl);
 
@@ -82,6 +83,7 @@ export async function updateTrip(tripId: number, formData: FormData) {
       destination: formData.get('destination') as string,
       departure_time: formData.get('departure_time') as string,
       price: Number(formData.get('price')),
+      capacity: Number(formData.get('capacity')), // 👇 Thêm update số lượng vé
       image_url: imageUrl, // 👇 Lưu link ảnh (mới hoặc cũ)
       route_details: formData.get('route_details') as string,
       waypoints: formData.get('waypoints') as string,
@@ -120,7 +122,7 @@ export async function deleteTrip(tripId: number) {
 
     revalidatePath('/admin');
     return { success: true };
-    
+
   } catch (err: any) {
     console.error("❌ Lỗi Server Action:", err);
     return { error: err.message };
@@ -140,9 +142,9 @@ export async function deleteBooking(bookingId: string) {
       return { error: error.message };
     }
 
-    revalidatePath('/admin/trips/[id]', 'page'); 
+    revalidatePath('/admin/trips/[id]', 'page');
     return { success: true };
-    
+
   } catch (err: any) {
     return { error: err.message };
   }
@@ -152,7 +154,7 @@ export async function deleteBooking(bookingId: string) {
 export async function checkInTicket(paymentCode: string) {
   try {
     const supabase = createAdminClient();
-    
+
     const { data: booking, error } = await supabase
       .from('bookings')
       .select('*, trips(destination, departure_time)')
@@ -165,24 +167,24 @@ export async function checkInTicket(paymentCode: string) {
 
     if (booking.status === 'PENDING') return { error: 'Vé CHƯA THANH TOÁN!' };
     if (booking.status === 'CANCELLED') return { error: 'Vé ĐÃ BỊ HỦY!' };
-    
+
     const checkInTime = new Date().toISOString();
-    
+
     const { error: updateError } = await supabase
       .from('bookings')
-      .update({ check_in_at: checkInTime }) 
+      .update({ check_in_at: checkInTime })
       .eq('id', booking.id);
 
     if (updateError) return { error: 'Lỗi cập nhật DB: ' + updateError.message };
 
-    return { 
-      success: true, 
+    return {
+      success: true,
       booking: {
         ...booking,
         trip_destination: booking.trips.destination,
         trip_time: booking.trips.departure_time,
-        check_in_at: checkInTime 
-      } 
+        check_in_at: checkInTime
+      }
     };
 
   } catch (err: any) {
