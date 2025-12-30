@@ -42,11 +42,21 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
+    
+    // 👇 1. LẤY THÊM BIẾN NÀY
+    const fullName = formData.get('fullName') as string; 
+    
     const phoneNumber = formData.get('phone') as string;
     const studentId = formData.get('studentId') as string;
     const notes = formData.get('notes') as string;
 
-    // Validate SĐT cơ bản
+    // 👇 2. THÊM VALIDATE TÊN
+    if (!fullName || fullName.trim().length < 2) {
+        toast.error("Vui lòng nhập họ tên đầy đủ");
+        setLoading(false);
+        return;
+    }
+
     if (!phoneNumber || phoneNumber.length < 9) {
         toast.error("Số điện thoại không hợp lệ");
         setLoading(false);
@@ -56,11 +66,11 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
     try {
       console.log("🚀 Đang gửi yêu cầu đặt vé...");
       
-      // Gọi Server Action
       const result = await bookTicket(
         tripId, 
-        seatType, // Gửi loại ghế đã chọn
+        seatType, 
         { 
+          fullName: fullName, // 👈 3. TRUYỀN TÊN MỚI VÀO ĐÂY
           phone: phoneNumber, 
           studentId: studentId, 
           notes: notes 
@@ -95,10 +105,11 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
             <div className="relative">
             <User className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
             <input 
-                type="text" 
-                value={user.user_metadata.full_name || user.email} 
-                disabled 
-                className="w-full pl-10 pr-4 py-3 bg-slate-100 border-none rounded-xl text-slate-600 font-medium cursor-not-allowed"
+              name="fullName" // 1. Thêm name để lấy dữ liệu
+              type="text" 
+              required        // 2. Bắt buộc nhập
+              defaultValue={user.user_metadata.full_name || user.email} 
+              className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 outline-none transition"
             />
             </div>
         </div>

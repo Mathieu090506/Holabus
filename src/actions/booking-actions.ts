@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server';
 
 // Định nghĩa kiểu dữ liệu cho thông tin bổ sung
 type BookingExtraData = {
+  fullname: string;
   phone: string;
   studentId: string;
   notes: string;
@@ -52,7 +53,7 @@ export async function bookTicket(
       
       // Các trường thông tin từ Form
       seat_preference: seatPreference, // Vị trí ghế
-      full_name: user.user_metadata.full_name,
+      full_name: extraData.fullName,
       email: user.email,
       phone_number: extraData.phone,   // SĐT người dùng nhập
       // student_id: extraData.studentId, // (Bỏ comment nếu DB có cột này)
