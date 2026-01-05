@@ -29,9 +29,9 @@ export default function UserNav({ user }: { user: any }) {
     return (
       <Link
         href="/login"
-        className="bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-lg transition-all text-base backdrop-blur-sm border border-white/10"
+        className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition-all text-sm shadow-sm hover:shadow-md"
       >
-        Sign in
+        Đăng nhập
       </Link>
     );
   }
