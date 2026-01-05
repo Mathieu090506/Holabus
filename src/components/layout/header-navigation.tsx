@@ -11,19 +11,19 @@ export default function HeaderNavigation() {
                 href="/my-tickets"
                 className="hover:text-slate-900 transition-colors"
             >
-                My Trips
+                Chuyến đi
             </Link>
             <Link
-                href="/wallet"
+                href="/about"
                 className="hover:text-slate-900 transition-colors"
             >
-                Wallet
+                Về dự án
             </Link>
             <Link
                 href="/support"
                 className="hover:text-slate-900 transition-colors"
             >
-                Support
+                Hỗ trợ
             </Link>
         </nav>
     );
