@@ -18,6 +18,11 @@ export interface Database {
           price: number
           capacity: number
           status: string
+          image_url: string | null
+          route_details: string | null
+          waypoints: string | null
+          tags: string | null
+          google_sheet_url: string | null
           created_at: string
         }
         Insert: {
@@ -28,6 +33,11 @@ export interface Database {
           price: number
           capacity?: number
           status?: string
+          image_url?: string | null
+          route_details?: string | null
+          waypoints?: string | null
+          tags?: string | null
+          google_sheet_url?: string | null
           created_at?: string
         }
         Update: {
@@ -38,6 +48,11 @@ export interface Database {
           price?: number
           capacity?: number
           status?: string
+          image_url?: string | null
+          route_details?: string | null
+          waypoints?: string | null
+          tags?: string | null
+          google_sheet_url?: string | null
           created_at?: string
         }
       }

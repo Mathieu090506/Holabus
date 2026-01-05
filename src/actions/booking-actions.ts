@@ -3,16 +3,17 @@
 import { createClient } from '@/utils/supabase/server';
 
 // Định nghĩa kiểu dữ liệu cho thông tin bổ sung
+// Định nghĩa kiểu dữ liệu cho thông tin bổ sung
 type BookingExtraData = {
-  fullname: string;
+  fullName: string;
   phone: string;
   studentId: string;
   notes: string;
 };
 
 export async function bookTicket(
-  tripId: string, 
-  seatPreference: string, 
+  tripId: string,
+  seatPreference: string,
   extraData: BookingExtraData
 ) {
   const supabase = await createClient();
@@ -35,7 +36,7 @@ export async function bookTicket(
     if (count && count > 0) {
       return { error: "Bạn thao tác quá nhanh! Vui lòng chờ 30 giây." };
     }
-    
+
     // 3. Lấy thông tin chuyến xe để lấy giá tiền
     const { data: trip } = await supabase.from('trips').select('price').eq('id', tripId).single();
     if (!trip) return { error: "Chuyến xe không tồn tại!" };
@@ -48,18 +49,16 @@ export async function bookTicket(
       user_id: user.id,
       trip_id: tripId,
       status: 'PENDING',
-      amount: trip.price,
+      amount: trip ? (trip as any).price : 0,
       payment_code: paymentCode,
-      
+
       // Các trường thông tin từ Form
       seat_preference: seatPreference, // Vị trí ghế
       full_name: extraData.fullName,
       email: user.email,
       phone_number: extraData.phone,   // SĐT người dùng nhập
-      student_id: extraData.studentId, // (Bỏ comment nếu DB có cột này)
-      // notes: extraData.notes           // (Bỏ comment nếu DB có cột này)
-      
-    }).select().single();
+      student_id: extraData.studentId,
+    } as any).select().single() as any;
 
     if (error) {
       console.error("❌ Lỗi Supabase:", error.message); // Log lỗi ra Terminal server để debug

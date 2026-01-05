@@ -24,6 +24,7 @@ export async function createBooking(prevState: any, formData: FormData): Promise
   const studentId = formData.get('studentId') as string;
   const phone = formData.get('phone') as string;
   const seatPreference = formData.get('preference') as string;
+  const notes = formData.get('notes') as string; // <--- Lấy notes từ form
   const price = Number(formData.get('price'));
 
   // Lấy tên thật từ tài khoản Google (để lưu vào đơn cho tiện đối soát)
@@ -35,8 +36,6 @@ export async function createBooking(prevState: any, formData: FormData): Promise
   }
 
   // 4. Sinh mã thanh toán (PAYMENT CODE)
-  // Format: HOLA + 5 ký tự ngẫu nhiên (VD: HOLA8X29Z)
-  // Logic này đơn giản, đủ dùng cho dự án này.
   const uniqueCode = 'HOLA' + Math.random().toString(36).substring(2, 7).toUpperCase();
 
   // 4.5. KIỂM TRA SỐ LƯỢNG VÉ CÒN LẠI (Manual Check)
@@ -67,9 +66,10 @@ export async function createBooking(prevState: any, formData: FormData): Promise
         student_id: studentId,
         phone_number: phone,
         amount: price,
-        status: 'PENDING',        // Mặc định là Chờ thanh toán
-        payment_code: uniqueCode, // Mã để user chuyển khoản
-        seat_preference: seatPreference
+        status: 'PENDING',
+        payment_code: uniqueCode,
+        seat_preference: seatPreference,
+        more: notes // <--- Lưu vào trường 'more' trong DB
       } as any)
       .select('id')
       .single();
@@ -85,18 +85,11 @@ export async function createBooking(prevState: any, formData: FormData): Promise
     }
 
     // 5.5. TRỪ SỐ VÉ ĐI 1
-    const { error: updateError } = await supabase
-      .from('trips')
-      .update({ capacity: tripData.capacity - 1 } as any)
+    const { error: updateError } = await (supabase.from('trips') as any)
+      .update({ capacity: tripData.capacity - 1 })
       .eq('id', tripId);
 
-    if (updateError) {
-      console.error("Lỗi cập nhật số vé:", updateError);
-      // Không return error ở đây vì booking đã tạo thành công, chỉ log lại để sửa sau
-    }
-
     // 6. Thành công!
-    // Revalidate để cập nhật số ghế ngoài trang chủ
     revalidatePath(`/trips/${tripId}`);
     revalidatePath('/');
 

@@ -45,6 +45,8 @@ export async function createTrip(formData: FormData) {
       image_url: imageUrl,                    // 👇 Lưu link ảnh vừa upload
       route_details: formData.get('route_details') as string,
       waypoints: formData.get('waypoints') as string,
+      tags: formData.get('tags') as string,
+      google_sheet_url: formData.get('google_sheet_url') as string,
     };
 
     console.log("🚀 Đang tạo chuyến xe:", tripData);
@@ -53,6 +55,9 @@ export async function createTrip(formData: FormData) {
 
     if (error) {
       console.error("❌ Lỗi Supabase (Create):", error);
+      if (error.code === 'PGRST204') {
+        return { error: "Thiếu cột 'google_sheet_url' hoặc 'tags' trong Database. Hãy chạy lệnh SQL trong file update_schema_sheet.sql!" };
+      }
       return { error: error.message };
     }
 
@@ -87,6 +92,8 @@ export async function updateTrip(tripId: number, formData: FormData) {
       image_url: imageUrl, // 👇 Lưu link ảnh (mới hoặc cũ)
       route_details: formData.get('route_details') as string,
       waypoints: formData.get('waypoints') as string,
+      tags: formData.get('tags') as string, // 👇 Tag hiển thị
+      google_sheet_url: formData.get('google_sheet_url') as string, // 👇 Link Google Sheet
     };
 
     console.log("🚀 Đang update chuyến:", tripId, updates);
@@ -95,6 +102,9 @@ export async function updateTrip(tripId: number, formData: FormData) {
 
     if (error) {
       console.error("❌ Lỗi Supabase (Update):", error);
+      if (error.code === 'PGRST204') {
+        return { error: "Thiếu cột 'google_sheet_url' hoặc 'tags' trong Database. Hãy chạy lệnh SQL trong file update_schema_sheet.sql!" };
+      }
       return { error: error.message };
     }
 

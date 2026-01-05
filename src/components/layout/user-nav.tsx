@@ -29,27 +29,32 @@ export default function UserNav({ user }: { user: any }) {
     return (
       <Link
         href="/login"
-        className="bg-white text-orange-600 border border-orange-100 hover:bg-orange-50 font-bold py-2.5 px-6 rounded-full transition shadow-sm hover:shadow-md text-sm"
+        className="bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-lg transition-all text-base backdrop-blur-sm border border-white/10"
       >
-        Đăng nhập
+        Sign in
       </Link>
     );
   }
 
   return (
     <div className="relative">
-      {/* NÚT BẤM HIỆN MENU */}
+      {/* NÚT BẤM HIỆN MENU (Avatar Only style) */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 bg-white/50 hover:bg-white backdrop-blur-md pl-2 pr-4 py-1.5 rounded-full border border-white/20 transition-all duration-300 group"
+        className="relative group outline-none"
       >
-        <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center text-white font-bold shadow-inner">
-          {user.user_metadata.full_name?.[0]?.toUpperCase() || 'U'}
+        <div className="w-9 h-9 rounded-full bg-slate-200 overflow-hidden border border-slate-200 group-hover:ring-2 group-hover:ring-sky-500 transition-all">
+          {/* Simple Avatar Placeholder or Image */}
+          {user.user_metadata.avatar_url ? (
+            <img src={user.user_metadata.avatar_url} alt="User" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-indigo-400 to-cyan-400 flex items-center justify-center text-white font-bold text-xs">
+              {user.user_metadata.full_name?.[0]?.toUpperCase() || 'U'}
+            </div>
+          )}
         </div>
-        <span className="text-sm font-medium text-slate-700 max-w-[100px] truncate group-hover:text-orange-700">
-          {user.user_metadata.full_name}
-        </span>
-        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        {/* IsOnline Indicator */}
+        <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></div>
       </button>
 
       {/* DROPDOWN MENU */}

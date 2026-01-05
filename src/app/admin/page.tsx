@@ -28,6 +28,15 @@ export default async function AdminDashboard() {
     // Lấy tổng user
     const { count: userCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
 
+    // Lấy thống kê truy cập
+    const { data: stats } = await supabase.from('daily_stats').select('visit_count, date');
+    const totalVisits = stats?.reduce((sum, item) => sum + item.visit_count, 0) || 0;
+
+    // Lấy số lượt hôm nay (theo múi giờ server/db - UTC, nên cẩn thận, nhưng demo thì ok)
+    // Để đơn giản ta just lấy ngày cuối cùng trong db hoặc filter JS
+    const todayStr = new Date().toISOString().split('T')[0];
+    const todayVisits = stats?.find(s => s.date === todayStr)?.visit_count || 0;
+
     // --- 3. XỬ LÝ DỮ LIỆU CHO BIỂU ĐỒ CỘT (DOANH THU 7 NGÀY GẦN NHẤT) ---
     // Tạo mảng 7 ngày gần nhất: ['2025-12-28', '2025-12-27', ...]
     const last7Days = [...Array(7)].map((_, i) => {
@@ -72,21 +81,21 @@ export default async function AdminDashboard() {
         .order('departure_time', { ascending: true });
 
     return (
-        <div className="min-h-screen bg-slate-50 p-6 md:p-10 pt-32">
+        <div className="min-h-screen bg-slate-50 p-4 pt-24 md:p-10 md:pt-32">
 
             {/* HEADER */}
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-800">Admin Dashboard</h1>
                     <p className="text-slate-500 mt-1">Phân tích & Tăng trưởng kinh doanh</p>
                 </div>
-                <Link href="/" className="bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition shadow-sm">
+                <Link href="/" className="bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition shadow-sm w-full md:w-auto text-center">
                     Xem trang chủ
                 </Link>
             </div>
 
             {/* --- KHỐI 1: KPIs (CHỈ SỐ CHÍNH) --- */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {/* Card Doanh Thu */}
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <div className="flex justify-between items-start">
@@ -130,6 +139,22 @@ export default async function AdminDashboard() {
                     </div>
                     <div className="mt-4 text-xs text-slate-400">Tài khoản sinh viên</div>
                 </div>
+
+                {/* Card Visits (NEW) */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <p className="text-sm font-medium text-slate-500">Lượt truy cập</p>
+                            <h3 className="text-3xl font-bold text-slate-800 mt-2">{totalVisits.toLocaleString()}</h3>
+                        </div>
+                        <div className="p-3 bg-purple-100 text-purple-600 rounded-xl">
+                            <TrendingUp className="w-6 h-6" />
+                        </div>
+                    </div>
+                    <div className="mt-4 text-xs text-slate-400">
+                        <span className="text-purple-600 font-bold">+{todayVisits}</span> hôm nay
+                    </div>
+                </div>
             </div>
 
             {/* --- KHỐI 2: BIỂU ĐỒ PHÂN TÍCH (VISUALIZATIONS) - PHẦN MỚI --- */}
@@ -172,25 +197,33 @@ export default async function AdminDashboard() {
 
             {/* --- KHỐI 3: QUẢN LÝ CHUYẾN XE (BẢNG DỮ LIỆU) --- */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50/50">
                     <div>
                         <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                             <Map className="w-5 h-5 text-slate-500" /> Quản lý Chuyến xe
                         </h2>
                         <p className="text-xs text-slate-500 mt-1">Danh sách các chuyến đang mở bán</p>
                     </div>
-                    <Link
-                        href="/admin/scan"
-                        className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-purple-700 transition flex items-center gap-2 shadow-lg"
-                    >
-                        <QrCode className="w-4 h-4" /> Soát vé
-                    </Link>
-                    <Link
-                        href="/admin/trips/new"
-                        className="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-800 transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                    >
-                        <Plus className="w-4 h-4" /> Thêm chuyến mới
-                    </Link>
+                    <div className="flex flex-wrap gap-2 w-full md:w-auto">
+                        <Link
+                            href="/admin/config"
+                            className="bg-white border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-50 transition flex items-center gap-2 shadow-sm flex-1 md:flex-none justify-center"
+                        >
+                            <TrendingUp className="w-4 h-4" /> <span className="hidden sm:inline">Nội dung</span>
+                        </Link>
+                        <Link
+                            href="/admin/scan"
+                            className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-purple-700 transition flex items-center gap-2 shadow-lg flex-1 md:flex-none justify-center"
+                        >
+                            <QrCode className="w-4 h-4" /> Soát vé
+                        </Link>
+                        <Link
+                            href="/admin/trips/new"
+                            className="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-800 transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex-1 md:flex-none justify-center"
+                        >
+                            <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Thêm chuyến</span><span className="inline sm:hidden">Thêm</span>
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="overflow-x-auto">

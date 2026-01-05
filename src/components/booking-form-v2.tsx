@@ -14,10 +14,10 @@ type Props = {
 
 export default function BookingFormV2({ tripId, price, user }: Props) {
   const [loading, setLoading] = useState(false);
-  
+
   // State quản lý lựa chọn ghế (Mặc định là Random)
   const [seatType, setSeatType] = useState('random');
-  
+
   const router = useRouter();
 
   // Nếu chưa đăng nhập
@@ -42,38 +42,38 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    
+
     // 👇 1. LẤY THÊM BIẾN NÀY
-    const fullName = formData.get('fullName') as string; 
-    
+    const fullName = formData.get('fullName') as string;
+
     const phoneNumber = formData.get('phone') as string;
     const studentId = formData.get('studentId') as string;
     const notes = formData.get('notes') as string;
 
     // 👇 2. THÊM VALIDATE TÊN
     if (!fullName || fullName.trim().length < 2) {
-        toast.error("Vui lòng nhập họ tên đầy đủ");
-        setLoading(false);
-        return;
+      toast.error("Vui lòng nhập họ tên đầy đủ");
+      setLoading(false);
+      return;
     }
 
     if (!phoneNumber || phoneNumber.length < 9) {
-        toast.error("Số điện thoại không hợp lệ");
-        setLoading(false);
-        return;
+      toast.error("Số điện thoại không hợp lệ");
+      setLoading(false);
+      return;
     }
 
     try {
       console.log("🚀 Đang gửi yêu cầu đặt vé...");
-      
+
       const result = await bookTicket(
-        tripId, 
-        seatType, 
-        { 
+        tripId,
+        seatType,
+        {
           fullName: fullName, // 👈 3. TRUYỀN TÊN MỚI VÀO ĐÂY
-          phone: phoneNumber, 
-          studentId: studentId, 
-          notes: notes 
+          phone: phoneNumber,
+          studentId: studentId,
+          notes: notes
         }
       );
 
@@ -97,50 +97,71 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      
+
       {/* 1. THÔNG TIN CÁ NHÂN */}
       <div className="space-y-3">
         <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Họ và tên</label>
-            <div className="relative">
+          <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Họ và tên</label>
+          <div className="relative">
             <User className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
-            <input 
+            <input
               name="fullName" // 1. Thêm name để lấy dữ liệu
-              type="text" 
+              type="text"
               required        // 2. Bắt buộc nhập
-              defaultValue={user.user_metadata.full_name || user.email} 
+              defaultValue="" // Không tự điền tên
+              placeholder="VD: Nguyễn Văn A"
+              className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 outline-none transition uppercase" // Added uppercase class for better UX
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Số điện thoại <span className="text-red-500">*</span></label>
+          <div className="relative">
+            <Phone className="absolute left-3 top-3 w-5 h-5 text-orange-500" />
+            <input
+              name="phone"
+              type="tel"
+              required
+              placeholder="Nhập số điện thoại..."
+              defaultValue={user.user_metadata.phone_number || ''}
               className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 outline-none transition"
             />
-            </div>
+          </div>
         </div>
 
         <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Số điện thoại <span className="text-red-500">*</span></label>
-            <div className="relative">
-            <Phone className="absolute left-3 top-3 w-5 h-5 text-orange-500" />
-            <input 
-                name="phone"
-                type="tel" 
-                required
-                placeholder="Nhập số điện thoại..."
-                defaultValue={user.user_metadata.phone_number || ''}
-                className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 outline-none transition"
-            />
-            </div>
-        </div>
-
-        <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Mã Sinh Viên (Nếu có)</label>
-            <div className="relative">
+          <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Mã Sinh Viên (Nếu có)</label>
+          <div className="relative">
             <BookOpen className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
-            <input 
-                name="studentId"
-                type="text" 
-                placeholder="VD: HE15xxxx"
-                className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 outline-none transition"
+            <input
+              name="studentId"
+              type="text"
+              placeholder="VD: HE15xxxx"
+              className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 outline-none transition"
             />
-            </div>
+          </div>
         </div>
+      </div>
+
+      <div className="border-t border-dashed border-slate-200"></div>
+
+      {/* THÊM TRƯỜNG GHI CHÚ (ĐIỂM XUỐNG XE) */}
+      <div>
+        <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">
+          Điểm xuống xe mong muốn (Note)
+        </label>
+        <div className="relative">
+          <textarea
+            name="notes"
+            rows={3}
+            placeholder="Ví dụ: Xuống ở ngã tư Hàng Xanh, gần BigC..."
+            className="w-full p-4 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 outline-none transition text-sm"
+          />
+        </div>
+        <p className="text-[10px] text-slate-400 mt-1 ml-1">
+          * Tài xế sẽ cố gắng hỗ trợ nếu thuận tiện lộ trình.
+        </p>
       </div>
 
       <div className="border-t border-dashed border-slate-200"></div>
@@ -148,56 +169,53 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
       {/* 2. CHỌN VỊ TRÍ GHẾ (ĐÃ KHÔI PHỤC) */}
       <div>
         <label className="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">
-            Chọn vị trí ghế mong muốn
+          Chọn vị trí ghế mong muốn
         </label>
         <div className="grid grid-cols-3 gap-2">
-            {/* Option 1: Say xe */}
-            <button
-                type="button"
-                onClick={() => setSeatType('front')}
-                className={`relative p-3 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${
-                    seatType === 'front' 
-                    ? 'border-orange-500 bg-orange-50 text-orange-700 ring-1 ring-orange-500' 
-                    : 'border-slate-200 bg-white text-slate-500 hover:border-orange-300'
-                }`}
-            >
-                <Armchair className="w-5 h-5" />
-                <span className="text-[10px] font-bold">Say xe</span>
-                <span className="text-[9px] font-normal opacity-70">(Ngồi đầu)</span>
-                {seatType === 'front' && <CheckCircle2 className="w-4 h-4 text-orange-600 absolute top-1 right-1" />}
-            </button>
+          {/* Option 1: Say xe */}
+          <button
+            type="button"
+            onClick={() => setSeatType('front')}
+            className={`relative p-3 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${seatType === 'front'
+              ? 'border-orange-500 bg-orange-50 text-orange-700 ring-1 ring-orange-500'
+              : 'border-slate-200 bg-white text-slate-500 hover:border-orange-300'
+              }`}
+          >
+            <Armchair className="w-5 h-5" />
+            <span className="text-[10px] font-bold">Say xe</span>
+            <span className="text-[9px] font-normal opacity-70">(Ngồi đầu)</span>
+            {seatType === 'front' && <CheckCircle2 className="w-4 h-4 text-orange-600 absolute top-1 right-1" />}
+          </button>
 
-            {/* Option 2: Cửa sổ */}
-            <button
-                type="button"
-                onClick={() => setSeatType('window')}
-                className={`relative p-3 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${
-                    seatType === 'window' 
-                    ? 'border-orange-500 bg-orange-50 text-orange-700 ring-1 ring-orange-500' 
-                    : 'border-slate-200 bg-white text-slate-500 hover:border-orange-300'
-                }`}
-            >
-                <div className="border-2 border-current w-4 h-4 rounded-sm"></div>
-                <span className="text-[10px] font-bold">Cửa sổ</span>
-                <span className="text-[9px] font-normal opacity-70">(Ngắm cảnh)</span>
-                {seatType === 'window' && <CheckCircle2 className="w-4 h-4 text-orange-600 absolute top-1 right-1" />}
-            </button>
+          {/* Option 2: Cửa sổ */}
+          <button
+            type="button"
+            onClick={() => setSeatType('window')}
+            className={`relative p-3 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${seatType === 'window'
+              ? 'border-orange-500 bg-orange-50 text-orange-700 ring-1 ring-orange-500'
+              : 'border-slate-200 bg-white text-slate-500 hover:border-orange-300'
+              }`}
+          >
+            <div className="border-2 border-current w-4 h-4 rounded-sm"></div>
+            <span className="text-[10px] font-bold">Cửa sổ</span>
+            <span className="text-[9px] font-normal opacity-70">(Ngắm cảnh)</span>
+            {seatType === 'window' && <CheckCircle2 className="w-4 h-4 text-orange-600 absolute top-1 right-1" />}
+          </button>
 
-            {/* Option 3: Ngẫu nhiên */}
-            <button
-                type="button"
-                onClick={() => setSeatType('random')}
-                className={`relative p-3 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${
-                    seatType === 'random' 
-                    ? 'border-orange-500 bg-orange-50 text-orange-700 ring-1 ring-orange-500' 
-                    : 'border-slate-200 bg-white text-slate-500 hover:border-orange-300'
-                }`}
-            >
-                <Ticket className="w-5 h-5" />
-                <span className="text-[10px] font-bold">Ngẫu nhiên</span>
-                <span className="text-[9px] font-normal opacity-70">(Tùy ý)</span>
-                {seatType === 'random' && <CheckCircle2 className="w-4 h-4 text-orange-600 absolute top-1 right-1" />}
-            </button>
+          {/* Option 3: Ngẫu nhiên */}
+          <button
+            type="button"
+            onClick={() => setSeatType('random')}
+            className={`relative p-3 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${seatType === 'random'
+              ? 'border-orange-500 bg-orange-50 text-orange-700 ring-1 ring-orange-500'
+              : 'border-slate-200 bg-white text-slate-500 hover:border-orange-300'
+              }`}
+          >
+            <Ticket className="w-5 h-5" />
+            <span className="text-[10px] font-bold">Ngẫu nhiên</span>
+            <span className="text-[9px] font-normal opacity-70">(Tùy ý)</span>
+            {seatType === 'random' && <CheckCircle2 className="w-4 h-4 text-orange-600 absolute top-1 right-1" />}
+          </button>
         </div>
       </div>
 

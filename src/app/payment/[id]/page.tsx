@@ -1,5 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { CheckCircle, Clock, ArrowLeft, Copy, CreditCard, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -25,7 +25,7 @@ export default async function PaymentPage({ params }: Props) {
     const supabase = await createClient();
 
     // 2. Lấy thông tin đơn hàng + Kèm thông tin chuyến xe (Join table)
-    const { data: booking, error } = await supabase
+    const { data: bookingData, error } = await supabase
         .from('bookings')
         .select(`
       *,
@@ -37,6 +37,9 @@ export default async function PaymentPage({ params }: Props) {
     `)
         .eq('id', id)
         .single();
+
+    // Cast to any to avoid TS errors
+    const booking = bookingData as any;
 
     // Nếu không tìm thấy đơn hoặc lỗi -> Trả về 404
     if (error || !booking) {
@@ -79,26 +82,9 @@ export default async function PaymentPage({ params }: Props) {
     // 👆👆👆 KẾT THÚC ĐOẠN CODE MỚI 👆👆👆
 
     // 3. LOGIC HIỂN THỊ
-    // Nếu đơn đã thanh toán rồi -> Hiện thông báo thành công luôn
+    // Nếu đơn đã thanh toán rồi -> Redirect sang trang vé chi tiết
     if (booking.status === 'PAID') {
-        return (
-            <div className="min-h-screen bg-green-50 flex flex-col items-center justify-center p-4">
-                <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-md w-full border border-green-100">
-                    <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <CheckCircle className="w-10 h-10 text-green-600" />
-                    </div>
-                    <h1 className="text-2xl font-bold text-green-800 mb-2">Thanh toán thành công!</h1>
-                    <p className="text-gray-600 mb-6">
-                        Vé điện tử cho chuyến đi <b>{booking.trips.destination}</b> đã được gửi tới email của bạn.
-                    </p>
-                    <div className="space-y-3">
-                        <Link href="/" className="block w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition-colors">
-                            Về trang chủ
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        );
+        redirect(`/ticket/${booking.payment_code}`);
     }
 
     // 4. TẠO LINK VIETQR (Dynamic QR Code)

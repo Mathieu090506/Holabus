@@ -1,117 +1,97 @@
 'use client'
 
 import Link from 'next/link';
-import { MapPin, Bus, Star, ArrowRight } from 'lucide-react';
+import { Heart, MapPin } from 'lucide-react';
 
-export default function TripCard({ trip }: { trip: any }) {
+// Maps city names to image URLs (similar to what we had in search section)
+const CITY_IMAGES: Record<string, string> = {
+    'Hà Nội': 'https://th.bing.com/th/id/R.00b9d0a6b818074f91939b65ecf54850?rik=cDlzM%2fSHsO9VWg&riu=http%3a%2f%2fsuperminimaps.com%2fwp-content%2fuploads%2f2018%2f03%2fHanoi-Lake-Aerea-768x432.jpg&ehk=5XtWYWv%2bpKaioEGl5trdqpiKt6iaJp5olBKD6KOIKf4%3d&risl=&pid=ImgRaw&r=0',
+    'Thái Bình': 'https://ik.imagekit.io/tvlk/blog/2023/05/bien-vo-cuc-thai-binh-cover.jpg',
+    'Hải Phòng': 'https://media.urbanistnetwork.com/saigoneer/article-images/legacy/DcQH0hfb.jpg',
+    'default': 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021&auto=format&fit=crop'
+};
+
+// Maps city names to descriptions
+const DESTINATION_DESCRIPTIONS: Record<string, string> = {
+    'Saigon -> Da Lat': 'Escape the heat and enjoy the flowers of the highlands.',
+    'Da Nang -> Hue': 'Historical journey through the ancient capital.',
+    'Hanoi -> Sapa': 'Travel through the misty mountains to the north.',
+    'default': 'Trải nghiệm hành trình tuyệt vời về nhà đón Tết.'
+};
+
+export default function TripCard({ trip, destinationImages = {} }: { trip: any, destinationImages?: Record<string, string> }) {
     // Format giá tiền
     const priceFormatted = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(trip.price);
 
-    // Mock data for new fields (Since backend data might not have them yet)
-    const stationName = trip.origin === 'Hà Nội' ? 'Bến xe Mỹ Đình' : 'Bến xe Miền Đông';
-    const remainingTickets = trip.capacity ?? 0;
+    // Image logic
+    const cityImage = trip.image_url || destinationImages[trip.destination] || CITY_IMAGES[trip.destination] || CITY_IMAGES['default'];
+
+    // Tag logic & Styling
+    const tag = trip.tags || "Vé bán chạy";
+    let tagStyle = "bg-slate-100 text-slate-600";
+    if (tag === "Vé bán chạy" || tag === "Very Popular") tagStyle = "bg-green-100 text-green-700";
+    else if (tag === "Sắp hết vé" || tag === "Fast Filling") tagStyle = "bg-orange-100 text-orange-700";
+    else if (tag === "Cảnh đẹp" || tag === "Scenic Route") tagStyle = "bg-blue-100 text-blue-700";
+
+    // Description logic
+    // Try to find exact route match first, then destination match, then default
+    const routeKey = `${trip.origin} -> ${trip.destination}`;
+    const description = DESTINATION_DESCRIPTIONS[routeKey] || DESTINATION_DESCRIPTIONS[trip.destination] || DESTINATION_DESCRIPTIONS['default'];
+
+    // Route Title Display
+    const routeTitle = trip.origin ? `${trip.origin} → ${trip.destination}` : trip.destination;
 
     return (
-        <tr className="hover:bg-red-50/50 transition-colors group">
-            {/* Route */}
-            <td className="p-8">
-                <div className="flex items-center gap-4">
-                    <Bus className="w-8 h-8 text-red-600" />
-                    <div className="font-bold text-slate-800 text-xl group-hover:text-red-700 transition-colors">
-                        {trip.origin} - {trip.destination}
+        <Link href={`/trips/${trip.id}`} className="group block w-full bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100">
+            {/* Image Section */}
+            <div className="aspect-[4/3] w-full relative overflow-hidden">
+                <img
+                    src={cityImage}
+                    alt={trip.destination}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+
+                {/* Price Badge */}
+                <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-sm z-10 transition-transform group-hover:scale-105">
+                    <span className="text-xs font-bold text-slate-900">Từ {priceFormatted}</span>
+                </div>
+            </div>
+
+            {/* Content Section */}
+            <div className="p-5 flex flex-col gap-4">
+                {/* Header: Route & Tag */}
+                <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-lg font-black text-slate-900 leading-tight">
+                        {routeTitle}
+                    </h3>
+                    {tag && (
+                        <span className={`text-[10px] uppercase font-bold px-2 py-1 rounded-md whitespace-nowrap ${tagStyle}`}>
+                            {tag}
+                        </span>
+                    )}
+                </div>
+
+                {/* Description */}
+                <p className="text-sm font-medium text-slate-500 line-clamp-2 leading-relaxed">
+                    {description}
+                </p>
+
+                {/* Action Button */}
+                <div className="mt-2">
+                    <div className="w-full py-3 bg-red-50 text-red-600 font-bold rounded-xl text-center text-sm group-hover:bg-red-600 group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-md hover:scale-[1.02]">
+                        Đặt vé ngay
                     </div>
                 </div>
-            </td>
-
-            {/* Price */}
-            <td className="p-8 font-bold text-red-700 text-lg">
-                {priceFormatted}
-            </td>
-
-            {/* Station (New Column 3) */}
-            <td className="p-8 text-slate-600 font-medium text-base">
-                <div className="flex items-center gap-2">
-                    <MapPin className="w-5 h-5 text-orange-500" />
-                    {stationName}
-                </div>
-            </td>
-
-            {/* Status & Tickets (New Column 4) */}
-            <td className="p-8">
-                <div className="flex flex-col gap-1.5">
-                    <span className="text-base font-bold text-green-600 flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
-                        Đang mở bán
-                    </span>
-                    <span className="text-sm text-slate-500">Còn {remainingTickets} vé</span>
-                </div>
-            </td>
-
-            {/* Action */}
-            <td className="p-8 text-right">
-                <Link
-                    href={`/trips/${trip.id}`}
-                    className="inline-flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 px-8 rounded-full shadow-lg shadow-red-200 transition-all active:scale-95 text-base"
-                >
-                    Đặt ngay <ArrowRight className="w-5 h-5 ml-2" />
-                </Link>
-            </td>
-        </tr>
+            </div>
+        </Link>
     );
 }
 
+// Keep Mobile Card for backward compatibility if needed, but the main grid is responsive now.
+// For now, I'll alias it to the main TripCard to maintain valid imports in parent,
+// or just export a simplified version if the parent specifically uses it. 
+// Since I removed the specific mobile view logic in parent and used grid, 
+// I can just export TripCard as TripCardMobile or keep it unused.
 export function TripCardMobile({ trip }: { trip: any }) {
-    const priceFormatted = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(trip.price);
-    const stationName = trip.origin === 'Hà Nội' ? 'Bến xe Mỹ Đình' : 'Bến xe Miền Đông';
-    const remainingTickets = trip.capacity ?? 0;
-
-    return (
-        <div className="bg-white rounded-2xl p-5 border border-red-100 shadow-sm flex flex-col gap-4">
-            {/* Route Header */}
-            <div className="flex items-center gap-3 border-b border-red-50 pb-3">
-                <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600">
-                    <Bus className="w-5 h-5" />
-                </div>
-                <div>
-                    <div className="text-xs text-orange-500 font-bold uppercase tracking-wider">Tuyến du xuân</div>
-                    <div className="font-bold text-slate-800 text-lg leading-tight">
-                        {trip.origin} - {trip.destination}
-                    </div>
-                </div>
-            </div>
-
-            {/* Info Grid - Updated fields */}
-            <div className="grid grid-cols-2 gap-3">
-                <div className="bg-red-50/50 rounded-lg p-3">
-                    <div className="text-xs text-slate-500 mb-1">Giá vé</div>
-                    <div className="font-bold text-red-700 text-sm">{priceFormatted}</div>
-                </div>
-                <div className="bg-orange-50/50 rounded-lg p-3">
-                    <div className="text-xs text-slate-500 mb-1">Bến xe</div>
-                    <div className="font-bold text-slate-700 text-sm truncate">{stationName}</div>
-                </div>
-                <div className="bg-green-50 rounded-lg p-3 col-span-2 flex items-center justify-between border border-green-100">
-                    <div>
-                        <div className="text-xs text-green-600 mb-0.5 font-semibold">Trạng thái</div>
-                        <div className="font-bold text-green-700 text-sm flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-green-600"></span>
-                            Đang mở bán
-                        </div>
-                    </div>
-                    <div className="text-right">
-                        <div className="text-xs text-green-600 mb-0.5">Vé còn lại</div>
-                        <div className="font-bold text-green-700 text-sm">{remainingTickets} vé</div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Action */}
-            <Link
-                href={`/trips/${trip.id}`}
-                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-red-200 flex items-center justify-center gap-2 active:scale-95 transition-all"
-            >
-                Đặt vé ngay <ArrowRight className="w-4 h-4" />
-            </Link>
-        </div>
-    );
+    return <TripCard trip={trip} />;
 }

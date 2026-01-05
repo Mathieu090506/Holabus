@@ -12,7 +12,7 @@ export default function MobileNav({ user }: { user: any }) {
         <div className="md:hidden">
             <button
                 onClick={() => setOpen(true)}
-                className="p-2 text-white hover:bg-white/10 rounded-full transition-colors"
+                className="p-2 text-slate-900 hover:bg-slate-100 rounded-full transition-colors"
             >
                 <Menu className="w-7 h-7" />
             </button>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react';
-import { Bell, Search } from 'lucide-react';
+import { Search, Heart, ThumbsUp } from 'lucide-react';
 import TripCard, { TripCardMobile } from './trip-card';
 
 // --- HÀM HỖ TRỢ: CHUYỂN TIẾNG VIỆT CÓ DẤU -> KHÔNG DẤU ---
@@ -12,11 +12,89 @@ function normalizeString(str: string) {
         .toLowerCase();
 }
 
-export default function TripSearchSection({ trips, user }: { trips: any[], user: any }) {
+function TetCountdown() {
+    const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+    useEffect(() => {
+        // Tet Binh Ngo (2026) is Feb 17, 2026
+        // If today is past Feb 17 2026, you might want to switch to 2027, but let's stick to 2026 for now or next year.
+        // Assuming target is next Tet relative to now.
+        const calculateTimeLeft = () => {
+            const now = new Date();
+            let year = now.getFullYear();
+
+            // Simplified Tet dates for upcoming years to be dynamic
+            // 2025: Jan 29
+            // 2026: Feb 17
+            // 2027: Feb 6
+            let tetDate = new Date(`February 17, 2026 00:00:00`);
+
+            // Logic fall-back: If current date is past Tet 2026, set to next known Tet or just invalid
+            if (now.getTime() > tetDate.getTime()) {
+                // Fallback or just showing 0
+                // For this specific request context (2025/2026 transition), let's keep it simple.
+            }
+
+            const difference = tetDate.getTime() - now.getTime();
+
+            if (difference > 0) {
+                setTimeLeft({
+                    days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+                    minutes: Math.floor((difference / 1000 / 60) % 60),
+                    seconds: Math.floor((difference / 1000) % 60),
+                });
+            } else {
+                setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+            }
+        };
+
+        calculateTimeLeft();
+        const timer = setInterval(calculateTimeLeft, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
+
+    return (
+        <div className="flex justify-center items-start gap-2 md:gap-6 text-center text-slate-800 py-6">
+            {[
+                { label: 'Days', value: timeLeft.days },
+                { label: 'Hours', value: timeLeft.hours },
+                { label: 'Minutes', value: timeLeft.minutes },
+                { label: 'Seconds', value: timeLeft.seconds },
+            ].map((item, index, arr) => (
+                <div key={item.label} className="flex items-start">
+                    <div className="flex flex-col items-center w-20 md:w-32">
+                        <div className="text-6xl md:text-8xl font-black text-slate-900 leading-none tracking-tighter">
+                            {String(item.value).padStart(2, '0')}
+                        </div>
+                        <span className="text-[10px] md:text-sm font-bold text-slate-500 uppercase tracking-widest mt-2">
+                            {item.label}
+                        </span>
+                    </div>
+                    {/* Add separator except for the last item */}
+                    {index < arr.length - 1 && (
+                        <div className="text-4xl md:text-6xl font-black text-slate-300 mx-1 md:mx-2 mt-2 select-none">
+                            :
+                        </div>
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+}
+
+export default function TripSearchSection({ trips, user, destinationImages = {} }: { trips: any[], user: any, destinationImages?: Record<string, string> }) {
 
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
     const [isSearching, setIsSearching] = useState(false);
+    const [visibleCount, setVisibleCount] = useState(3);
+
+    // Reset visible count when search changes
+    useEffect(() => {
+        setVisibleCount(3);
+    }, [debouncedSearchTerm]);
 
     // Debounce search term to create "searching" effect
     useEffect(() => {
@@ -45,218 +123,152 @@ export default function TripSearchSection({ trips, user }: { trips: any[], user:
 
 
     return (
-        <div className="min-h-screen bg-slate-50 font-sans pb-20">
-
-            {/* 1. HEADER & SEARCH SECTION */}
-            {/* 1. HEADER SECTION (Tet Full Background + Secondary Bus Image) */}
-            <div className="relative pt-32 pb-64 px-4 font-sans overflow-hidden bg-cover bg-center bg-no-repeat transition-all duration-500" style={{ backgroundImage: "url('/tetimg.jpg')" }}>
-                {/* Overlay for readability */}
-                <div className="absolute inset-0 bg-red-900/10 pointer-events-none"></div>
-
-                <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center relative z-10">
-
-                    {/* LEFT: Text & Search */}
-                    <div className="text-left space-y-6">
-                        <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight drop-shadow-md">
-                            Bạn muốn về đâu ăn Tết?
-                        </h1>
-                        <p className="text-white/90 text-xl font-medium drop-shadow-sm">
-                            Đặt vé xe khách & tàu hỏa dễ dàng, nhanh chóng.
-                        </p>
-
-                        {/* Search Input */}
-                        <div className="relative max-w-lg shadow-2xl rounded-full">
-                            <input
-                                type="text"
-                                placeholder="Nhập tên tỉnh thành (VD: Nam Định...)"
-                                className="w-full py-5 pl-14 pr-4 rounded-full text-slate-800 font-bold border-0 focus:ring-4 focus:ring-yellow-400/50 placeholder:text-slate-400 placeholder:font-normal text-lg bg-white/95 backdrop-blur-sm"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-red-500" />
-                        </div>
-                    </div>
-
-                    {/* RIGHT: Secondary Image (Festive Bus) */}
-
-
+        <>
+            <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-2 selection:bg-red-600 selection:text-white relative">
+                {/* Global Background Image - Fixed Full Page */}
+                <div className="fixed inset-0 z-[-1] pointer-events-none">
+                    <img
+                        src="/tet-atmosphere.png"
+                        alt="Tet Background"
+                        className="w-full h-full object-cover opacity-100"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-red-50/90"></div>
                 </div>
-            </div>
 
-            {/* 1.5 FEATURES BANNER */}
-            <div className="max-w-7xl mx-auto px-4 -mt-24 relative z-20 mb-12">
-                <div className="bg-white rounded-xl shadow-lg border-2 border-red-50 p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* 1. HERO SECTION */}
+                <div className="relative pt-24 pb-20 px-4 font-sans overflow-hidden">
+                    {/* Background Glow Effect */}
 
-                    {/* Feature 1 - Đỏ (May mắn) */}
-                    <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center shrink-0">
-                            <svg className="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-red-900 mb-1">Hơn 75 triệu lượt khách</h3>
-                            <p className="text-sm text-slate-500 leading-relaxed">
-                                Tin tưởng đặt vé cho hơn 2 triệu chuyến đi trên khắp cả nước.
+
+                    <div className="max-w-4xl mx-auto text-center relative z-10 space-y-8">
+
+                        {/* Hero Text */}
+                        <div className="space-y-3">
+                            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 leading-tight">
+                                Let there be <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-yellow-500">Tet Holidays</span>
+                            </h1>
+                            <p className="text-slate-700 text-xl font-medium drop-shadow-sm">
+                                Về nhà đón Tết - Gắn kết tình thân
                             </p>
                         </div>
-                    </div>
 
-                    {/* Feature 2 - Cam (Thịnh vượng) */}
-                    <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
-                            <svg className="w-6 h-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                            </svg>
+                        {/* TET COUNTDOWN */}
+                        <div className="flex justify-center gap-4 md:gap-8 text-center text-slate-800 drop-shadow-sm py-2">
+                            {/* Inline Countdown Logic Reuse visualization only for style update, actual logic is in component above */}
+                            <TetCountdown />
                         </div>
-                        <div>
-                            <h3 className="font-bold text-red-900 mb-1">Hỗ trợ 24/7 tận tâm</h3>
-                            <p className="text-sm text-slate-500 leading-relaxed">
-                                Đội ngũ chăm sóc khách hàng luôn sẵn sàng hỗ trợ bạn từng bước.
-                            </p>
-                        </div>
-                    </div>
 
-                    {/* Feature 3 - Vàng (Tài lộc) */}
-                    <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center shrink-0">
-                            <svg className="w-6 h-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-red-900 mb-1">Hoàn tiền 100% dễ dàng</h3>
-                            <p className="text-sm text-slate-500 leading-relaxed">
-                                Hủy vé bất kỳ lúc nào và nhận hoàn tiền ngay lập tức, không cần lý do.
-                            </p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            {/* 2. LIST TRIPS */}
-            <div className="max-w-7xl mx-auto px-4 relative z-20 pb-20">
-
-                {/* Section Title */}
-                <h2 className="text-3xl md:text-5xl font-extrabold text-red-800 mb-10 text-center drop-shadow-sm">
-                    Các tuyến đường phổ biến nhất mùa Tết 2024
-                </h2>
-
-                <div className={`transition-all duration-300 ${isSearching ? 'opacity-30 blur-sm scale-[0.99]' : 'opacity-100 blur-0 scale-100'}`}>
-                    {filteredTrips.length === 0 ? (
-                        <div className="bg-white p-8 rounded-2xl text-center shadow-lg border border-red-100">
-                            <div className="bg-red-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <Search className="w-8 h-8 text-red-300" />
+                        {/* Search Bar */}
+                        <div className="relative max-w-2xl mx-auto group">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Bạn muốn đi đâu?"
+                                    className="w-full py-5 pl-14 pr-4 rounded-lg bg-white/80 backdrop-blur-sm text-slate-900 font-bold border border-slate-200 focus:ring-red-500 focus:border-red-500 placeholder:text-slate-500 placeholder:font-medium text-lg shadow-xl"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-500" />
                             </div>
-                            <p className="text-slate-500 font-medium">Không tìm thấy chuyến về <span className="font-bold text-red-600">"{searchTerm}"</span></p>
-                            <button onClick={() => setSearchTerm('')} className="text-red-600 font-bold text-sm mt-2 hover:underline">Xem tất cả</button>
-                        </div>
-                    ) : (
-                        <div className="bg-transparent md:bg-white rounded-2xl md:shadow-xl md:border border-red-100 overflow-hidden">
 
-                            {/* MOBILE VIEW (Cards) */}
-                            <div className="md:hidden space-y-4">
-                                {filteredTrips.map((trip) => (
-                                    <TripCardMobile key={trip.id} trip={trip} />
+                            {/* Popular Cities Suggestion */}
+                            <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
+                                <span className="text-sm font-medium text-slate-500">Phổ biến:</span>
+                                {['Quảng Ngãi', 'Đà Nẵng', 'Hà Nội', 'Sài Gòn', 'Huế', 'Quy Nhơn'].map((city) => (
+                                    <button
+                                        key={city}
+                                        onClick={() => setSearchTerm(city)}
+                                        className="px-3 py-1 bg-white/60 hover:bg-white text-slate-600 hover:text-red-600 text-sm font-semibold rounded-full border border-slate-200 transition-all shadow-sm"
+                                    >
+                                        {city}
+                                    </button>
                                 ))}
                             </div>
+                        </div>
 
-                            {/* DESKTOP VIEW (Table) */}
-                            <div className="hidden md:block overflow-x-auto">
-                                <table className="w-full text-left border-collapse min-w-[900px]">
-                                    <thead className="bg-red-700 text-yellow-300 text-sm font-bold uppercase tracking-wider border-b border-red-800 shadow-md">
-                                        <tr>
-                                            <th className="p-8">Tuyến đường</th>
-                                            <th className="p-8">Giá trung bình</th>
-                                            <th className="p-8">Địa điểm bến xe</th>
-                                            <th className="p-8">Vé còn lại & Trạng thái</th>
-                                            <th className="p-8"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100">
-                                        {filteredTrips.map((trip) => (
-                                            <TripCard key={trip.id} trip={trip} />
-                                        ))}
-                                    </tbody>
-                                </table>
+                    </div>
+                </div>
+
+                {/* 2. LIST TRIPS */}
+                <div className="max-w-7xl mx-auto px-4 relative z-20">
+
+                    {/* Section Title */}
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl font-bold text-slate-800">
+                            Chuyến đi phổ biến
+                        </h2>
+                        <div className="flex gap-2">
+                            {/* Navigation arrows could go here */}
+                        </div>
+                    </div>
+
+                    <div className={`transition-all duration-300 ${isSearching ? 'opacity-30 blur-sm scale-[0.99]' : 'opacity-100 blur-0 scale-100'}`}>
+                        {filteredTrips.length === 0 ? (
+                            <div className="p-12 text-center rounded-xl border border-dashed border-slate-300 bg-white/50">
+                                <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <Search className="w-8 h-8 text-slate-400" />
+                                </div>
+                                <p className="text-slate-500 font-medium text-lg">Không tìm thấy chuyến về <span className="text-slate-900">"{searchTerm}"</span></p>
+                                <button onClick={() => setSearchTerm('')} className="text-red-600 font-bold mt-4 hover:underline">Xem tất cả chuyến đi</button>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {filteredTrips.slice(0, visibleCount).map((trip) => (
+                                        <TripCard
+                                            key={trip.id}
+                                            trip={trip}
+                                            destinationImages={destinationImages}
+                                        />
+                                    ))}
+                                </div>
+
+                                <div className="mt-10 text-center flex flex-col md:flex-row items-center justify-center gap-4">
+                                    {/* See More Button */}
+                                    {filteredTrips.length > visibleCount && (
+                                        <button
+                                            onClick={() => setVisibleCount(prev => prev + 3)}
+                                            className="text-slate-500 hover:text-red-600 font-bold py-2 px-8 transition-all active:scale-95"
+                                        >
+                                            Xem thêm {filteredTrips.length - visibleCount} chuyến đi khác
+                                        </button>
+                                    )}
+
+                                    {/* Collapse Button */}
+                                    {visibleCount > 3 && (
+                                        <button
+                                            onClick={() => setVisibleCount(3)}
+                                            className="text-slate-500 hover:text-red-600 font-bold py-2 px-8 transition-all active:scale-95"
+                                        >
+                                            Thu gọn danh sách
+                                        </button>
+                                    )}
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+
+                {/* 3. Footer / Connect Strip */}
+                <div className="max-w-7xl mx-auto px-4 mt-0">
+                    <div className="py-2 flex flex-col md:flex-row items-center justify-between gap-4 pb-2">
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <ThumbsUp className="w-5 h-5 text-blue-600 fill-current" />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-slate-900 text-base">Theo dõi Page</h3>
+                                <p className="text-slate-500 text-xs">Để nắm được thông tin chi tiết.</p>
                             </div>
                         </div>
-                    )}
-                </div>
-            </div>
-
-
-            {/* 3. POPULAR DESTINATIONS */}
-            <div className="max-w-7xl mx-auto px-4 relative z-20 mb-20">
-                <h2 className="text-3xl md:text-5xl font-extrabold text-red-800 mb-10 text-center drop-shadow-sm">
-                    Điểm đến yêu thích
-                </h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {/* 1. Hà Nội */}
-                    <div className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-lg">
-                        <img
-                            src="https://th.bing.com/th/id/R.00b9d0a6b818074f91939b65ecf54850?rik=cDlzM%2fSHsO9VWg&riu=http%3a%2f%2fsuperminimaps.com%2fwp-content%2fuploads%2f2018%2f03%2fHanoi-Lake-Aerea-768x432.jpg&ehk=5XtWYWv%2bpKaioEGl5trdqpiKt6iaJp5olBKD6KOIKf4%3d&risl=&pid=ImgRaw&r=0"
-                            alt="Hà Nội"
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                        <div className="absolute bottom-0 left-0 p-6 text-white">
-                            <p className="text-sm font-medium text-yellow-400 mb-1">Thủ đô ngàn năm</p>
-                            <h3 className="text-2xl font-bold">Hà Nội</h3>
-                        </div>
-                    </div>
-
-                    {/* 2. TP. HCM */}
-                    <div className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-lg">
-                        <img
-                            src="https://media.urbanistnetwork.com/saigoneer/article-images/legacy/DcQH0hfb.jpg"
-                            alt="TP. HCM"
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                        <div className="absolute bottom-0 left-0 p-6 text-white">
-                            <p className="text-sm font-medium text-yellow-400 mb-1">Sôi động & Hiện đại</p>
-                            <h3 className="text-2xl font-bold">TP Hải Phòng</h3>
-                        </div>
-                    </div>
-
-                    {/* 3. Đà Nẵng */}
-                    <div className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-lg">
-                        <img
-                            src="https://ik.imagekit.io/tvlk/blog/2023/05/bien-vo-cuc-thai-binh-cover.jpg"
-                            alt="Đà Nẵng"
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                        <div className="absolute bottom-0 left-0 p-6 text-white">
-                            <p className="text-sm font-medium text-yellow-400 mb-1">Thành phố đáng sống</p>
-                            <h3 className="text-2xl font-bold">Thái Bình</h3>
-                        </div>
-                    </div>
-
-                    {/* 4. Đà Lạt */}
-                    <div className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-lg">
-                        <img
-                            src="https://images.unsplash.com/photo-1626012678075-1e828a2a075a?q=80&w=800&auto=format&fit=crop"
-                            alt="Đà Lạt"
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                        <div className="absolute bottom-0 left-0 p-6 text-white">
-                            <p className="text-sm font-medium text-yellow-400 mb-1">Thành phố ngàn hoa</p>
-                            <h3 className="text-2xl font-bold">Thái Bình</h3>
-                        </div>
+                        <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-5 text-sm rounded-lg transition-colors">
+                            Theo dõi ngay
+                        </button>
                     </div>
                 </div>
             </div>
 
-            {/* Footer Text */}
-            <div className="text-center text-slate-400 text-xs mt-12 pb-8">
-                © 2024 HolaBus • Hotline 1900 xxxx
-            </div>
 
-        </div>
+        </>
     );
 }

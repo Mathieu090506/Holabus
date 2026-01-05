@@ -15,10 +15,15 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
     const [origin, setOrigin] = useState(trip?.origin || 'ĐH FPT Hòa Lạc');
     const [destination, setDestination] = useState(trip?.destination || '');
     const [waypoints, setWaypoints] = useState(trip?.waypoints || '');
+    const [tags, setTags] = useState(trip?.tags || '');
+    // const [googleSheetUrl, setGoogleSheetUrl] = useState(trip?.google_sheet_url || ''); // Bỏ Google Sheet
     const [loading, setLoading] = useState(false);
+    const [selectedBooking, setSelectedBooking] = useState<any>(null);
+    const [showFullList, setShowFullList] = useState(false); // 👇 1. State cho bảng tổng hợp
 
     // 👇 1. THÊM ĐOẠN NÀY (Để xử lý ảnh)
     const [previewUrl, setPreviewUrl] = useState<string>(trip?.image_url || '');
+
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -265,6 +270,24 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
                                     className="w-full border border-blue-200 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none bg-white text-sm"
                                 />
                             </div>
+
+                            {/* 4. TAGS / BADGE */}
+                            <div className="bg-red-50 p-4 rounded-xl border border-red-100">
+                                <label className="block text-sm font-bold text-red-800 mb-1 flex items-center gap-2">
+                                    🏷️ Nhãn dán (Badge)
+                                </label>
+                                <p className="text-xs text-red-600 mb-2">
+                                    Văn bản hiển thị trên góc ảnh (VD: VÉ TẾT 2026). Để trống nếu không muốn hiện.
+                                </p>
+                                <input
+                                    name="tags"
+                                    type="text"
+                                    value={tags}
+                                    onChange={(e) => setTags(e.target.value)}
+                                    placeholder="VD: VÉ TẾT 2026"
+                                    className="w-full border border-red-200 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 outline-none bg-white text-sm font-bold text-red-600"
+                                />
+                            </div>
                         </div>
 
                         {/* NÚT SUBMIT */}
@@ -312,15 +335,67 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
                                 <Users className="w-5 h-5 text-slate-500" />
                                 Danh sách khách ({bookings?.length || 0})
                             </h3>
+                            {/* Nút vào Google Sheet */}
+                            <div className="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowFullList(true)}
+                                    className="text-xs bg-blue-600 text-white border border-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-700 transition font-bold shadow-sm flex items-center gap-1.5"
+                                >
+                                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                    Xem bảng tổng
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (!bookings || bookings.length === 0) {
+                                            alert("Chưa có khách nào để copy!");
+                                            return;
+                                        }
+
+                                        // 1. Tạo header
+                                        const headers = ['Mã Vé', 'Họ Tên', 'Email', 'SĐT', 'Khách Trả', 'Trạng Thái', 'Thời Gian Check-in', 'Ngày Đặt'];
+
+                                        // 2. Map dữ liệu
+                                        const rows = bookings.map(b => [
+                                            b.payment_code,
+                                            b.full_name || 'Khách vãng lai',
+                                            b.email || '',
+                                            "'" + (b.phone_number || ''), // Thêm dấu ' để Excel không tự format số 0
+                                            (b.amount || 0).toLocaleString('vi-VN') + 'đ',
+                                            b.status === 'PAID' ? 'Đã thanh toán' : b.status,
+                                            b.check_in_at ? new Date(b.check_in_at).toLocaleString('vi-VN') : 'Chưa lên xe',
+                                            new Date(b.created_at).toLocaleString('vi-VN')
+                                        ]);
+
+                                        // 3. Nối thành chuỗi TSV (Tab Separated Values) - chuẩn nhất để paste vào Sheet/Excel
+                                        const tsvContent = [
+                                            headers.join('\t'),
+                                            ...rows.map(r => r.join('\t'))
+                                        ].join('\n');
+
+                                        // 4. Copy
+                                        navigator.clipboard.writeText(tsvContent)
+                                            .then(() => alert("✅ Đã copy danh sách! \nBạn hãy mở Google Sheet và bấm Ctrl + V để dán."))
+                                            .catch(() => alert("❌ Lỗi khi copy."));
+                                    }}
+                                    className="text-xs bg-slate-100 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition font-bold shadow-sm flex items-center gap-1.5"
+                                    title="Copy danh sách để dán vào Excel/Sheet"
+                                >
+                                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
+                                    Copy danh sách
+                                </button>
+                            </div>
                         </div>
 
-                        <div className="max-h-[400px] overflow-y-auto">
+                        <div className="max-h-[400px] overflow-y-auto overflow-x-auto">
                             {bookings && bookings.length > 0 ? (
                                 <table className="w-full text-sm text-left">
                                     <thead className="bg-white text-slate-500 sticky top-0 shadow-sm z-10">
                                         <tr>
                                             <th className="p-3 font-medium">Họ tên / SĐT</th>
                                             <th className="p-3 font-medium">Mã vé / TT</th>
+                                            <th className="p-3 text-center">Chi tiết</th>
                                             <th className="p-3 text-right">Hủy</th>
                                         </tr>
                                     </thead>
@@ -362,7 +437,18 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
                                                     </div>
                                                 </td>
 
-                                                {/* CỘT 3: HÀNH ĐỘNG */}
+                                                {/* CỘT 3: CHI TIẾT */}
+                                                <td className="p-3 text-center">
+                                                    <button
+                                                        onClick={() => setSelectedBooking(bk)}
+                                                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition"
+                                                        title="Xem chi tiết"
+                                                    >
+                                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                    </button>
+                                                </td>
+
+                                                {/* CỘT 4: HÀNH ĐỘNG */}
                                                 <td className="p-3 text-right">
                                                     <button
                                                         onClick={() => handleDeleteBooking(bk.id)}
@@ -385,8 +471,184 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
                         </div>
                     </div>
                 )}
-
             </div>
-        </div>
+
+            {/* --- MODAL CHI TIẾT BOOKING --- */}
+            {
+                selectedBooking && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+                        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+                            {/* Header Modal */}
+                            <div className="bg-slate-900 text-white p-4 flex justify-between items-center">
+                                <h3 className="font-bold text-lg flex items-center gap-2">
+                                    <Ticket className="w-5 h-5 text-orange-400" />
+                                    Chi tiết vé: {selectedBooking.payment_code}
+                                </h3>
+                                <button
+                                    onClick={() => setSelectedBooking(null)}
+                                    className="p-1 hover:bg-white/20 rounded-lg transition"
+                                >
+                                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                            </div>
+
+                            {/* Body Modal */}
+                            <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+                                {/* Thông tin khách */}
+                                <div className="flex gap-4 items-center mb-6">
+                                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-2xl">
+                                        {selectedBooking.full_name?.charAt(0) || 'K'}
+                                    </div>
+                                    <div>
+                                        <div className="text-xl font-bold text-slate-800">{selectedBooking.full_name}</div>
+                                        <div className="text-slate-500 text-sm flex items-center gap-1">
+                                            📧 {selectedBooking.email || 'Không có email'}
+                                        </div>
+                                        <div className="text-slate-500 text-sm flex items-center gap-1">
+                                            📞 {selectedBooking.phone_number}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                        <span className="block text-slate-500 text-xs mb-1">Mã sinh viên</span>
+                                        <span className="font-bold text-slate-800">{selectedBooking.student_id || '---'}</span>
+                                    </div>
+                                    <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                        <span className="block text-slate-500 text-xs mb-1">Ghế mong muốn</span>
+                                        <span className="font-bold text-slate-800">{selectedBooking.seat_preference || 'Ngẫu nhiên'}</span>
+                                    </div>
+                                    <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                        <span className="block text-slate-500 text-xs mb-1">Số tiền</span>
+                                        <span className="font-bold text-green-600 text-lg">{(selectedBooking.amount || 0).toLocaleString()}đ</span>
+                                    </div>
+                                    <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                        <span className="block text-slate-500 text-xs mb-1">Trạng thái</span>
+                                        <span className={`font-bold ${selectedBooking.status === 'PAID' ? 'text-green-600' : 'text-yellow-600'}`}>
+                                            {selectedBooking.status === 'PAID' ? 'ĐÃ THANH TOÁN' : selectedBooking.status}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Ghi chú */}
+                                <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-100">
+                                    <span className="block text-yellow-800 text-xs font-bold mb-1 uppercase">Ghi chú của khách</span>
+                                    <p className="text-slate-700 text-sm italic">
+                                        "{selectedBooking.more || selectedBooking.notes || 'Không có ghi chú nào.'}"
+                                    </p>
+                                </div>
+
+                                {/* Timeline */}
+                                <div className="border-t border-slate-100 pt-4 mt-4">
+                                    <h4 className="text-sm font-bold text-slate-800 mb-3">Lịch sử</h4>
+                                    <div className="space-y-3 relative pl-4 border-l-2 border-slate-100">
+                                        <div className="relative">
+                                            <div className="absolute -left-[21px] top-1 w-3 h-3 bg-slate-300 rounded-full border-2 border-white box-content"></div>
+                                            <p className="text-xs text-slate-500">{new Date(selectedBooking.created_at).toLocaleString('vi-VN')}</p>
+                                            <p className="text-sm font-medium text-slate-800">Đặt vé thành công</p>
+                                        </div>
+                                        {selectedBooking.check_in_at && (
+                                            <div className="relative">
+                                                <div className="absolute -left-[21px] top-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white box-content"></div>
+                                                <p className="text-xs text-slate-500">{new Date(selectedBooking.check_in_at).toLocaleString('vi-VN')}</p>
+                                                <p className="text-sm font-bold text-blue-700">Đã lên xe (Check-in)</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Footer Modal */}
+                            <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+                                <button
+                                    onClick={() => setSelectedBooking(null)}
+                                    className="px-5 py-2 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-100 transition shadow-sm"
+                                >
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
+            {/* --- MODAL BẢNG TỔNG HỢP FULL MÀN HÌNH --- */}
+            {showFullList && (
+                <div className="fixed inset-0 z-[60] bg-slate-50 flex flex-col">
+                    {/* Header Full Modal */}
+                    <div className="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm">
+                        <div>
+                            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                                <Users className="w-6 h-6 text-blue-600" />
+                                Danh sách chi tiết ({bookings?.length || 0} khách)
+                            </h2>
+                            <p className="text-sm text-slate-500 mt-1">
+                                Chuyến: {origin} - {destination} | {trip?.departure_time ? new Date(trip.departure_time).toLocaleString('vi-VN') : ''}
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setShowFullList(false)}
+                            className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-bold transition flex items-center gap-2"
+                        >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                            Đóng lại
+                        </button>
+                    </div>
+
+                    {/* Table Container */}
+                    <div className="flex-1 overflow-auto p-6">
+                        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden min-w-[1200px]">
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-slate-50 text-slate-700 font-bold uppercase text-xs sticky top-0 shadow-sm border-b border-slate-200">
+                                    <tr>
+                                        <th className="p-4 w-10 text-center">#</th>
+                                        <th className="p-4">Mã Vé</th>
+                                        <th className="p-4">Họ Tên</th>
+                                        <th className="p-4">SĐT</th>
+                                        <th className="p-4">Email</th>
+                                        <th className="p-4">MSSV</th>
+                                        <th className="p-4 text-center">Ghế</th>
+                                        <th className="p-4 text-right">Số tiền</th>
+                                        <th className="p-4 text-center">Trạng thái</th>
+                                        <th className="p-4 text-center">Check-in</th>
+                                        <th className="p-4">Ghi chú</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100">
+                                    {bookings?.map((bk, index) => (
+                                        <tr key={bk.id} className="hover:bg-blue-50 transition-colors">
+                                            <td className="p-4 text-center text-slate-400 font-mono">{index + 1}</td>
+                                            <td className="p-4 font-mono font-bold text-blue-600">{bk.payment_code}</td>
+                                            <td className="p-4 font-bold text-slate-800">{bk.full_name || '---'}</td>
+                                            <td className="p-4 text-slate-600">{bk.phone_number}</td>
+                                            <td className="p-4 text-slate-500 max-w-[200px] truncate" title={bk.email}>{bk.email || '-'}</td>
+                                            <td className="p-4 text-slate-600 font-mono">{bk.student_id || '-'}</td>
+                                            <td className="p-4 text-center font-bold text-slate-700 bg-slate-50 rounded">{bk.seat_preference || 'N/A'}</td>
+                                            <td className="p-4 text-right font-bold text-green-600">{(bk.amount || 0).toLocaleString()}đ</td>
+                                            <td className="p-4 text-center">
+                                                <span className={`px-2 py-1 rounded text-xs font-bold ${bk.status === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                                    {bk.status}
+                                                </span>
+                                            </td>
+                                            <td className="p-4 text-center">
+                                                {bk.check_in_at ? (
+                                                    <span className="text-green-600 font-bold text-xs">✔ {new Date(bk.check_in_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</span>
+                                                ) : (
+                                                    <span className="text-slate-300 text-xs">-</span>
+                                                )}
+                                            </td>
+                                            <td className="p-4 max-w-[200px] truncate text-slate-500 italic" title={bk.more || bk.notes}>
+                                                {bk.more || bk.notes || ''}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div >
     );
 }
