@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { createClient } from '@/utils/supabase/server';
 import TripSearchSection from '@/components/trip-search-section';
 import TetLanding from '@/components/tet-landing';
@@ -63,11 +64,13 @@ export default async function Home() {
         Chúng ta truyền cả 'trips' và 'user' xuống component con.
         Component con sẽ lo việc hiển thị Banner, Tìm kiếm, và Chào user.
       */}
-      <TripSearchSection
-        trips={trips || []}
-        user={user}
-        destinationImages={destinationImages}
-      />
+      <Suspense fallback={<div className="h-[600px] bg-slate-50 animate-pulse text-center pt-20">Đang tải...</div>}>
+        <TripSearchSection
+          trips={trips || []}
+          user={user}
+          destinationImages={destinationImages}
+        />
+      </Suspense>
 
       {/* 4. FAQ SECTION */}
       <FaqSection faqs={faqs} />

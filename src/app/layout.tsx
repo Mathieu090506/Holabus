@@ -1,7 +1,106 @@
 // ... imports
 import SiteHeader from '@/components/layout/site-header'; // Import file mới
+import LuckyMoneyEffect from '@/components/effects/lucky-money-effect';
 import "./globals.css";
 
+import type { Metadata } from 'next';
+import Script from 'next/script';
+
+export const metadata: Metadata = {
+  title: {
+    default: 'Hola Bus - Vé Xe Tết 2026 | Đặt Vé Xe Khách Giá Rẻ Uy Tín',
+    template: '%s | Hola Bus',
+  },
+  description: 'Đặt vé xe Tết 2026 giá rẻ, uy tín tại Hola Bus. Hàng ngàn chuyến xe đi khắp các tỉnh thành: Đà Nẵng, Quảng Ngãi, Hà Nội, Sài Gòn. Ưu đãi 50% cho sinh viên.',
+  keywords: ['vé xe tết', 'vé xe khách', 'hola bus', 'đặt vé xe', 'xe khách bắc nam', 'vé xe tết 2026', 'xe tết về quê'],
+  authors: [{ name: 'Hola Bus Team' }],
+  creator: 'Hola Bus',
+  publisher: 'Hola Bus',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    title: 'Hola Bus - Vé Xe Tết 2026 | Về Nhà Đón Tết Sum Vầy',
+    description: 'Hệ thống đặt vé xe khách trực tuyến hàng đầu. Đặt vé nhanh chóng, thanh toán an toàn, hỗ trợ 24/7.',
+    url: 'https://holabus.vn',
+    siteName: 'Hola Bus',
+    images: [
+      {
+        url: '/tet-atmosphere.png',
+        width: 1200,
+        height: 630,
+        alt: 'Hola Bus - Vé Xe Tết 2026',
+      },
+    ],
+    locale: 'vi_VN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Hola Bus - Vé Xe Tết 2026',
+    description: 'Ưu đãi vé xe giảm tới 50% cho sinh viên, về nhà đón Tết sum vầy.',
+    images: ['/tet-atmosphere.png'],
+  },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
+  manifest: '/site.webmanifest',
+};
+
+// JSON-LD Structured Data
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TravelAgency',
+  name: 'Hola Bus',
+  image: 'https://holabus.vn/tet-atmosphere.png',
+  description: 'Nền tảng đặt vé xe khách trực tuyến uy tín hàng đầu Việt Nam.',
+  url: 'https://holabus.vn',
+  telephone: '+84123456789',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '123 Đường Xe Khách',
+    addressLocality: 'Hồ Chí Minh',
+    postalCode: '700000',
+    addressCountry: 'VN',
+  },
+  priceRange: '$$',
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday',
+      ],
+      opens: '00:00',
+      closes: '23:59',
+    },
+  ],
+};
 export default function RootLayout({
   children,
 }: {
@@ -9,11 +108,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi">
-      <body className="antialiased text-slate-800 bg-slate-50">
-        
+      <body className="antialiased text-slate-800">
+
         {/* Đặt Header ở đây */}
         <SiteHeader />
-        
+
         {/* Header dùng position:absolute nên nó sẽ nằm đè lên children.
             Điều này HOÀN HẢO cho trang chủ vì ta muốn nó đè lên Banner Tết.
             
@@ -21,7 +120,12 @@ export default function RootLayout({
             Nếu bị che, ở các trang con bạn chỉ cần thêm class `pt-20` vào thẻ bao ngoài cùng là được.
         */}
         {children}
-        
+        <LuckyMoneyEffect />
+        <Script
+          id="json-ld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </body>
     </html>
   );

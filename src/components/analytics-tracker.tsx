@@ -18,7 +18,7 @@ export default function AnalyticsTracker() {
             const { error } = await supabase.rpc('increment_visit_count');
 
             if (error) {
-                console.error("Failed to track visit:", error);
+                console.warn("Failed to track visit (Check if 'increment_visit_count' RPC exists in DB):", error);
             } else {
                 console.log("Visit tracked");
             }

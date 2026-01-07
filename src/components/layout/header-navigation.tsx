@@ -6,7 +6,7 @@ import { siteConfig } from '@/config/site';
 
 export default function HeaderNavigation() {
     return (
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-500">
+        <nav className="hidden md:flex items-center gap-6 text-lg font-medium text-slate-500">
             <Link
                 href="/my-tickets"
                 className="hover:text-slate-900 transition-colors"

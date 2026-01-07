@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
-import { Calendar, ArrowLeft, MapPin, Clock, User, ShieldCheck, Star } from 'lucide-react';
+import { Calendar, ArrowLeft, ArrowRight, MapPin, Clock, User, ShieldCheck, Star } from 'lucide-react';
 import Link from 'next/link';
 import TripMap from '@/components/trip-map';
 import BookingFormV2 from '@/components/booking-form-v2';
@@ -38,7 +38,7 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
     const durationStr = `${hours}h ${minutes}m`;
 
     return (
-        <main className="min-h-screen bg-slate-50 font-sans pb-20 pt-8">
+        <main className="min-h-screen bg-[#FFFBE6] font-sans pb-20 pt-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* 1. HEADER SECTION (Redesigned) */}
@@ -53,38 +53,41 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                         </Link>
                     </div>
 
-                    <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6">
-                        {/* Title & Info */}
-                        <div className="flex-1">
-                            {/* Origin to Destination */}
-                            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mb-3">
-                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
-                                    {trip.origin}
-                                </h1>
-                                <span className="text-3xl sm:text-4xl text-slate-300 font-light px-2">to</span>
-                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
-                                    {trip.destination}
-                                </h1>
-
-                                <span className="ml-2 inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-100 uppercase tracking-widest shadow-sm">
-                                    <ShieldCheck className="w-3 h-3" /> Available
-                                </span>
+                    <div className="flex flex-col gap-4">
+                        {/* Title Row - Flex Wrap to handle long names */}
+                        <div className="flex flex-wrap items-center gap-3 md:gap-6">
+                            <h1 className="text-3xl md:text-5xl font-black text-[#D0021B] tracking-tight leading-tight">
+                                {trip.origin}
+                            </h1>
+                            <div className="hidden md:flex items-center justify-center">
+                                <ArrowRight className="w-8 h-8 text-yellow-500" strokeWidth={3} />
                             </div>
+                            {/* Mobile Separator */}
+                            <span className="md:hidden text-yellow-500 font-bold text-xl">→</span>
 
-                            {/* Date & Seats */}
-                            <div className="flex flex-wrap items-center gap-6 text-slate-500 font-medium text-sm sm:text-base">
-                                <span className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-100 shadow-sm">
-                                    <Calendar className="w-4 h-4 text-slate-400" />
-                                    {departureDate.toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })}
-                                </span>
-                                <span className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-100 shadow-sm">
-                                    <User className="w-4 h-4 text-slate-400" />
-                                    40 Chỗ ngồi
-                                </span>
-                            </div>
+                            <h1 className="text-3xl md:text-5xl font-black text-[#D0021B] tracking-tight leading-tight">
+                                {trip.destination}
+                            </h1>
                         </div>
 
+                        {/* Metadata Row - Better spacing and alignment */}
+                        <div className="flex flex-wrap items-center gap-3 md:gap-6 text-sm md:text-base mt-2">
+                            <span className="inline-flex items-center gap-1.5 bg-green-100/80 text-green-700 px-3 py-1.5 rounded-full font-bold uppercase text-xs tracking-wider border border-green-200">
+                                <ShieldCheck className="w-4 h-4" /> Available
+                            </span>
 
+                            <div className="hidden md:block w-px h-5 bg-slate-300/50"></div>
+
+                            <span className="flex items-center gap-2 text-slate-600 font-medium bg-white/50 px-3 py-1.5 rounded-lg border border-slate-100/50">
+                                <Calendar className="w-4 h-4 text-slate-400" />
+                                {departureDate.toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })}
+                            </span>
+
+                            <span className="flex items-center gap-2 text-slate-600 font-medium bg-white/50 px-3 py-1.5 rounded-lg border border-slate-100/50">
+                                <User className="w-4 h-4 text-slate-400" />
+                                {trip.capacity || 40} Chỗ ngồi
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -95,7 +98,7 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                     <div className="lg:col-span-2 space-y-6">
 
                         {/* MAP CARD */}
-                        <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 h-[300px] md:h-[400px] relative">
+                        <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-yellow-200 h-[300px] md:h-[400px] relative">
                             <TripMap
                                 origin={trip.origin}
                                 destination={trip.destination}
@@ -107,7 +110,7 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                         </div>
 
                         {/* ITINERARY CARD */}
-                        <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
+                        <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-yellow-200">
                             <div className="flex justify-between items-center mb-8">
                                 <h2 className="text-xl font-bold text-slate-900">Chi tiết lịch trình</h2>
                                 <span className="text-slate-400 text-sm font-medium">Thời gian: {durationStr}</span>
@@ -135,15 +138,32 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                                     </div>
                                 </div>
 
-                                {/* LAYOVER / INFO (Optional) */}
+                                {/* WAYPOINTS / STOPS */}
+                                {trip.waypoints && trip.waypoints.split(';').map((waypoint: string, index: number) => {
+                                    const point = waypoint.trim();
+                                    if (!point) return null;
+                                    return (
+                                        <div key={index} className="relative flex gap-6 group">
+                                            <div className="relative z-10 w-2 h-2 rounded-full bg-slate-300 ring-4 ring-white mt-5 ml-0.5 group-hover:bg-orange-400 transition-colors"></div>
+                                            <div className="flex-1 pl-1">
+                                                <div className="inline-flex items-center gap-2 mb-1">
+                                                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Điểm dừng {index + 1}</span>
+                                                </div>
+                                                <h4 className="text-base font-bold text-slate-700">{point}</h4>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+
+                                {/* ROUTE INFO (Text Detail) */}
                                 {trip.route_details && (
                                     <div className="relative flex gap-6 my-2">
-                                        <div className="relative z-10 w-2 h-2 rounded-full bg-slate-300 ring-4 ring-white mt-4 ml-0.5"></div>
-                                        <div className="flex-1">
-                                            <div className="inline-flex items-center gap-2 bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full text-xs font-bold border border-orange-100">
+                                        <div className="relative z-10 w-2 h-2 rounded-full bg-orange-200 ring-4 ring-white mt-2 ml-0.5"></div>
+                                        <div className="flex-1 pl-1">
+                                            <div className="inline-flex items-center gap-2 bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full text-xs font-bold border border-orange-100 mb-2">
                                                 <Clock className="w-3 h-3" /> Thông tin lộ trình
                                             </div>
-                                            <p className="text-slate-500 text-sm mt-2 leading-relaxed ml-1">
+                                            <p className="text-slate-500 text-sm leading-relaxed whitespace-pre-line">
                                                 {trip.route_details}
                                             </p>
                                         </div>
@@ -156,10 +176,10 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                                     <div className="flex-1 bg-slate-50 rounded-xl p-5 border border-slate-100 hover:border-slate-300 transition-colors">
                                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                                             <span className="font-black text-2xl text-slate-900">
-                                                {arrivalDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                                                {!isNaN(arrivalDate.getTime()) ? arrivalDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
                                             </span>
                                             <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded uppercase tracking-wider">
-                                                {arrivalDate.toLocaleDateString('vi-VN', { day: 'numeric', month: 'short' })}
+                                                {!isNaN(arrivalDate.getTime()) ? arrivalDate.toLocaleDateString('vi-VN', { day: 'numeric', month: 'short' }) : 'Dự kiến'}
                                             </span>
                                         </div>
                                         <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 mb-1">
@@ -177,8 +197,8 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
 
                     {/* RIGHT COLUMN (1/3): BOOKING FORM */}
                     <div className="lg:col-span-1">
-                        <div className="sticky top-24 space-y-6">
-                            <div className="bg-white rounded-2xl p-6 shadow-xl shadow-slate-200/50 border border-slate-100">
+                        <div className="sticky top-32 space-y-6 z-40">
+                            <div className="bg-white rounded-2xl p-6 shadow-xl shadow-yellow-100/50 border border-yellow-200">
 
                                 <div className="mb-6">
                                     <h3 className="font-bold text-slate-900 text-lg mb-4">Chi phí chuyến đi</h3>
@@ -193,7 +213,7 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                                     <div className="border-t border-slate-100 my-4"></div>
                                     <div className="flex items-end justify-between">
                                         <span className="font-bold text-slate-900 text-xl">Tổng cộng</span>
-                                        <span className="font-black text-3xl text-blue-600">{trip.price.toLocaleString()}đ</span>
+                                        <span className="font-black text-3xl text-[#D0021B]">{trip.price.toLocaleString()}đ</span>
                                     </div>
                                     <p className="text-right text-xs text-slate-400 mt-1">Đã bao gồm thuế</p>
                                 </div>
@@ -208,15 +228,15 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                             </div>
 
                             {/* SUPPORT CARD BELOW FORM */}
-                            <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+                            <div className="bg-gradient-to-br from-[#D0021B] to-[#FF5B00] rounded-2xl p-6 text-white shadow-lg relative overflow-hidden ring-4 ring-yellow-100">
                                 <div className="relative z-10">
-                                    <h3 className="font-bold text-lg mb-2">Cần hỗ trợ vé Tết?</h3>
-                                    <p className="text-indigo-100 text-sm mb-4">Liên hệ ngay hotline để được tư vấn lộ trình tốt nhất.</p>
-                                    <a href="tel:0919170252" className="bg-white text-indigo-600 font-bold py-2 px-4 rounded-lg text-sm flex items-center justify-center gap-2 hover:bg-indigo-50 transition shadow-md w-full">
+                                    <h3 className="font-bold text-lg mb-2 text-yellow-100">Cần hỗ trợ vé Tết?</h3>
+                                    <p className="text-red-100 text-sm mb-4">Liên hệ ngay hotline để được tư vấn lộ trình tốt nhất.</p>
+                                    <a href="tel:0919170252" className="bg-white text-[#D0021B] font-bold py-2 px-4 rounded-lg text-sm flex items-center justify-center gap-2 hover:bg-yellow-50 transition shadow-md w-full border border-yellow-200">
                                         Gọi Hotline 0919.170.252
                                     </a>
                                 </div>
-                                <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                                <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-yellow-400/20 rounded-full blur-2xl"></div>
                             </div>
                         </div>
                     </div>

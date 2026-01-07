@@ -12,13 +12,13 @@ export default async function SiteHeader() {
     return (
         <header className="sticky top-0 left-0 right-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm">
             <div className="max-w-[1400px] mx-auto px-4 md:px-6">
-                <div className="flex h-16 items-center justify-between gap-4">
+                <div className="flex h-24 items-center justify-between gap-4">
 
                     {/* LEFT SIDE: LOGO + NAV LINKS */}
                     <div className="flex items-center gap-8 md:gap-12 flex-shrink-0">
                         {/* LOGO "HOLA BUS" */}
                         <Link href="/" className="flex items-center gap-1 group">
-                            <span className="font-black text-2xl tracking-tighter leading-none">
+                            <span className="font-black text-3xl tracking-tighter leading-none">
                                 <span className="text-red-600">HOLA</span>
                                 <span className="text-slate-900">BUS</span>
                             </span>

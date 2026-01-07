@@ -44,9 +44,9 @@ export default function TetLanding({
 
                 {/* 2. SUBTEXT: GREETING */}
                 <div className="relative z-10 mt-4 md:mt-10">
-                    <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-slate-800 uppercase tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-yellow-500 drop-shadow-sm">
+                    <h3 className="text-3xl sm:text-5xl md:text-7xl font-black text-slate-800 uppercase tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-yellow-500 drop-shadow-sm">
                         {greeting}
-                    </h2>
+                    </h3>
                     <p className="mt-6 text-slate-500 text-lg sm:text-2xl font-bold font-sans">
                         {subtext}
                     </p>

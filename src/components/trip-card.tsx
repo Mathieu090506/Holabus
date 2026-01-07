@@ -1,22 +1,14 @@
 'use client'
 
 import Link from 'next/link';
-import { Heart, MapPin } from 'lucide-react';
+import { Star, Zap, Ticket } from 'lucide-react';
 
-// Maps city names to image URLs (similar to what we had in search section)
+// Maps city names to image URLs fallback
 const CITY_IMAGES: Record<string, string> = {
     'Hà Nội': 'https://th.bing.com/th/id/R.00b9d0a6b818074f91939b65ecf54850?rik=cDlzM%2fSHsO9VWg&riu=http%3a%2f%2fsuperminimaps.com%2fwp-content%2fuploads%2f2018%2f03%2fHanoi-Lake-Aerea-768x432.jpg&ehk=5XtWYWv%2bpKaioEGl5trdqpiKt6iaJp5olBKD6KOIKf4%3d&risl=&pid=ImgRaw&r=0',
     'Thái Bình': 'https://ik.imagekit.io/tvlk/blog/2023/05/bien-vo-cuc-thai-binh-cover.jpg',
     'Hải Phòng': 'https://media.urbanistnetwork.com/saigoneer/article-images/legacy/DcQH0hfb.jpg',
     'default': 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021&auto=format&fit=crop'
-};
-
-// Maps city names to descriptions
-const DESTINATION_DESCRIPTIONS: Record<string, string> = {
-    'Saigon -> Da Lat': 'Escape the heat and enjoy the flowers of the highlands.',
-    'Da Nang -> Hue': 'Historical journey through the ancient capital.',
-    'Hanoi -> Sapa': 'Travel through the misty mountains to the north.',
-    'default': 'Trải nghiệm hành trình tuyệt vời về nhà đón Tết.'
 };
 
 export default function TripCard({ trip, destinationImages = {} }: { trip: any, destinationImages?: Record<string, string> }) {
@@ -26,72 +18,66 @@ export default function TripCard({ trip, destinationImages = {} }: { trip: any, 
     // Image logic
     const cityImage = trip.image_url || destinationImages[trip.destination] || CITY_IMAGES[trip.destination] || CITY_IMAGES['default'];
 
-    // Tag logic & Styling
-    const tag = trip.tags || "Vé bán chạy";
-    let tagStyle = "bg-slate-100 text-slate-600";
-    if (tag === "Vé bán chạy" || tag === "Very Popular") tagStyle = "bg-green-100 text-green-700";
-    else if (tag === "Sắp hết vé" || tag === "Fast Filling") tagStyle = "bg-orange-100 text-orange-700";
-    else if (tag === "Cảnh đẹp" || tag === "Scenic Route") tagStyle = "bg-blue-100 text-blue-700";
+    // Random Data Generator (Mocking data not in DB to match Klook UI)
+    const rating = (4.5 + Math.random() * 0.5).toFixed(1);
+    const reviews = Math.floor(Math.random() * 500) + 50;
+    const booked = Math.floor(Math.random() * 1000) + 100;
 
-    // Description logic
-    // Try to find exact route match first, then destination match, then default
-    const routeKey = `${trip.origin} -> ${trip.destination}`;
-    const description = DESTINATION_DESCRIPTIONS[routeKey] || DESTINATION_DESCRIPTIONS[trip.destination] || DESTINATION_DESCRIPTIONS['default'];
-
-    // Route Title Display
-    const routeTitle = trip.origin ? `${trip.origin} → ${trip.destination}` : trip.destination;
+    // Title Logic
+    // Klook often puts "Category • Location" small above, and specific name below.
+    // We will simulate: Category = "Xe Khách", Location = Destination
+    const categoryLocation = `Xe Khách • ${trip.destination}`;
+    const title = `Vé xe ${trip.origin} đi ${trip.destination} - Nhà xe Hola Bus`;
 
     return (
-        <Link href={`/trips/${trip.id}`} className="group block w-full bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100">
-            {/* Image Section */}
-            <div className="aspect-[4/3] w-full relative overflow-hidden">
+        <Link href={`/trips/${trip.id}`} className="group block w-full bg-white rounded-2xl overflow-hidden border-2 border-yellow-300 hover:border-yellow-500 hover:shadow-lg transition-all duration-300 flex flex-col h-full">
+            {/* Image Section - Fixed Height for consistency - 4:3 Aspect Ratio */}
+            <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100">
                 <img
                     src={cityImage}
                     alt={trip.destination}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
                 />
-
-                {/* Price Badge */}
-                <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-sm z-10 transition-transform group-hover:scale-105">
-                    <span className="text-xs font-bold text-slate-900">Từ {priceFormatted}</span>
-                </div>
             </div>
 
             {/* Content Section */}
-            <div className="p-5 flex flex-col gap-4">
-                {/* Header: Route & Tag */}
-                <div className="flex items-start justify-between gap-2">
-                    <h3 className="text-lg font-black text-slate-900 leading-tight">
-                        {routeTitle}
-                    </h3>
-                    {tag && (
-                        <span className={`text-[10px] uppercase font-bold px-2 py-1 rounded-md whitespace-nowrap ${tagStyle}`}>
-                            {tag}
-                        </span>
-                    )}
+            <div className="p-4 flex flex-col flex-1">
+
+                {/* Category • Location */}
+                <div className="text-[13px] text-gray-500 mb-2 font-normal truncate">
+                    Transport • {trip.destination}
                 </div>
 
-                {/* Description */}
-                <p className="text-sm font-medium text-slate-500 line-clamp-2 leading-relaxed">
-                    {description}
-                </p>
+                {/* Title */}
+                <h3 className="text-[16px] font-bold text-gray-900 leading-[1.3] line-clamp-2 mb-2 group-hover:text-black min-h-[42px]">
+                    {title}
+                </h3>
 
-                {/* Action Button */}
-                <div className="mt-2">
-                    <div className="w-full py-3 bg-red-50 text-red-600 font-bold rounded-xl text-center text-sm group-hover:bg-red-600 group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-md hover:scale-[1.02]">
-                        Đặt vé ngay
-                    </div>
+                {/* Tags (Gray background -> Light Tet Red/Pink) */}
+                <div className="flex flex-wrap gap-2 mb-3">
+                    <span className="bg-[#FFF0F0] text-[#D0021B] text-[12px] px-2 py-1 rounded-[4px] font-normal">
+                        Book now for today
+                    </span>
+                </div>
+
+                {/* Status Line */}
+                <div className="flex items-center gap-1.5 mb-2 text-[13px]">
+                    <Ticket className="w-3.5 h-3.5 text-[#D0021B]" />
+                    <span className="font-bold text-[#D0021B]">Đang mở bán vé Tết</span>
+                </div>
+
+                {/* Price Section */}
+                <div className="mt-auto pt-2">
+                    <span className="text-xl font-bold text-[#D0021B]">
+                        {priceFormatted}
+                    </span>
                 </div>
             </div>
         </Link>
     );
 }
 
-// Keep Mobile Card for backward compatibility if needed, but the main grid is responsive now.
-// For now, I'll alias it to the main TripCard to maintain valid imports in parent,
-// or just export a simplified version if the parent specifically uses it. 
-// Since I removed the specific mobile view logic in parent and used grid, 
-// I can just export TripCard as TripCardMobile or keep it unused.
+// Export a dummy for compatibility if needed
 export function TripCardMobile({ trip }: { trip: any }) {
     return <TripCard trip={trip} />;
 }

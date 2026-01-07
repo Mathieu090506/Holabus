@@ -4,6 +4,12 @@
 
 /* Thêm css nền cho đỡ mỏi mắt */
 body {
-  background-color: #f8f9fa; /* Màu xám nhạt */
+  background-color: #fffdf5;
+  /* Màu kem ấm áp cho Tết */
+  background-image: url('/tet-texture.png');
+  background-repeat: repeat;
+  background-size: 500px;
+  /* Nhỏ lại một chút cho tinh tế */
+  /* background-attachment: fixed; -> Bỏ cái này vì gây lỗi trên mobile/safari */
   color: #1a1a1a;
 }

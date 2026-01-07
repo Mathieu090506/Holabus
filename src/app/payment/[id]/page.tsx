@@ -14,6 +14,8 @@ const BANK_CONFIG = {
     ACCOUNT_NAME: 'DOAN THE LONG' // Tên chủ tài khoản (Viết hoa không dấu)
 };
 
+import PaymentStatusChecker from '@/components/payment-status-checker';
+
 // Định nghĩa kiểu Props cho Next.js 16 (params là Promise)
 type Props = {
     params: Promise<{ id: string }>;
@@ -102,6 +104,7 @@ export default async function PaymentPage({ params }: Props) {
 
     return (
         <main className="min-h-screen bg-[#f8f9fa] pb-10 pt-32 px-4 md:pb-20">
+            <PaymentStatusChecker bookingId={id} />
             <div className="max-w-xl mx-auto">
                 {/* Nút Back */}
                 <Link href="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-orange-600 mb-6 transition-colors font-medium">
