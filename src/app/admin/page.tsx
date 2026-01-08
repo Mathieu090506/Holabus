@@ -89,22 +89,9 @@ export default async function AdminDashboard() {
                     <h1 className="text-3xl font-bold text-slate-800">Admin Dashboard</h1>
                     <p className="text-slate-500 mt-1">Phân tích & Tăng trưởng kinh doanh</p>
                 </div>
-                <div className="flex gap-2 w-full md:w-auto">
-                    <form action={async () => {
-                        'use server';
-                        const { syncCassoTransactions } = await import('@/actions/casso');
-                        const res = await syncCassoTransactions();
-                        // Trong thực tế nên dùng client component + toast, nhưng đây là server component thuần
-                        console.log(res);
-                    }}>
-                        <button className="bg-blue-600 text-white border border-blue-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition shadow-sm w-full md:w-auto text-center flex items-center justify-center gap-2">
-                            <TrendingUp className="w-4 h-4" /> Đồng bộ Bank
-                        </button>
-                    </form>
-                    <Link href="/" className="bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition shadow-sm w-full md:w-auto text-center">
-                        Xem trang chủ
-                    </Link>
-                </div>
+                <Link href="/" className="bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition shadow-sm w-full md:w-auto text-center">
+                    Xem trang chủ
+                </Link>
             </div>
 
             {/* --- KHỐI 1: KPIs (CHỈ SỐ CHÍNH) --- */}

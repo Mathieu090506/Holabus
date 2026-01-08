@@ -2,11 +2,8 @@ import { createClient } from '@/utils/supabase/server';
 import { notFound, redirect } from 'next/navigation';
 import { CheckCircle, Clock, ArrowLeft, Copy, CreditCard, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 import PaymentTimer from '@/components/payment-timer';
 import { bankConfig } from '@/config/bank';
-
-// --- CẤU HÌNH TÀI KHOẢN NHẬN TIỀN (SỬA LẠI CỦA BẠN) ---
 
 
 import PaymentStatusChecker from '@/components/payment-status-checker';

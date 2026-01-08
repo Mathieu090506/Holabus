@@ -31,7 +31,7 @@ export default async function Home() {
   }
 
   // Parse JSON configs safely
-  let destinationImagesStr = config['destination_images_json'];
+  const destinationImagesStr = config['destination_images_json'];
   let destinationImages = {};
   try {
     if (destinationImagesStr) {
@@ -41,7 +41,7 @@ export default async function Home() {
     console.error("Error parsing destination_images_json", e);
   }
 
-  let faqsStr = config['faqs_json'];
+  const faqsStr = config['faqs_json'];
   let faqs = undefined; // Let component use default if undefined
   try {
     if (faqsStr) {
