@@ -10,9 +10,13 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function POST(req: Request) {
   try {
     // 1. CHECK BẢO MẬT
+    console.log("🔔 WEBHOOK ĐÃ NHẬN ĐƯỢC REQUEST!");
     const secureToken = req.headers.get('x-secure-token') || req.headers.get('secure-token');
+    console.log(`🔑 Token nhận được: ${secureToken}`);
+    console.log(`🔐 Token trong Env: ${process.env.WEBHOOK_SECRET}`);
+
     if (secureToken !== process.env.WEBHOOK_SECRET) {
-      console.log("⛔ Sai Webhook Secret!");
+      console.log("⛔ Sai Webhook Secret! Dừng xử lý.");
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
