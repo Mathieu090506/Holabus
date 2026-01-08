@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@payos/node": "^2.0.4",
     "@react-email/components": "^1.0.2",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.89.0",

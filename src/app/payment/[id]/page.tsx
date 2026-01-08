@@ -7,12 +7,7 @@ import PaymentTimer from '@/components/payment-timer';
 import { bankConfig } from '@/config/bank';
 
 // --- CẤU HÌNH TÀI KHOẢN NHẬN TIỀN (SỬA LẠI CỦA BẠN) ---
-const BANK_CONFIG = {
-    BANK_ID: 'MB',             // Mã ngân hàng (MB, VCB, TECHCOMBANK, VPBANK, TPBANK...)
-    ACCOUNT_NO: '0919170252',  // Số tài khoản của bạn
-    TEMPLATE: 'compact2',      // Mẫu QR (compact, compact2, qr_only, print)
-    ACCOUNT_NAME: 'DOAN THE LONG' // Tên chủ tài khoản (Viết hoa không dấu)
-};
+
 
 import PaymentStatusChecker from '@/components/payment-status-checker';
 
@@ -57,8 +52,8 @@ export default async function PaymentPage({ params }: Props) {
     // Nếu vé chưa thanh toán (PENDING) mà đã hết giờ
     if (booking.status === 'PENDING' && timeLeft <= 0) {
 
-        // 1. Xóa vé ngay lập tức khỏi Database
-        await supabase.from('bookings').delete().eq('id', id);
+        // 1. Không xóa vé khỏi DB để tránh mất dữ liệu nếu khách chuyển muộn
+        // await supabase.from('bookings').delete().eq('id', id);
 
         // 2. Trả về giao diện báo lỗi (Return luôn để chặn code bên dưới chạy)
         return (

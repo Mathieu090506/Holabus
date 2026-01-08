@@ -2,7 +2,7 @@ import { createAdminClient } from '@/utils/supabase/admin';
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { TicketEmail } from '@/components/email/ticket-email';
-import { appendToSheet } from '@/utils/google-sheets'; 
+import { appendToSheet } from '@/utils/google-sheets';
 
 // Khởi tạo Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -18,10 +18,10 @@ export async function POST(req: Request) {
 
     const body = await req.json();
     const transactions = body.data || [];
-    
+
     // Nếu không có giao dịch thì return luôn
     if (transactions.length === 0) {
-        return NextResponse.json({ message: 'No transactions' });
+      return NextResponse.json({ message: 'No transactions' });
     }
 
     const supabase = createAdminClient();
@@ -31,14 +31,14 @@ export async function POST(req: Request) {
     for (const tx of transactions) {
       const description = (tx.description || '').toUpperCase();
       const amount = tx.amount || 0;
-      
+
       // Tìm mã đơn (VD: HOLA8X92)
       const match = description.match(/HOLA[A-Z0-9]+/);
 
       if (match) {
         let emailDebug = "Chưa thực hiện";
         let sheetDebug = "Chưa thực hiện"; // <--- [2] BIẾN MỚI
-        
+
         const paymentCode = match[0];
         console.log(`\n============== 🔍 XỬ LÝ ĐƠN: ${paymentCode} ==============`);
 
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
 
         // B. KIỂM TRA TIỀN (Cho phép khách chuyển dư)
         if (amount >= booking.amount) {
-          
+
           // C. UPDATE DB -> PAID
           const { error: updateError } = await supabase
             .from('bookings')
@@ -81,62 +81,62 @@ export async function POST(req: Request) {
               const { data: profile } = await supabase.from('profiles').select('*').eq('id', booking.user_id).single();
 
               const emailNhanVe = profile?.email;
-              const ADMIN_EMAIL = 'doanthelong061207@gmail.com'; 
+              const ADMIN_EMAIL = 'doanthelong061207@gmail.com';
 
               // --- 1. GỬI EMAIL ---
               if (!emailNhanVe) {
-                  emailDebug = "Lỗi: Không tìm thấy email trong DB";
+                emailDebug = "Lỗi: Không tìm thấy email trong DB";
               } else {
-                  const { data: emailData, error: emailError } = await resend.emails.send({
-                      from: 'HOLA BUS <onboarding@resend.dev>',
-                      to: emailNhanVe, 
-                      subject: `[HOLA BUS] Vé điện tử: ${paymentCode}`,
-                      react: TicketEmail({
-                          customerName: booking.full_name || profile.full_name || 'Bạn mình ơi',
-                          busRoute: trip ? `${trip.origin} - ${trip.destination}` : 'Chuyến đi',
-                          departureTime: trip ? new Date(trip.departure_time).toLocaleString('vi-VN') : '',
-                          ticketCode: paymentCode,
-                          seatType: booking.seat_preference,
-                          price: booking.amount
-                      }),
-                  });
+                const { data: emailData, error: emailError } = await resend.emails.send({
+                  from: 'HOLA BUS <onboarding@resend.dev>',
+                  to: emailNhanVe,
+                  subject: `[HOLA BUS] Vé điện tử: ${paymentCode}`,
+                  react: TicketEmail({
+                    customerName: booking.full_name || profile.full_name || 'Bạn mình ơi',
+                    busRoute: trip ? `${trip.origin} - ${trip.destination}` : 'Chuyến đi',
+                    departureTime: trip ? new Date(trip.departure_time).toLocaleString('vi-VN') : '',
+                    ticketCode: paymentCode,
+                    seatType: booking.seat_preference,
+                    price: booking.amount
+                  }),
+                });
 
-                  if (emailError) {
-                      console.error("🔥 RESEND THẤT BẠI:", emailError);
-                      emailDebug = `Thất bại: ${emailError.message} (Chỉ gửi được cho ${ADMIN_EMAIL})`; 
-                  } else {
-                      console.log("📧 RESEND THÀNH CÔNG! ID:", emailData?.id);
-                      emailDebug = `Thành công! ID: ${emailData?.id}`; 
-                  }
+                if (emailError) {
+                  console.error("🔥 RESEND THẤT BẠI:", emailError);
+                  emailDebug = `Thất bại: ${emailError.message} (Chỉ gửi được cho ${ADMIN_EMAIL})`;
+                } else {
+                  console.log("📧 RESEND THÀNH CÔNG! ID:", emailData?.id);
+                  emailDebug = `Thành công! ID: ${emailData?.id}`;
+                }
               }
 
               // --- 2. GHI GOOGLE SHEET (MỚI) --- [3] ĐOẠN CODE MỚI CHÈN VÀO
               console.log("📊 Đang ghi Google Sheet...");
               const sheetData = {
-                  ...booking,
-                  trips: trip, // Truyền thông tin chuyến xe vào để lấy tên chuyến
-                  phone_number: booking.phone_number
+                ...booking,
+                trips: trip, // Truyền thông tin chuyến xe vào để lấy tên chuyến
+                phone_number: booking.phone_number
               };
-              
+
               // Gọi hàm ghi sheet và lưu trạng thái
               const sheetStatus = await appendToSheet(sheetData);
               sheetDebug = sheetStatus;
 
             } catch (err: any) {
-                console.error("🔥 CRASH LOGIC PHỤ:", err);
-                emailDebug = `Crash code: ${err.message}`;
-                sheetDebug = `Crash code: ${err.message}`;
+              console.error("🔥 CRASH LOGIC PHỤ:", err);
+              emailDebug = `Crash code: ${err.message}`;
+              sheetDebug = `Crash code: ${err.message}`;
             }
             // =========================================================
 
-            results.push({ 
-              code: paymentCode, 
-              status: 'Success', 
+            results.push({
+              code: paymentCode,
+              status: 'Success',
               email_status: emailDebug,
               sheet_status: sheetDebug // <--- [4] TRẢ VỀ KẾT QUẢ SHEET
             });
           } else {
-              console.error("Lỗi update DB:", updateError);
+            console.error("Lỗi update DB:", updateError);
           }
         }
       }

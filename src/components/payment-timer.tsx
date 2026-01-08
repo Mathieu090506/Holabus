@@ -15,7 +15,7 @@ export default function PaymentTimer({ targetDate, duration = 10 * 60 * 1000 }: 
   const [mounted, setMounted] = useState(false);
 
   // Tính toán bán kính và chu vi cho vòng tròn SVG
-  const radius = 30; 
+  const radius = 30;
   const circumference = 2 * Math.PI * radius;
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function PaymentTimer({ targetDate, duration = 10 * 60 * 1000 }: 
   if (!mounted) return null;
 
   // --- TÍNH TOÁN HIỂN THỊ ---
-  
+
   // 1. Phần trăm thời gian còn lại (để vẽ vòng tròn)
   const percentage = (timeLeft / duration) * 100;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
@@ -75,7 +75,7 @@ export default function PaymentTimer({ targetDate, duration = 10 * 60 * 1000 }: 
 
   return (
     <div className={`flex items-center gap-4 px-4 py-2 rounded-xl border border-white/50 shadow-sm backdrop-blur-sm ${bgClass} transition-colors duration-500`}>
-      
+
       {/* VÒNG TRÒN SVG */}
       <div className="relative w-12 h-12 flex items-center justify-center">
         {/* Vòng tròn nền (mờ) */}
@@ -88,6 +88,7 @@ export default function PaymentTimer({ targetDate, duration = 10 * 60 * 1000 }: 
             strokeWidth="4"
             fill="transparent"
             className="text-gray-200"
+            style={{ r: '18px' }}
           />
           {/* Vòng tròn tiến độ (màu) */}
           <circle
@@ -101,30 +102,30 @@ export default function PaymentTimer({ targetDate, duration = 10 * 60 * 1000 }: 
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
             className={`transition-all duration-1000 ease-linear ${colorClass}`}
-            style={{ 
-                // Fix lỗi hiển thị radius trong SVG nhỏ
-                r: '18px' // Ghi đè bán kính để vừa khung 12 (48px)
+            style={{
+              // Fix lỗi hiển thị radius trong SVG nhỏ
+              r: '18px' // Ghi đè bán kính để vừa khung 12 (48px)
             }}
           />
         </svg>
-        
+
         {/* Icon đồng hồ ở giữa */}
         <div className="absolute inset-0 flex items-center justify-center">
-            {percentage <= 20 ? (
-                <AlertCircle className={`w-4 h-4 ${colorClass.replace('stroke-', 'text-')}`} />
-            ) : (
-                <Clock className={`w-4 h-4 ${colorClass.replace('stroke-', 'text-')}`} />
-            )}
+          {percentage <= 20 ? (
+            <AlertCircle className={`w-4 h-4 ${colorClass.replace('stroke-', 'text-')}`} />
+          ) : (
+            <Clock className={`w-4 h-4 ${colorClass.replace('stroke-', 'text-')}`} />
+          )}
         </div>
       </div>
 
       {/* TEXT HIỂN THỊ */}
       <div>
         <p className="text-[10px] uppercase font-bold tracking-wider text-gray-500 mb-0.5">
-            {statusText}
+          {statusText}
         </p>
         <div className={`text-2xl font-black font-mono leading-none ${colorClass.replace('stroke-', 'text-').replace('animate-pulse', '')}`}>
-            {formattedTime}
+          {formattedTime}
         </div>
       </div>
 
