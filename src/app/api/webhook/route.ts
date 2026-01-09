@@ -33,8 +33,12 @@ export async function POST(req: Request) {
 
     // 2. DUYỆT GIAO DỊCH
     for (const tx of transactions) {
+      console.log("RAW Description:", tx.description); 
+
       const description = (tx.description || '').toUpperCase();
       const amount = tx.amount || 0;
+
+      console.log(`🔍 Nội dung sau khi chuẩn hóa: "${description}"`);
 
       // Tìm mã đơn (VD: HOLA8X92)
       const match = description.match(/HOLA[A-Z0-9]+/);
@@ -66,7 +70,7 @@ export async function POST(req: Request) {
 
         // B. KIỂM TRA TIỀN (Cho phép khách chuyển dư)
         if (amount >= booking.amount) {
-
+          console.log(`💰 Tiền OK (${amount} >= ${booking.amount}). Đang update DB...`);
           // C. UPDATE DB -> PAID
           const { error: updateError } = await supabase
             .from('bookings')
@@ -141,8 +145,22 @@ export async function POST(req: Request) {
             });
           } else {
             console.error("Lỗi update DB:", updateError);
+            
           }
+        } else {
+          // 👇👇👇 THÊM ĐOẠN NÀY VÀO NGAY
+          console.error(`💸 THIẾU TIỀN! Khách chuyển: ${amount}, Giá vé: ${booking.amount}`);
+          console.error(`👉 Mã đơn: ${paymentCode} chưa được kích hoạt.`);
+          
+          // (Tùy chọn) Bạn có thể return luôn kết quả để Casso biết (nhưng thường cứ để 200 để Casso không gọi lại)
+          results.push({ 
+              code: paymentCode, 
+              status: 'Failed', 
+              reason: `Thiếu tiền: Trả ${amount}/${booking.amount}` 
+          });
         }
+      } else {
+        console.log(`⚠️ KHÔNG tìm thấy mã HOLA... trong chuỗi: ${description}`);
       }
     }
 
