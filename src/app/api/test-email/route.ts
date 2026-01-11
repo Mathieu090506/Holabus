@@ -8,7 +8,7 @@ export async function GET() {
     const { data, error } = await resend.emails.send({
       from: 'HOLA BUS <onboarding@resend.dev>',
       to: 'doanthelong061207@gmail.com', // <--- THAY EMAIL CỦA BẠN VÀO ĐÂY
-      subject: 'Test Email Hola Bus',
+      subject: 'Test Email ',
       html: '<p>Xin chào! Nếu bạn nhận được mail này thì Resend đã hoạt động ngon lành!</p>'
     });
 

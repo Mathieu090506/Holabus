@@ -1,21 +1,21 @@
 import { Suspense } from 'react';
 import { createClient } from '@/utils/supabase/server';
-import TripSearchSection from '@/components/trip-search-section';
+import TripSearchHeader from '@/components/trip-search-header';
+import TripSearchResults from '@/components/trip-search-results';
 import TetLanding from '@/components/tet-landing';
 import FaqSection from '@/components/faq-section';
 import TestimonialsSection from '@/components/testimonials-section';
 import SiteFooter from '@/components/site-footer';
 import AnalyticsTracker from '@/components/analytics-tracker';
-// Lưu ý: AuthButton thường nằm ở Navbar (layout.tsx), 
-// nhưng nếu bạn muốn đặt ở đâu đó trong body thì cứ import lại.
+import { SearchProvider } from '@/components/search-provider';
 
 export default async function Home() {
   const supabase = await createClient();
 
-  // 1. Lấy thông tin User (GIỮ NGUYÊN TÍNH NĂNG CŨ)
+  // 1. Lấy thông tin User
   const { data: { user } } = await supabase.auth.getUser();
 
-  // 2. Fetch Trips (GIỮ NGUYÊN TÍNH NĂNG CŨ)
+  // 2. Fetch Trips
   const { data: trips, error } = await supabase
     .from('trips')
     .select('*')
@@ -42,7 +42,7 @@ export default async function Home() {
   }
 
   const faqsStr = config['faqs_json'];
-  let faqs = undefined; // Let component use default if undefined
+  let faqs = undefined;
   try {
     if (faqsStr) {
       faqs = JSON.parse(faqsStr);
@@ -51,8 +51,6 @@ export default async function Home() {
     console.error("Error parsing faqs_json", e);
   }
 
-
-  // Xử lý lỗi đơn giản nếu fetch thất bại
   if (error) {
     console.error("Lỗi tải dữ liệu:", error);
   }
@@ -60,24 +58,39 @@ export default async function Home() {
   return (
     <main>
       <AnalyticsTracker />
-      {/* 3. HIỂN THỊ GIAO DIỆN MỚI 
-        Chúng ta truyền cả 'trips' và 'user' xuống component con.
-        Component con sẽ lo việc hiển thị Banner, Tìm kiếm, và Chào user.
-      */}
-      <Suspense fallback={<div className="h-[600px] bg-slate-50 animate-pulse text-center pt-20">Đang tải...</div>}>
-        <TripSearchSection
-          trips={trips || []}
-          user={user}
-          destinationImages={destinationImages}
-        />
-      </Suspense>
 
-      {/* 4. FAQ SECTION */}
+      <SearchProvider>
+        {/* 3. TRIP SEARCH HEADER - Rendered immediately for fast LCP & Visual Stability */}
+        {/* Contains the Hero Slider & Search Widget overlapping it */}
+        <TripSearchHeader />
+
+        {/* 4. TRIP RESULTS - Fetched Data */}
+        <Suspense fallback={
+          <div className="min-h-screen bg-[#FFFBE6] pb-20 font-sans">
+            {/* Trip List Skeleton */}
+            <div className="max-w-[1280px] mx-auto px-4 mt-24">
+              <div className="w-48 h-10 bg-red-100/50 rounded-lg mb-8 animate-pulse" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="h-[400px] bg-white rounded-2xl border-2 border-yellow-100 shadow-sm animate-pulse" />
+                ))}
+              </div>
+            </div>
+          </div>
+        }>
+          <TripSearchResults
+            trips={trips || []}
+            destinationImages={destinationImages}
+          />
+        </Suspense>
+      </SearchProvider>
+
+      {/* 5. FAQ SECTION */}
       <FaqSection faqs={faqs} />
 
       <TestimonialsSection />
 
-      {/* 5. LANDING PAGE & ANIMATION */}
+      {/* 6. LANDING PAGE & ANIMATION */}
       <TetLanding
         year={config['landing_year']}
         greeting={config['landing_greeting']}

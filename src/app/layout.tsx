@@ -101,6 +101,10 @@ const jsonLd = {
     },
   ],
 };
+import { Toaster } from 'sonner';
+
+// ... (existing imports)
+
 export default function RootLayout({
   children,
 }: {
@@ -113,14 +117,9 @@ export default function RootLayout({
         {/* Đặt Header ở đây */}
         <SiteHeader />
 
-        {/* Header dùng position:absolute nên nó sẽ nằm đè lên children.
-            Điều này HOÀN HẢO cho trang chủ vì ta muốn nó đè lên Banner Tết.
-            
-            TUY NHIÊN: Với các trang con (như Admin, Login), nội dung có thể bị che mất.
-            Nếu bị che, ở các trang con bạn chỉ cần thêm class `pt-20` vào thẻ bao ngoài cùng là được.
-        */}
         {children}
         <LuckyMoneyEffect />
+        <Toaster position="top-center" richColors />
         <Script
           id="json-ld"
           type="application/ld+json"

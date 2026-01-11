@@ -1,11 +1,13 @@
 // Nodejs v18+ đã có fetch built-in
 
+const { hrtime } = require("process");
+
 // Nếu chạy lỗi 'require not defined' hoặc 'fetch not defined', hãy dùng: node --experimental-fetch test-webhook.js (với Node cũ)
 // Hoặc đổi tên thành .mjs
 
 // CẤU HÌNH
 const API_URL = 'http://localhost:3000/api/webhook';
-const WEBHOOK_SECRET = 'YOUR_SECURE_TOKEN'; // <--- ĐIỀN TOKEN TRONG .env.local CỦA BẠN VÀO ĐÂY
+const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET; // <--- ĐIỀN TOKEN TRONG .env.local CỦA BẠN VÀO ĐÂY
 
 async function run() {
     // Giả lập 1 giao dịch từ Casso

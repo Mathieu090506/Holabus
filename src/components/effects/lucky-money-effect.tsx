@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
-const NUM_ITEMS = 30; // Increased count for variety
+const NUM_ITEMS = 8; // Adjusted count as requested
 const TYPES = ['envelope']; // Weighting types: Just Envelope
 
 export default function LuckyMoneyEffect() {
@@ -15,8 +15,8 @@ export default function LuckyMoneyEffect() {
             id: i,
             type: TYPES[Math.floor(Math.random() * TYPES.length)],
             x: Math.random() * 100, // Random horizontal position %
-            delay: Math.random() * 5, // Random delay
-            duration: 8 + Math.random() * 7, // Slow fall (8-15s)
+            delay: Math.random() * 10, // Adjusted delay
+            duration: 15 + Math.random() * 10, // Faster fall (15-25s)
             size: 25 + Math.random() * 15, // Random size
             rotation: Math.random() * 360, // Initial rotation
         }));

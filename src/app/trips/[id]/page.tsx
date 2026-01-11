@@ -1,9 +1,10 @@
 import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
-import { Calendar, ArrowLeft, ArrowRight, MapPin, Clock, User, ShieldCheck, Star } from 'lucide-react';
+import { Calendar, ArrowLeft, ArrowRight, MapPin, Clock, User, ShieldCheck, Star, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import TripMap from '@/components/trip-map';
 import BookingFormV2 from '@/components/booking-form-v2';
+import { siteConfig } from '@/config/site';
 
 // Next.js 15/16: params là Promise
 export default async function TripDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -145,7 +146,7 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                                     return (
                                         <div key={index} className="relative flex gap-6 group">
                                             <div className="relative z-10 w-2 h-2 rounded-full bg-slate-300 ring-4 ring-white mt-5 ml-0.5 group-hover:bg-orange-400 transition-colors"></div>
-                                            <div className="flex-1 pl-1">
+                                            <div className="flex-1 bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-orange-200 transition-colors">
                                                 <div className="inline-flex items-center gap-2 mb-1">
                                                     <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Điểm dừng {index + 1}</span>
                                                 </div>
@@ -163,9 +164,11 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                                             <div className="inline-flex items-center gap-2 bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full text-xs font-bold border border-orange-100 mb-2">
                                                 <Clock className="w-3 h-3" /> Thông tin lộ trình
                                             </div>
-                                            <p className="text-slate-500 text-sm leading-relaxed whitespace-pre-line">
-                                                {trip.route_details}
-                                            </p>
+                                            <div className="bg-orange-50 border border-orange-100 p-4 rounded-xl mt-2">
+                                                <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line font-medium">
+                                                    {trip.route_details}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 )}
@@ -175,11 +178,8 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                                     <div className="relative z-10 w-3 h-3 rounded-full bg-slate-900 ring-4 ring-white mt-1.5 box-content group-hover:scale-110 transition-transform"></div>
                                     <div className="flex-1 bg-slate-50 rounded-xl p-5 border border-slate-100 hover:border-slate-300 transition-colors">
                                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
-                                            <span className="font-black text-2xl text-slate-900">
-                                                {!isNaN(arrivalDate.getTime()) ? arrivalDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
-                                            </span>
-                                            <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded uppercase tracking-wider">
-                                                {!isNaN(arrivalDate.getTime()) ? arrivalDate.toLocaleDateString('vi-VN', { day: 'numeric', month: 'short' }) : 'Dự kiến'}
+                                            <span className="text-xs font-bold text-slate-500 bg-slate-200 px-2 py-1 rounded uppercase tracking-wider">
+                                                Điểm kết thúc
                                             </span>
                                         </div>
                                         <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 mb-1">
@@ -231,9 +231,15 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                             <div className="bg-gradient-to-br from-[#D0021B] to-[#FF5B00] rounded-2xl p-6 text-white shadow-lg relative overflow-hidden ring-4 ring-yellow-100">
                                 <div className="relative z-10">
                                     <h3 className="font-bold text-lg mb-2 text-yellow-100">Cần hỗ trợ vé Tết?</h3>
-                                    <p className="text-red-100 text-sm mb-4">Liên hệ ngay hotline để được tư vấn lộ trình tốt nhất.</p>
-                                    <a href="tel:0919170252" className="bg-white text-[#D0021B] font-bold py-2 px-4 rounded-lg text-sm flex items-center justify-center gap-2 hover:bg-yellow-50 transition shadow-md w-full border border-yellow-200">
-                                        Gọi Hotline 0919.170.252
+                                    <p className="text-red-100 text-sm mb-4">Nhắn tin ngay cho chúng tôi để được tư vấn lộ trình tốt nhất.</p>
+                                    <a
+                                        href={siteConfig.messengerUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="bg-white text-[#D0021B] font-bold py-3 px-4 rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-yellow-50 transition shadow-lg hover:shadow-xl w-full border border-yellow-200"
+                                    >
+                                        <MessageCircle className="w-5 h-5 fill-current" />
+                                        Chat qua Fanpage
                                     </a>
                                 </div>
                                 <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-yellow-400/20 rounded-full blur-2xl"></div>
