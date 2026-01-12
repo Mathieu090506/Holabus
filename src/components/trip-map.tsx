@@ -25,26 +25,19 @@ export default function TripMap({ origin, destination, waypoints }: TripMapProps
   // => Nếu có Waypoints: Map sẽ đi từ Origin -> ...Intermediate Waypoints... -> Last Waypoint (Làm đích đến)
   // => Nếu KHÔNG có Waypoints: Fallback về Origin -> Destination (Input) để map không bị lỗi trắng.
 
-  let mapDestination = destination; // Mặc định dùng destination từ props (fallback)
+  let mapDestination = destination;
   let waypointsParam = '';
 
   if (waypoints && waypoints.trim() !== '') {
-    const points = waypoints.split(/[;,]/) // Tách bằng ; hoặc ,
+    const points = waypoints.split(';')    // Tách bằng ;
       .map(p => p.trim())                  // Xóa khoảng trắng thừa
       .filter(p => p !== '');              // Bỏ điểm rỗng
 
     if (points.length > 0) {
-      // Lấy điểm cuối cùng trong list waypoints làm Đích Đến thực tế của Map
-      mapDestination = points[points.length - 1];
-
-      // Các điểm còn lại là điểm trung gian
-      const intermediatePoints = points.slice(0, points.length - 1);
-
-      if (intermediatePoints.length > 0) {
-        // Mã hóa URL
-        const encodedPoints = intermediatePoints.map(p => encodeURIComponent(p)).join('|');
-        waypointsParam = `&waypoints=${encodedPoints}`;
-      }
+      // Logic Mới: Tất cả điểm trong Waypoints đều là điểm trung gian
+      // Đích đến (Destination) được giữ nguyên từ input
+      const encodedPoints = points.map(p => encodeURIComponent(p)).join('|');
+      waypointsParam = `&waypoints=${encodedPoints}`;
     }
   }
 

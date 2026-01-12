@@ -11,6 +11,7 @@
   "dependencies": {
     "@payos/node": "^2.0.4",
     "@react-email/components": "^1.0.2",
+    "@react-google-maps/api": "^2.20.8",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.89.0",
     "@yudiel/react-qr-scanner": "^2.5.0",

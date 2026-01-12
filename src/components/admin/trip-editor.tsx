@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import RouteMap from '@/components/trip-map';
+import InteractiveMap from './interactive-map';
 import { createTrip, updateTrip, deleteTrip, deleteBooking } from '@/actions/admin-trips'; // Import thêm deleteBooking
 import { useRouter } from 'next/navigation';
 import { Save, Trash2, MapPin, Clock, DollarSign, Users, Ticket, UserX, UserCheck, Armchair } from 'lucide-react';
@@ -320,23 +321,30 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
             </div >
 
             {/* --- CỘT PHẢI: MAP & DANH SÁCH VÉ --- */}
-            < div className="space-y-6" >
+            <div className="space-y-6">
 
-                {/* 1. MAP PREVIEW (GIỮ NGUYÊN) */}
-                < div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200" >
+                {/* 1. MAP PREVIEW (UPDATED: INTERACTIVE) */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <div className="flex justify-between items-center mb-4">
-                        <h3 className="font-bold text-slate-500 uppercase text-xs tracking-wider">Xem trước lộ trình</h3>
-                        <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-bold animate-pulse">Live Preview</span>
+                        <h3 className="font-bold text-slate-500 uppercase text-xs tracking-wider">Xem bản đồ & Chỉnh chuyến</h3>
+                        <span className="bg-orange-100 text-orange-700 text-xs px-2 py-1 rounded font-bold animate-pulse">Interactive Mode</span>
                     </div>
 
-                    <div className="rounded-xl overflow-hidden border border-slate-200 shadow-inner min-h-[250px]">
-                        <RouteMap origin={origin} destination={destination} waypoints={waypoints} />
+                    <div className="rounded-xl overflow-hidden border border-slate-200 shadow-inner h-[400px] relative">
+                        {/* Fallback component loading... is handled inside InteractiveMap */}
+                        <InteractiveMap
+                            origin={origin}
+                            destination={destination}
+                            waypointsInput={waypoints}
+                            onWaypointsChanged={(newVal: string) => setWaypoints(newVal)}
+                        />
                     </div>
 
-                    <div className="mt-4 bg-yellow-50 border border-yellow-100 p-3 rounded-xl text-xs text-yellow-800">
-                        <p>💡 Thay đổi địa điểm bên trái, bản đồ sẽ tự cập nhật.</p>
+                    <div className="mt-4 bg-blue-50 border border-blue-100 p-3 rounded-xl text-xs text-blue-800 space-y-1">
+                        <p>💡 <b>Mẹo:</b> Bạn có thể <b>kéo thả đường màu xanh</b> trên bản đồ để thay đổi lộ trình.</p>
+                        <p>Các điểm đi qua mới sẽ tự động được thêm vào ô "Điểm trung gian".</p>
                     </div>
-                </div >
+                </div>
 
                 {/* 2. DANH SÁCH HÀNH KHÁCH (MỚI THÊM VÀO) */}
                 {
