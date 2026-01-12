@@ -117,16 +117,28 @@ export async function updateTrip(tripId: number, formData: FormData) {
   }
 }
 
-// 3. XÓA (Giữ nguyên)
+// 3. XÓA (Đã sửa: Manual Cascade Delete)
 export async function deleteTrip(tripId: number) {
   try {
     const supabase = createAdminClient();
     console.log("🚀 Đang xóa chuyến:", tripId);
 
+    // 1. Xóa tất cả bookings của chuyến này trước (để tránh lỗi Foreign Key nếu chưa set Cascade DB)
+    const { error: bookingError } = await supabase
+      .from('bookings')
+      .delete()
+      .eq('trip_id', tripId);
+
+    if (bookingError) {
+      console.error("❌ Lỗi khi xóa bookings đính kèm:", bookingError);
+      return { error: "Không thể xóa lịch sử vé: " + bookingError.message };
+    }
+
+    // 2. Sau đó mới xóa Trip
     const { error } = await supabase.from('trips').delete().eq('id', tripId);
 
     if (error) {
-      console.error("❌ Lỗi Supabase (Delete):", error);
+      console.error("❌ Lỗi Supabase (Delete Trip):", error);
       return { error: error.message };
     }
 
