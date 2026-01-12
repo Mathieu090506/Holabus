@@ -6,7 +6,7 @@ import TetLanding from '@/components/tet-landing';
 import FaqSection from '@/components/faq-section';
 import TestimonialsSection from '@/components/testimonials-section';
 import SiteFooter from '@/components/site-footer';
-import AnalyticsTracker from '@/components/analytics-tracker';
+// import AnalyticsTracker from '@/components/analytics-tracker';
 import { SearchProvider } from '@/components/search-provider';
 
 export default async function Home() {
@@ -57,7 +57,7 @@ export default async function Home() {
 
   return (
     <main>
-      <AnalyticsTracker />
+      {/* AnalyticsTracker Removed */}
 
       <SearchProvider>
         {/* 3. TRIP SEARCH HEADER - Rendered immediately for fast LCP & Visual Stability */}

@@ -69,6 +69,8 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
       return;
     }
 
+    const honeypot = formData.get('website_url') as string;
+
     try {
       console.log("🚀 Đang gửi yêu cầu đặt vé...");
 
@@ -79,7 +81,8 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
           fullName: fullName,
           phone: phoneNumber,
           studentId: email, // Dùng trường studentId để lưu email tạm thời
-          notes: finalNotes // Combined notes
+          notes: finalNotes, // Combined notes
+          honeypot: honeypot // Pass honeypot to server
         }
       );
 

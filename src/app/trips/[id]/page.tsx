@@ -6,9 +6,12 @@ import TripMap from '@/components/trip-map';
 import BookingFormV2 from '@/components/booking-form-v2';
 import { siteConfig } from '@/config/site';
 
-// Next.js 15/16: params là Promise
-export default async function TripDetailPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+// Next.js 15/16: params là Promise - Rebuild Trigger
+export const dynamic = 'force-dynamic';
+
+export default async function TripDetailPage(props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
+    const { id } = params;
     const supabase = await createClient();
 
     // 1. Lấy thông tin chuyến xe

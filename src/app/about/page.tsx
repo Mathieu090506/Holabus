@@ -470,7 +470,7 @@ export default function AboutPage() {
                                 <Phone className="shrink-0 text-[#D0021B]" size={20} />
                                 <div>
                                     <span className="block text-white font-bold">0376 875 810</span>
-                                    <span className="text-sm">Ms. Anh Hồng (Trưởng phòng dịch vụ)</span>
+                                    <span className="text-sm">Ms. Ánh Hồng (Trưởng phòng dịch vụ)</span>
                                 </div>
                             </li>
                             <li className="flex items-start gap-3">

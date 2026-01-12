@@ -22,7 +22,7 @@ const HERO_SLIDES = [
     },
     {
         id: 3,
-        image: '/tet-bg-v2.png',
+        image: '/tet-bg-v4.png',
         title: <>Du Xuân <br /> <span className="text-[#FFD700]">Rộn Ràng</span></>,
         subtitle: 'Trải nghiệm hành trình trọn vẹn và ý nghĩa cùng Hola Bus.'
     }

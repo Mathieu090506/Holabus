@@ -94,7 +94,7 @@ export default function TripCard({ trips, destinationImages = {} }: { trips: any
                             Transport • {mainTrip.destination}
                         </div>
                         <h3 className="text-[16px] font-bold text-gray-900 leading-[1.3] line-clamp-2 group-hover:text-black">
-                            {title}
+                            {mainTrip.origin} đi <span className="text-[#D0021B] text-[19px] uppercase">{mainTrip.destination}</span>
                         </h3>
                     </div>
                     {isExpanded && (
@@ -156,7 +156,7 @@ export default function TripCard({ trips, destinationImages = {} }: { trips: any
                                 </div>
                                 {t.route_details && (
                                     <div className="text-xs text-slate-600 bg-white p-2 rounded border border-slate-100 mt-2">
-                                        <span className="font-semibold text-slate-800">Lộ trình:</span> {t.route_details}
+                                        <span className="font-semibold text-slate-800">Lộ trình:</span> {t.route_details.replace(/\r?\n/g, ' - ')}
                                     </div>
                                 )}
                             </Link>

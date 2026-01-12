@@ -48,6 +48,60 @@ export async function bookTicket(
     // If the user meant to check `extraData.notes` for specific bot patterns, that would be a different check.
 
     // ---------------------------------------------------------
+    // 🛡️ 1. VALIDATE INPUT (SAFE & SECURE MODE)
+    // ---------------------------------------------------------
+
+    // Helper: Kiểm tra XSS/Link (Chặn tuyệt đối link và script)
+    const isSafeInput = (text: string) => {
+      if (!text) return true; // Cho phép rỗng (sẽ check require sau)
+      const lower = text.toLowerCase();
+
+      // 1. Chặn Link (http, https, www)
+      if (lower.includes('http://') || lower.includes('https://') || lower.includes('www.')) return false;
+
+      // 2. Chặn Script XSS (<script, javascript:, onEvent)
+      if (lower.includes('<script') || lower.includes('javascript:') || lower.includes('vbscript:')) return false;
+      if (lower.includes('onload=') || lower.includes('onerror=') || lower.includes('onclick=')) return false;
+
+      return true;
+    };
+
+    // A. Validate Full Name
+    // Chỉ cho phép: Chữ cái (Unicode), Số, Khoảng trắng, dấu chấm, gạch ngang, nháy đơn.
+    // Loại bỏ các ký tự đặc biệt nguy hiểm: < > / \ { } [ ]
+    // A. Validate Full Name
+    // Simplified safe regex:
+    const nameRegex = /^[A-Za-z\u00C0-\u024F\u1E00-\u1EFF0-9\s\.\-\']+$/;
+    const cleanName = extraData.fullName ? extraData.fullName.trim() : '';
+
+    if (!cleanName) return { error: "Vui lòng nhập họ tên." };
+    if (!nameRegex.test(cleanName)) return { error: "Tên chứa ký tự không hợp lệ." };
+    if (!isSafeInput(cleanName)) return { error: "Tên không được chứa liên kết hoặc mã độc." };
+    if (cleanName.length < 2) return { error: "Tên quá ngắn." };
+
+    // B. Validate Phone
+    const cleanPhone = extraData.phone ? extraData.phone.trim() : '';
+    // Regex: VN Phone (84 hoặc 0 + 3/5/7/8/9 + 8 số)
+    const phoneRegex = /^(84|0[3|5|7|8|9])+([0-9]{8})$/;
+
+    // Check spam số 0
+    if (/^0+$/.test(cleanPhone)) return { error: "Số điện thoại không hợp lệ (Spam)." };
+
+    if (!cleanPhone) return { error: "Vui lòng nhập số điện thoại." };
+    if (!phoneRegex.test(cleanPhone)) return { error: "Số điện thoại không đúng định dạng VN." };
+
+    // C. Validate Notes
+    const cleanNotes = extraData.notes ? extraData.notes.trim() : '';
+    if (cleanNotes.length > 500) return { error: "Ghi chú quá dài." };
+    if (!isSafeInput(cleanNotes)) return { error: "Ghi chú không được chứa Link hoặc <Script>." };
+
+    // D. Validate StudentID / Email
+    const cleanStudentId = extraData.studentId ? extraData.studentId.trim() : '';
+    if (cleanStudentId.length > 100) return { error: "Email/MSSV quá dài." };
+    if (!isSafeInput(cleanStudentId)) return { error: "Email/MSSV chứa nội dung không an toàn." };
+
+
+    // ---------------------------------------------------------
     // 🛡️ 2. IP RATE LIMITING (CHẶN THEO IP)
     // ---------------------------------------------------------
     const headerList = await headers();
@@ -73,10 +127,11 @@ export async function bookTicket(
     // ---------------------------------------------------------
     // 🛡️ 3. PHONE REGEX & SPAM CHECK (BỔ SUNG LẠI)
     // ---------------------------------------------------------
-    const phoneRegex = /^0\d{9}$/;
-    if (!extraData.phone || !phoneRegex.test(extraData.phone)) {
-      return { error: "Số điện thoại không hợp lệ (10 số, đầu 0)" };
-    }
+    // The previous phone regex check is now handled by the new validation section.
+    // const phoneRegex = /^0\d{9}$/;
+    // if (!extraData.phone || !phoneRegex.test(extraData.phone)) {
+    //   return { error: "Số điện thoại không hợp lệ (10 số, đầu 0)" };
+    // }
 
     // 1. Kiểm tra đăng nhập
     const { data: { user } } = await supabase.auth.getUser();

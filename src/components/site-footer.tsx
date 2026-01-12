@@ -17,12 +17,14 @@ export default function SiteFooter() {
 
                         <div className="flex items-center gap-4">
                             {/* Red Envelope Icon (CSS Layout) */}
-                            <div className="w-10 h-14 bg-[#D0021B] rounded-[4px] border border-yellow-200 flex items-center justify-center shadow-sm relative overflow-hidden -rotate-12 hover:rotate-0 transition-transform cursor-pointer">
-                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[30%] bg-[#B00015] rounded-b-full"></div>
-                                <div className="w-[60%] h-[60%] border border-yellow-400 rounded-full flex items-center justify-center mt-3">
-                                    <span className="text-yellow-400 font-bold text-[8px]">Tết</span>
+                            <Link href="/about">
+                                <div className="w-10 h-14 bg-[#D0021B] rounded-[4px] border border-yellow-200 flex items-center justify-center shadow-sm relative overflow-hidden -rotate-12 hover:rotate-0 transition-transform cursor-pointer">
+                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[30%] bg-[#B00015] rounded-b-full"></div>
+                                    <div className="w-[60%] h-[60%] border border-yellow-400 rounded-full flex items-center justify-center mt-3">
+                                        <span className="text-yellow-400 font-bold text-[8px]">Tết</span>
+                                    </div>
                                 </div>
-                            </div>
+                            </Link>
 
                             <a
                                 href="https://facebook.com/HolaBusFPTU.CSKH"
@@ -80,7 +82,7 @@ export default function SiteFooter() {
                 {/* Bottom Bar */}
                 <div className="pt-8 border-t border-slate-800 text-center">
                     <p className="text-slate-500 text-xs md:text-sm font-medium">
-                        © 2026 Hola Bus. Made by Nguyễn Dương Công Thành and Đoàn Thế Long.
+                        © 2026 Hola Bus. Made by <span className="text-white font-bold text-base">Nguyễn Dương Công Thành</span> and <span className="text-white font-bold text-base">Đoàn Thế Long</span>.
                     </p>
                 </div>
             </div>
