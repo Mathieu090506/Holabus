@@ -45,7 +45,7 @@ function SearchTab({ active, label, onClick }: { active: boolean, label: string,
     );
 }
 
-export default function TripSearchHeader() {
+export default function TripSearchHeader({ trips = [] }: { trips?: any[] }) {
 
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -129,6 +129,9 @@ export default function TripSearchHeader() {
             return () => clearTimeout(handler);
         }
     }, [searchTerm, isTyping, router]);
+
+    // Calculate unique destinations for "Popular" section
+    const popularDestinations = Array.from(new Set(trips.map(t => t.destination))).slice(0, 5);
 
     return (
         <div className="relative bg-[#FFFBE6] pb-8 md:pb-16 pt-0">
@@ -246,18 +249,20 @@ export default function TripSearchHeader() {
                     </div>
 
                     {/* Quick Suggestions */}
-                    <div className="mt-5 flex flex-wrap gap-3 items-center text-sm">
-                        <span className="text-gray-400 font-medium mr-1">Phổ biến:</span>
-                        {['Quảng Ngãi', 'Đà Nẵng', 'Hà Nội', 'Sài Gòn', 'Đà Lạt'].map(city => (
-                            <button
-                                key={city}
-                                onClick={() => handleSearchScroll(city)}
-                                className="px-4 py-1.5 bg-yellow-50 hover:bg-red-50 hover:text-[#D0021B] border border-yellow-100 hover:border-red-100 rounded-full text-slate-600 text-xs md:text-sm font-semibold transition-all"
-                            >
-                                {city}
-                            </button>
-                        ))}
-                    </div>
+                    {activeTab === 'bus' && popularDestinations.length > 0 && (
+                        <div className="mt-5 flex flex-wrap gap-3 items-center text-sm">
+                            <span className="text-gray-400 font-medium mr-1">Phổ biến:</span>
+                            {popularDestinations.map(city => (
+                                <button
+                                    key={city}
+                                    onClick={() => handleSearchScroll(city)}
+                                    className="px-4 py-1.5 bg-yellow-50 hover:bg-red-50 hover:text-[#D0021B] border border-yellow-100 hover:border-red-100 rounded-full text-slate-600 text-xs md:text-sm font-semibold transition-all"
+                                >
+                                    {city}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

@@ -86,21 +86,36 @@ export async function POST(req: Request) {
                         try {
                             // Lấy thông tin chi tiết (Dùng chung cho cả Email và Sheet)
                             const { data: trip } = await supabase.from('trips').select('*').eq('id', booking.trip_id).single();
-                            const { data: profile } = await supabase.from('profiles').select('*').eq('id', booking.user_id).single();
 
-                            const emailNhanVe = profile?.email;
-                            const ADMIN_EMAIL = 'duongthanh09052006@gmail.com ';
+                            let profile = null;
+                            if (booking.user_id) {
+                                const { data } = await supabase.from('profiles').select('*').eq('id', booking.user_id).single();
+                                profile = data;
+                            }
+
+                            // Ưu tiên email từ booking (cho guest), nếu không có mới lấy từ profile
+                            const emailNhanVe = booking.email || profile?.email;
+                            const ADMIN_EMAIL = 'duongthanh09052006@gmail.com';
+
+                            // Debug log
+                            if (!process.env.RESEND_API_KEY) {
+                                console.error("⚠️ THIẾU RESEND_API_KEY! Không thể gửi email.");
+                                emailDebug = "Lỗi: Thiếu API Key";
+                            } else {
+                                console.log(`📧 Chuẩn bị gửi email tới: ${emailNhanVe}`);
+                            }
 
                             // --- 1. GỬI EMAIL ---
                             if (!emailNhanVe) {
-                                emailDebug = "Lỗi: Không tìm thấy email trong DB";
+                                emailDebug = "Lỗi: Không tìm thấy email trong DB (Booking & Profile đều null)";
+                                console.error(emailDebug);
                             } else {
                                 const { data: emailData, error: emailError } = await resend.emails.send({
                                     from: 'HOLA BUS <onboarding@resend.dev>',
                                     to: emailNhanVe,
                                     subject: `[HOLA BUS] Vé điện tử: ${paymentCode}`,
                                     react: TicketEmail({
-                                        customerName: booking.full_name || profile.full_name || 'Bạn mình ơi',
+                                        customerName: booking.full_name || profile?.full_name || 'Khách hàng',
                                         busRoute: trip ? `${trip.origin} - ${trip.destination}` : 'Chuyến đi',
                                         departureTime: trip ? new Date(trip.departure_time).toLocaleString('vi-VN') : '',
                                         ticketCode: paymentCode,
@@ -111,7 +126,7 @@ export async function POST(req: Request) {
 
                                 if (emailError) {
                                     console.error("🔥 RESEND THẤT BẠI:", emailError);
-                                    emailDebug = `Thất bại: ${emailError.message} (Chỉ gửi được cho ${ADMIN_EMAIL})`;
+                                    emailDebug = `Thất bại: ${emailError.message}`;
                                 } else {
                                     console.log("📧 RESEND THÀNH CÔNG! ID:", emailData?.id);
                                     emailDebug = `Thành công! ID: ${emailData?.id}`;

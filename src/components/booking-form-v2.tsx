@@ -20,21 +20,7 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
 
   const router = useRouter();
 
-  // Nếu chưa đăng nhập
-  if (!user) {
-    return (
-      <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 text-center">
-        <Ticket className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-        <h3 className="font-bold text-slate-700 mb-2">Đăng nhập để đặt vé</h3>
-        <button
-          onClick={() => router.push('/login')}
-          className="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 transition"
-        >
-          Đăng nhập ngay
-        </button>
-      </div>
-    );
-  }
+
 
   // Xử lý khi bấm nút Đặt vé
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -47,7 +33,7 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
     const fullName = formData.get('fullName') as string;
 
     const phoneNumber = formData.get('phone') as string;
-    const studentId = formData.get('studentId') as string;
+    const email = formData.get('email') as string;
     const notes = formData.get('notes') as string;
     const seatNotes = formData.get('seatNotes') as string;
 
@@ -69,6 +55,14 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
       return;
     }
 
+    // Validate Email (nếu có nhập)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && !emailRegex.test(email)) {
+      toast.error("Email không hợp lệ", { description: "Vui lòng kiểm tra lại định dạng email." });
+      setLoading(false);
+      return;
+    }
+
     if (!notes || notes.trim().length === 0) {
       toast.error("Vui lòng nhập điểm xuống xe mong muốn");
       setLoading(false);
@@ -84,7 +78,7 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
         {
           fullName: fullName,
           phone: phoneNumber,
-          studentId: studentId,
+          studentId: email, // Dùng trường studentId để lưu email tạm thời
           notes: finalNotes // Combined notes
         }
       );
@@ -109,6 +103,13 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+
+      {/* --- HONEYPOT (CHỐNG BOT) --- */}
+      {/* Bot sẽ tự động điền vào các ô này, người thường thì không thấy. Nếu có dữ liệu => Chặn */}
+      <div className="opacity-0 absolute -z-10 w-0 h-0 overflow-hidden">
+        <input type="text" name="website_url" tabIndex={-1} autoComplete="off" />
+        <input type="text" name="fax_number" tabIndex={-1} autoComplete="off" />
+      </div>
 
       {/* 1. THÔNG TIN CÁ NHÂN */}
       <div className="space-y-3">
@@ -136,21 +137,22 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
               type="tel"
               required
               placeholder="Nhập số điện thoại..."
-              defaultValue={user.user_metadata.phone_number || ''}
+              defaultValue={user?.user_metadata?.phone_number || ''}
               className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 outline-none transition"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Mã Sinh Viên (Nếu có)</label>
+          <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Email nhận vé</label>
           <div className="relative">
             <BookOpen className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
             <input
-              name="studentId"
-              type="text"
-              placeholder="VD: HE15xxxx"
+              name="email"
+              type="email"
+              placeholder="VD: name@example.com"
               className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 outline-none transition"
+              defaultValue={user?.email || ''}
             />
           </div>
         </div>

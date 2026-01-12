@@ -31,7 +31,7 @@ export default function TripCard({ trips, destinationImages = {} }: { trips: any
     // Image logic
     const cityImage = mainTrip.image_url || destinationImages[mainTrip.destination] || CITY_IMAGES[mainTrip.destination] || CITY_IMAGES['default'];
 
-    const title = `Vé xe ${mainTrip.origin} đi ${mainTrip.destination} - Nhà xe Hola Bus`;
+    const title = `${mainTrip.origin} đi ${mainTrip.destination}`;
 
     // Handle Click
     const handleClick = (e: React.MouseEvent) => {
@@ -112,10 +112,12 @@ export default function TripCard({ trips, destinationImages = {} }: { trips: any
                                 Book now for today
                             </span>
                         </div>
-                        <div className="flex items-center gap-1.5 mb-2 text-[13px]">
-                            <Ticket className="w-3.5 h-3.5 text-[#D0021B]" />
-                            <span className="font-bold text-[#D0021B]">Đang mở bán vé Tết</span>
-                        </div>
+                        {mainTrip.tags && (
+                            <div className="flex items-center gap-1.5 mb-2 text-[13px]">
+                                <Ticket className="w-3.5 h-3.5 text-[#D0021B]" />
+                                <span className="font-bold text-[#D0021B]">{mainTrip.tags}</span>
+                            </div>
+                        )}
                         <div className="mt-auto pt-2">
                             <span className="text-xl font-bold text-[#D0021B]">
                                 {isMultiple ? <>{formatPrice(minPrice)} - {formatPrice(maxPrice)}</> : formatPrice(mainTrip.price)}
@@ -127,7 +129,10 @@ export default function TripCard({ trips, destinationImages = {} }: { trips: any
                 {/* Expanded State List (The "In-Place" Modal replacement) */}
                 {isExpanded && (
                     <div className="mt-2 space-y-3 border-t border-dashed border-gray-200 pt-3 animate-in fade-in slide-in-from-top-2 duration-200">
-                        <p className="text-sm font-bold text-gray-700 mb-2">Chọn địa điểm & Lộ trình:</p>
+                        <div className="mb-2">
+                            <p className="text-sm font-black text-slate-800 uppercase mb-0.5">LỘ TRÌNH</p>
+                            <p className="text-xs text-slate-500 font-medium">(Chọn địa điểm bạn <span className="text-red-600 font-bold">muốn xuống</span>)</p>
+                        </div>
                         {trips.map(t => (
                             <Link
                                 key={t.id}

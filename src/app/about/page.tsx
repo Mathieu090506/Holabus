@@ -386,10 +386,10 @@ export default function AboutPage() {
                     <div className="lg:col-span-7">
                         <div className="grid grid-cols-2 gap-4">
                             <motion.div whileHover={{ scale: 1.02 }} className="aspect-[4/5] bg-gray-200 rounded-2xl overflow-hidden relative mt-12">
-                                <Image src="https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=2071" fill className="object-cover" alt="History 2017" />
+                                <Image src="/lichsu2.jpg" fill className="object-cover" alt="History 2017" />
                             </motion.div>
                             <motion.div whileHover={{ scale: 1.02 }} className="aspect-[4/5] bg-gray-200 rounded-2xl overflow-hidden relative">
-                                <Image src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2069" fill className="object-cover" alt="History 2018" />
+                                <Image src="/lichsuholabus.jpg" fill className="object-cover" alt="History 2018" />
                             </motion.div>
                         </div>
                     </div>

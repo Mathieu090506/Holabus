@@ -20,36 +20,47 @@ export default function TripMap({ origin, destination, waypoints }: TripMapProps
     );
   }
 
-  // 2. Xử lý chuỗi Waypoints (Điểm dừng)
-  // Logic: Tách chuỗi bằng dấu chấm phẩy (;) hoặc phẩy (,), sau đó nối lại bằng dấu gạch đứng (|)
-  // Google yêu cầu format: "Điểm A|Điểm B|Điểm C"
+  // 2. Xử lý logic hiển thị Map
+  // Tùy chỉnh theo yêu cầu: "Điểm kết thúc (Input) không ảnh hưởng map, chỉ Waypoints quyết định lộ trình"
+  // => Nếu có Waypoints: Map sẽ đi từ Origin -> ...Intermediate Waypoints... -> Last Waypoint (Làm đích đến)
+  // => Nếu KHÔNG có Waypoints: Fallback về Origin -> Destination (Input) để map không bị lỗi trắng.
+
+  let mapDestination = destination; // Mặc định dùng destination từ props (fallback)
   let waypointsParam = '';
-  
+
   if (waypoints && waypoints.trim() !== '') {
     const points = waypoints.split(/[;,]/) // Tách bằng ; hoặc ,
       .map(p => p.trim())                  // Xóa khoảng trắng thừa
       .filter(p => p !== '');              // Bỏ điểm rỗng
 
     if (points.length > 0) {
-      // Mã hóa URL để tránh lỗi tiếng Việt (VD: "Hà Nội" -> "H%C3%A0%20N%E1%BB%99i")
-      const encodedPoints = points.map(p => encodeURIComponent(p)).join('|');
-      waypointsParam = `&waypoints=${encodedPoints}`;
+      // Lấy điểm cuối cùng trong list waypoints làm Đích Đến thực tế của Map
+      mapDestination = points[points.length - 1];
+
+      // Các điểm còn lại là điểm trung gian
+      const intermediatePoints = points.slice(0, points.length - 1);
+
+      if (intermediatePoints.length > 0) {
+        // Mã hóa URL
+        const encodedPoints = intermediatePoints.map(p => encodeURIComponent(p)).join('|');
+        waypointsParam = `&waypoints=${encodedPoints}`;
+      }
     }
   }
 
   // 3. Tạo URL Embed (Chế độ Directions)
   const originParam = encodeURIComponent(origin);
-  const destParam = encodeURIComponent(destination);
-  
+  const destParam = encodeURIComponent(mapDestination);
+
   // URL chuẩn của Google Maps Embed API
   const mapUrl = `https://www.google.com/maps/embed/v1/directions?key=${apiKey}&origin=${originParam}&destination=${destParam}${waypointsParam}&mode=driving`;
 
   return (
     <div className="w-full h-full rounded-xl overflow-hidden shadow-sm border border-slate-200 bg-slate-50 relative group">
-      
+
       {/* Loading Skeleton (Hiện mờ mờ ở dưới trong lúc iframe tải) */}
       <div className="absolute inset-0 flex items-center justify-center z-0">
-         <div className="animate-pulse bg-slate-200 w-full h-full"></div>
+        <div className="animate-pulse bg-slate-200 w-full h-full"></div>
       </div>
 
       {/* IFRAME BẢN ĐỒ */}
@@ -64,7 +75,7 @@ export default function TripMap({ origin, destination, waypoints }: TripMapProps
         title="Bản đồ lộ trình"
         className="grayscale-[20%] hover:grayscale-0 transition-all duration-500" // Hiệu ứng: Mặc định hơi xám, di chuột vào sẽ có màu
       ></iframe>
-      
+
     </div>
   );
 }

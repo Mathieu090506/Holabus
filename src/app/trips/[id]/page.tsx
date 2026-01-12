@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
-import { Calendar, ArrowLeft, ArrowRight, MapPin, Clock, User, ShieldCheck, Star, MessageCircle } from 'lucide-react';
+import { Calendar, ArrowLeft, ArrowRight, MapPin, Clock, User, ShieldCheck, Star, MessageCircle, XCircle, CheckCircle2, Ticket } from 'lucide-react';
 import Link from 'next/link';
 import TripMap from '@/components/trip-map';
 import BookingFormV2 from '@/components/booking-form-v2';
@@ -73,9 +73,15 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
 
                         {/* Metadata Row - Better spacing and alignment */}
                         <div className="flex flex-wrap items-center gap-3 md:gap-6 text-sm md:text-base mt-2">
-                            <span className="inline-flex items-center gap-1.5 bg-green-100/80 text-green-700 px-3 py-1.5 rounded-full font-bold uppercase text-xs tracking-wider border border-green-200">
-                                <ShieldCheck className="w-4 h-4" /> Available
-                            </span>
+                            {trip.tags === 'Mở bán' ? (
+                                <span className="inline-flex items-center gap-1.5 bg-green-100/80 text-green-700 px-3 py-1.5 rounded-full font-bold uppercase text-xs tracking-wider border border-green-200">
+                                    <CheckCircle2 className="w-4 h-4" /> Đang Mở Bán
+                                </span>
+                            ) : (
+                                <span className="inline-flex items-center gap-1.5 bg-red-100/80 text-red-700 px-3 py-1.5 rounded-full font-bold uppercase text-xs tracking-wider border border-red-200">
+                                    <XCircle className="w-4 h-4" /> Tạm Dừng
+                                </span>
+                            )}
 
                             <div className="hidden md:block w-px h-5 bg-slate-300/50"></div>
 
@@ -84,10 +90,7 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                                 {departureDate.toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })}
                             </span>
 
-                            <span className="flex items-center gap-2 text-slate-600 font-medium bg-white/50 px-3 py-1.5 rounded-lg border border-slate-100/50">
-                                <User className="w-4 h-4 text-slate-400" />
-                                {trip.capacity || 40} Chỗ ngồi
-                            </span>
+
                         </div>
                     </div>
                 </div>
@@ -114,7 +117,7 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                         <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-yellow-200">
                             <div className="flex justify-between items-center mb-8">
                                 <h2 className="text-xl font-bold text-slate-900">Chi tiết lịch trình</h2>
-                                <span className="text-slate-400 text-sm font-medium">Thời gian: {durationStr}</span>
+                                <span className="text-[#D0021B] font-bold text-base bg-red-50 px-3 py-1 rounded-lg border border-red-100">Dự kiến sáng 07/02/2026</span>
                             </div>
 
                             <div className="relative pl-4 space-y-10 before:absolute before:left-[19px] before:top-3 before:bottom-3 before:w-0.5 before:bg-slate-200 before:border-l-[2px] before:border-dashed before:border-slate-300">
@@ -123,9 +126,7 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                                     <div className="relative z-10 w-3 h-3 rounded-full bg-blue-500 ring-4 ring-white mt-1.5 box-content group-hover:scale-110 transition-transform"></div>
                                     <div className="flex-1 bg-slate-50 rounded-xl p-5 border border-slate-100 hover:border-blue-200 transition-colors">
                                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
-                                            <span className="font-black text-2xl text-slate-900">
-                                                {departureDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
-                                            </span>
+
                                             <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded uppercase tracking-wider">
                                                 Khởi hành
                                             </span>
@@ -219,11 +220,35 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                                 </div>
 
                                 {/* BOOKING FORM COMPONENT */}
-                                <BookingFormV2
-                                    tripId={trip.id}
-                                    price={trip.price}
-                                    user={user}
-                                />
+                                {/* Logic hiển thị Form: Chỉ hiện khi Tag là "Mở bán" VÀ Còn vé */}
+                                {trip.tags === 'Mở bán' && (trip.capacity === undefined || trip.capacity > 0) ? (
+                                    <>
+                                        <BookingFormV2
+                                            tripId={trip.id}
+                                            price={trip.price}
+                                            user={user}
+                                        />
+                                    </>
+                                ) : (
+                                    <div className="bg-slate-50 rounded-2xl p-8 text-center border-2 border-slate-200 border-dashed">
+                                        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            {trip.capacity <= 0 ? (
+                                                <Ticket className="w-8 h-8 text-red-400" />
+                                            ) : (
+                                                <Clock className="w-8 h-8 text-slate-300" />
+                                            )}
+                                        </div>
+                                        <h3 className="font-bold text-slate-800 text-lg mb-2">
+                                            {trip.capacity <= 0 ? 'CHUYẾN XE ĐÃ HẾT VÉ' : 'Tạm dừng nhận khách'}
+                                        </h3>
+                                        <p className="text-slate-500 text-sm">
+                                            {trip.capacity <= 0
+                                                ? 'Rất tiếc, chuyến này đã bán hết vé. Vui lòng chọn chuyến khác.'
+                                                : 'Chuyến xe này hiện đang tạm dừng mở bán vé trực tuyến.'}
+                                            <br />Vui lòng liên hệ hotline hoặc quay lại sau.
+                                        </p>
+                                    </div>
+                                )}
 
                             </div>
 

@@ -7,6 +7,7 @@ import { bankConfig } from '@/config/bank';
 
 
 import PaymentStatusChecker from '@/components/payment-status-checker';
+import RefreshPaymentButton from '@/components/refresh-payment-button';
 
 // Định nghĩa kiểu Props cho Next.js 16 (params là Promise)
 type Props = {
@@ -176,15 +177,10 @@ export default async function PaymentPage({ params }: Props) {
 
                         {/* Footer Button */}
                         <div className="mt-8">
-                            <button
-                                disabled
-                                className="w-full bg-gray-100 text-gray-400 font-bold py-3 rounded-xl cursor-not-allowed mb-3"
-                            >
-                                Đang chờ xác nhận thanh toán...
-                            </button>
-                            <p className="text-center text-xs text-gray-400">
-                                Hệ thống sẽ tự động cập nhật sau 30s - 1 phút khi nhận được tiền.
-                                <br />Không cần bấm xác nhận thủ công.
+                            <RefreshPaymentButton />
+                            <p className="text-center text-xs text-slate-400">
+                                Hệ thống sẽ tự động cập nhật sau 30s - 1 phút.
+                                <br />Nếu đợi lâu, bạn có thể bấm nút trên để kiểm tra ngay.
                             </p>
                         </div>
                     </div>

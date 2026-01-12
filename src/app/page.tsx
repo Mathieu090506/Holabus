@@ -62,7 +62,7 @@ export default async function Home() {
       <SearchProvider>
         {/* 3. TRIP SEARCH HEADER - Rendered immediately for fast LCP & Visual Stability */}
         {/* Contains the Hero Slider & Search Widget overlapping it */}
-        <TripSearchHeader />
+        <TripSearchHeader trips={trips || []} />
 
         {/* 4. TRIP RESULTS - Fetched Data */}
         <Suspense fallback={

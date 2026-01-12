@@ -97,16 +97,13 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ c
                         </div>
 
                         <div className="flex items-start gap-4">
-                            <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center shrink-0">
-                                <Clock className="w-5 h-5 text-orange-600" />
+                            <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center shrink-0">
+                                <CheckCircle className="w-5 h-5 text-red-600" />
                             </div>
                             <div>
-                                <p className="text-sm text-slate-400 font-medium">Khởi hành</p>
-                                <h3 className="font-bold text-slate-800 text-lg">
-                                    {departureDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
-                                    <span className="text-slate-400 font-normal text-sm ml-2">
-                                        {departureDate.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-                                    </span>
+                                <p className="text-sm text-slate-400 font-medium">Lưu ý</p>
+                                <h3 className="font-bold text-red-600 text-lg">
+                                    Quý khách lưu vé để checkin
                                 </h3>
                             </div>
                         </div>
