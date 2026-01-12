@@ -267,15 +267,21 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
                                 </div>
                             </div>
 
-                            {/* 2. LỘ TRÌNH VĂN BẢN (Route Details) */}
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">Lộ trình chi tiết (Văn bản)</label>
+                            {/* 2. LỘ TRÌNH VĂN BẢN (Sẽ hiển thị thành Timeline) */}
+                            <div className="bg-orange-50 p-4 rounded-xl border border-orange-100">
+                                <label className="block text-sm font-bold text-orange-800 mb-1 flex items-center gap-2">
+                                    📝 Danh sách điểm dừng (Hiển thị cho khách)
+                                </label>
+                                <p className="text-xs text-orange-600 mb-2">
+                                    Nhập danh sách các điểm đón/trả khách, <b>mỗi địa điểm một dòng</b>.
+                                    <br />Hệ thống sẽ hiển thị danh sách này dưới dạng Sơ đồ Tuyến đường (Timeline) trên vé.
+                                </p>
                                 <textarea
                                     name="route_details"
-                                    rows={3}
+                                    rows={6}
                                     defaultValue={trip?.route_details || ''}
-                                    placeholder="VD: Đón tại FPT -> Đại Lộ Thăng Long -> Vành Đai 3 -> Cao Tốc -> Trả tại BigC Nam Định..."
-                                    className="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-orange-500 outline-none transition text-sm"
+                                    placeholder={'Ví dụ:\nĐón tại ĐH FPT\nNgã tư Hoà Lạc\nBigC Thăng Long\nTrạm thu phí Liêm Tuyền\nTrả tại TP Thái Bình'}
+                                    className="w-full border border-orange-200 rounded-lg p-3 focus:ring-2 focus:ring-orange-500 outline-none transition text-sm bg-white"
                                 ></textarea>
                             </div>
 

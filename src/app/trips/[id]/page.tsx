@@ -141,10 +141,29 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                                 </div>
 
                                 {/* WAYPOINTS / STOPS */}
-                                {trip.waypoints && trip.waypoints.split(';').map((waypoint: string, index: number) => {
-                                    const point = waypoint.trim();
-                                    if (!point) return null;
-                                    return (
+                                {/* WAYPOINTS / STOPS (RENDER TỪ DATABASE) */}
+                                {/* Logic: Ưu tiên lấy từ 'route_details' (nhập tay từng dòng). Nếu không có thì fallback sang 'waypoints' (lọc toạ độ) */}
+                                {(() => {
+                                    // 1. Cố gắng parse từ route_details (Split by Newline)
+                                    let displayPoints: string[] = [];
+
+                                    if (trip.route_details && trip.route_details.trim().length > 0) {
+                                        // Tách theo dòng mới (Enter)
+                                        displayPoints = trip.route_details.split(/\r?\n/).map((s: string) => s.trim()).filter((s: string) => s.length > 0);
+                                    }
+
+                                    // 2. Nếu không có route_details, dùng waypoints (Legacy)
+                                    if (displayPoints.length === 0 && trip.waypoints) {
+                                        displayPoints = trip.waypoints.split(';')
+                                            .map((s: string) => s.trim())
+                                            .filter((s: string) => {
+                                                // Lọc bỏ toạ độ số
+                                                return s.length > 0 && !/^-?\d+(\.\d+)?,\s*-?\d+(\.\d+)?$/.test(s);
+                                            });
+                                    }
+
+                                    // 3. RENDER
+                                    return displayPoints.map((point, index) => (
                                         <div key={index} className="relative flex gap-6 group">
                                             <div className="relative z-10 w-2 h-2 rounded-full bg-slate-300 ring-4 ring-white mt-5 ml-0.5 group-hover:bg-orange-400 transition-colors"></div>
                                             <div className="flex-1 bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-orange-200 transition-colors">
@@ -154,25 +173,8 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
                                                 <h4 className="text-base font-bold text-slate-700">{point}</h4>
                                             </div>
                                         </div>
-                                    );
-                                })}
-
-                                {/* ROUTE INFO (Text Detail) */}
-                                {trip.route_details && (
-                                    <div className="relative flex gap-6 my-2">
-                                        <div className="relative z-10 w-2 h-2 rounded-full bg-orange-200 ring-4 ring-white mt-2 ml-0.5"></div>
-                                        <div className="flex-1 pl-1">
-                                            <div className="inline-flex items-center gap-2 bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full text-xs font-bold border border-orange-100 mb-2">
-                                                <Clock className="w-3 h-3" /> Thông tin lộ trình
-                                            </div>
-                                            <div className="bg-orange-50 border border-orange-100 p-4 rounded-xl mt-2">
-                                                <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line font-medium">
-                                                    {trip.route_details}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
+                                    ));
+                                })()}
 
                                 {/* ARRIVAL */}
                                 <div className="relative flex gap-6 group">
