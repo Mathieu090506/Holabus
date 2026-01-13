@@ -98,11 +98,11 @@ export default function AboutPage() {
             {/* 1️⃣ HEADER (STICKY) */}
             <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-100">
                 <div className="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollTo('home')}>
+                    <Link href="/" className="flex items-center gap-2 cursor-pointer">
                         <span className="font-black text-xl md:text-3xl tracking-tighter leading-none">
-                            <span className="text-[#D0021B]">HOLA</span><span className="text-slate-900">BUS</span> <span className="text-[#D0021B]">2026</span>
+                            <span className="text-[#D0021B]">HOLABUS</span> <span className="text-[#D0021B]">2026</span>
                         </span>
-                    </div>
+                    </Link>
 
                     {/* Desktop Menu */}
                     <nav className="hidden md:flex items-center gap-8 font-bold text-sm uppercase tracking-wide text-slate-600">
