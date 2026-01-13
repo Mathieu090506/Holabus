@@ -22,22 +22,28 @@ export default function TripMap({ origin, destination, waypoints }: TripMapProps
 
   // 2. Xử lý logic hiển thị Map
   // Tùy chỉnh theo yêu cầu: "Điểm kết thúc (Input) không ảnh hưởng map, chỉ Waypoints quyết định lộ trình"
-  // => Nếu có Waypoints: Map sẽ đi từ Origin -> ...Intermediate Waypoints... -> Last Waypoint (Làm đích đến)
-  // => Nếu KHÔNG có Waypoints: Fallback về Origin -> Destination (Input) để map không bị lỗi trắng.
-
   let mapDestination = destination;
   let waypointsParam = '';
 
   if (waypoints && waypoints.trim() !== '') {
-    const points = waypoints.split(';')    // Tách bằng ;
-      .map(p => p.trim())                  // Xóa khoảng trắng thừa
-      .filter(p => p !== '');              // Bỏ điểm rỗng
+    const points = waypoints.split(';')
+      .map(p => p.trim())
+      .filter(p => p !== '');
 
     if (points.length > 0) {
-      // Logic Mới: Tất cả điểm trong Waypoints đều là điểm trung gian
-      // Đích đến (Destination) được giữ nguyên từ input
-      const encodedPoints = points.map(p => encodeURIComponent(p)).join('|');
-      waypointsParam = `&waypoints=${encodedPoints}`;
+      // Logic Mới Cập Nhật (Fix Bug):
+      // Nếu có waypoints, lấy ĐIỂM CUỐI CÙNG trong danh sách làm DESTINATION của Map.
+      // Các điểm còn lại sẽ là intermediate waypoints.
+      // Input 'destination' bị bỏ qua hoàn toàn.
+
+      mapDestination = points[points.length - 1]; // Điểm cuối làm Đích
+
+      if (points.length > 1) {
+        // Nếu còn điểm khác thì làm điểm trung gian
+        const intermediatePoints = points.slice(0, points.length - 1);
+        const encodedPoints = intermediatePoints.map(p => encodeURIComponent(p)).join('|');
+        waypointsParam = `&waypoints=${encodedPoints}`;
+      }
     }
   }
 

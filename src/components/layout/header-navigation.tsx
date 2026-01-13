@@ -15,6 +15,17 @@ export default function HeaderNavigation() {
                 Về dự án
             </Link>
 
+            <Link
+                href="#contact-footer"
+                className="hover:text-slate-900 transition-colors"
+                onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('contact-footer')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+            >
+                Liên hệ
+            </Link>
+
         </nav>
     );
 }

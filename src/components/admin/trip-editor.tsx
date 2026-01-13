@@ -288,17 +288,17 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
                             {/* 3. WAYPOINTS (Cho Google Maps) */}
                             <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
                                 <label className="block text-sm font-bold text-blue-800 mb-1 flex items-center gap-2">
-                                    📍 Điểm trung gian (Google Map)
+                                    📍 Lộ trình thực tế (Google Map)
                                 </label>
                                 <p className="text-xs text-blue-600 mb-2">
-                                    Nhập các điểm xe đi qua, cách nhau bằng dấu chấm phẩy (<b>;</b>) để bản đồ vẽ đường chính xác.
+                                    Nhập danh sách các điểm đi qua <b>bao gồm cả điểm cuối</b>, ngăn cách bằng dấu chấm phẩy (<b>;</b>) để vẽ đường trên bản đồ.
                                 </p>
                                 <input
                                     name="waypoints"
                                     type="text"
                                     value={waypoints}
                                     onChange={(e) => setWaypoints(e.target.value)}
-                                    placeholder="VD: BigC Thăng Long; Bến xe Nước Ngầm; Phủ Lý"
+                                    placeholder="VD: BigC Thăng Long; Phủ Lý; Nam Định (Điểm cuối)"
                                     className="w-full border border-blue-200 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none bg-white text-sm"
                                 />
                             </div>
@@ -340,15 +340,16 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
                         {/* Fallback component loading... is handled inside InteractiveMap */}
                         <InteractiveMap
                             origin={origin}
-                            destination={destination}
+                            destination={""} // 👈 Force EMPTY to completely decouple 'Destination' Input from Map
                             waypointsInput={waypoints}
                             onWaypointsChanged={(newVal: string) => setWaypoints(newVal)}
+                            ignoreDestinationForRoute={true}
                         />
                     </div>
 
                     <div className="mt-4 bg-blue-50 border border-blue-100 p-3 rounded-xl text-xs text-blue-800 space-y-1">
                         <p>💡 <b>Mẹo:</b> Bạn có thể <b>kéo thả đường màu xanh</b> trên bản đồ để thay đổi lộ trình.</p>
-                        <p>Các điểm đi qua mới sẽ tự động được thêm vào ô "Điểm trung gian".</p>
+                        <p>Các điểm đi qua mới sẽ tự động được thêm vào ô "Lộ trình thực tế" (dưới dạng toạ độ).</p>
                     </div>
                 </div>
 
@@ -666,7 +667,7 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
                                                         <span className="text-slate-300 text-xs">-</span>
                                                     )}
                                                 </td>
-                                                <td className="p-4 max-w-[200px] truncate text-slate-500 italic" title={bk.more || bk.notes}>
+                                                <td className="p-4 text-slate-500 italic whitespace-normal break-words min-w-[250px]">
                                                     {bk.more || bk.notes || ''}
                                                 </td>
                                             </tr>

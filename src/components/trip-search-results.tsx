@@ -123,7 +123,7 @@ export default function TripSearchResults({ trips, destinationImages = {} }: { t
         return Object.values(groups);
     }, [filteredTrips]);
 
-    const [visibleCount, setVisibleCount] = useState(4);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     return (
         <div className="min-h-screen bg-[#FFFBE6] font-sans pb-20">
@@ -154,30 +154,28 @@ export default function TripSearchResults({ trips, destinationImages = {} }: { t
                         ) : (
                             <>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                    {groupedTrips.slice(0, visibleCount).map((groupTrips) => (
-                                        <TripCard
+                                    {groupedTrips.map((groupTrips, index) => (
+                                        <div
                                             key={groupTrips[0].destination}
-                                            trips={groupTrips}
-                                            destinationImages={destinationImages}
-                                        />
+                                            className={index >= 4 && !isExpanded ? 'hidden md:block' : ''}
+                                        >
+                                            <TripCard
+                                                trips={groupTrips}
+                                                destinationImages={destinationImages}
+                                            />
+                                        </div>
                                     ))}
                                 </div>
 
 
-                                {/* Toggle Button: Visible only if we have more trips than the initial limit */}
+                                {/* Toggle Button: Visible only if we have more trips than the initial limit AND on mobile */}
                                 {groupedTrips.length > 4 && (
-                                    <div className="mt-10 flex justify-center">
+                                    <div className="mt-10 flex justify-center md:hidden">
                                         <button
-                                            onClick={() => {
-                                                if (visibleCount >= groupedTrips.length) {
-                                                    setVisibleCount(4); // Collapse
-                                                } else {
-                                                    setVisibleCount(groupedTrips.length); // Expand All
-                                                }
-                                            }}
+                                            onClick={() => setIsExpanded(!isExpanded)}
                                             className="w-[200px] h-[48px] border border-[#D0021B] text-[#D0021B] hover:bg-red-50 rounded-lg flex items-center justify-center font-bold bg-white transition-all font-sans"
                                         >
-                                            {visibleCount >= groupedTrips.length ? 'See less' : 'See all'}
+                                            {isExpanded ? 'See less' : 'See all'}
                                         </button>
                                     </div>
                                 )}

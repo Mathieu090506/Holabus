@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     siteName: 'Hola Bus',
     images: [
       {
-        url: '/tet-atmosphere.png',
+        url: '/anh-co.jpg',
         width: 1200,
         height: 630,
         alt: 'Hola Bus - Vé Xe Tết 2026',
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Hola Bus - Vé Xe Tết 2026',
     description: 'Ưu đãi vé xe giảm tới 50% cho sinh viên, về nhà đón Tết sum vầy.',
-    images: ['/tet-atmosphere.png'],
+    images: ['/anh-co.jpg'],
   },
   viewport: {
     width: 'device-width',
@@ -60,9 +60,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    icon: '/anh-co.jpg?v=2',
+    shortcut: '/anh-co.jpg?v=2',
+    apple: '/anh-co.jpg?v=2',
   },
   manifest: '/site.webmanifest',
 };

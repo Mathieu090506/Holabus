@@ -107,9 +107,9 @@ function TetCountdown() {
     );
 
     const Separator = () => (
-        <div className="hidden md:flex flex-col gap-3 mt-4 md:mt-8 mx-0 opacity-50">
-            <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#94A3B8]"></div>
-            <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#94A3B8]"></div>
+        <div className="flex flex-col gap-2 md:gap-3 mt-4 md:mt-8 mx-0 opacity-50">
+            <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-[#94A3B8]"></div>
+            <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-[#94A3B8]"></div>
         </div>
     );
 

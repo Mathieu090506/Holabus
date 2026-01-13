@@ -217,7 +217,7 @@ export default function AboutPage() {
                         <div className="absolute top-10 right-10 w-full h-full bg-gradient-to-br from-yellow-400 to-orange-600 rounded-[3rem] opacity-20 rotate-6"></div>
                         <div className="absolute inset-0 rounded-[3rem] overflow-hidden border-4 border-white/10 shadow-2xl">
                             <Image
-                                src="/ảnhco.jpg"
+                                src="/anh-co.jpg"
                                 alt="Hero Image"
                                 fill
                                 className="object-cover"
@@ -247,10 +247,10 @@ export default function AboutPage() {
                                 <Image src="/anhdongnguoi.jpeg" fill className="object-cover hover:scale-110 transition-transform duration-700" alt="Crowded Station" />
                             </motion.div>
                             <motion.div variants={scaleIn} className="relative rounded-2xl overflow-hidden">
-                                <Image src="/dancu.jpg" fill className="object-cover hover:scale-110 transition-transform duration-700" alt="Students Luggage" />
+                                <Image src="/dan-cu-11026.jpg" fill className="object-cover hover:scale-110 transition-transform duration-700" alt="Students Luggage" />
                             </motion.div>
                             <motion.div variants={scaleIn} className="relative rounded-2xl overflow-hidden">
-                                <Image src="/xephang.jpg" fill className="object-cover hover:scale-110 transition-transform duration-700" alt="Tired Travel" />
+                                <Image src="/ben-xe-17070605088091225124472.jpg" fill className="object-cover hover:scale-110 transition-transform duration-700" alt="Tired Travel" />
                             </motion.div>
                         </motion.div>
 
@@ -386,7 +386,7 @@ export default function AboutPage() {
                     <div className="lg:col-span-7">
                         <div className="grid grid-cols-2 gap-4">
                             <motion.div whileHover={{ scale: 1.02 }} className="aspect-[4/5] bg-gray-200 rounded-2xl overflow-hidden relative mt-12">
-                                <Image src="/lichsu2.jpg" fill className="object-cover" alt="History 2017" />
+                                <Image src="/lichsu2-2.jpg" fill className="object-cover" alt="History 2017" />
                             </motion.div>
                             <motion.div whileHover={{ scale: 1.02 }} className="aspect-[4/5] bg-gray-200 rounded-2xl overflow-hidden relative">
                                 <Image src="/lichsuholabus.jpg" fill className="object-cover" alt="History 2018" />

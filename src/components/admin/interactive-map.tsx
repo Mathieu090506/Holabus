@@ -10,9 +10,10 @@ type InteractiveMapProps = {
     destination: string;
     waypointsInput: string;
     onWaypointsChanged: (newWaypoints: string) => void;
+    ignoreDestinationForRoute?: boolean; // New prop to decouple Form Destination from Map Route
 };
 
-export default function InteractiveMap({ origin, destination, waypointsInput, onWaypointsChanged }: InteractiveMapProps) {
+export default function InteractiveMap({ origin, destination, waypointsInput, onWaypointsChanged, ignoreDestinationForRoute = false }: InteractiveMapProps) {
     const { isLoaded, loadError } = useJsApiLoader({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || '',
         libraries
@@ -33,16 +34,35 @@ export default function InteractiveMap({ origin, destination, waypointsInput, on
     }), []);
 
     // 1. Fetch Route from API (Standard Source of Truth)
-    // This runs whenever the Props (Origin/Dest/Waypoints) change.
-    // This ensures the map always reflects the "official" state of the data.
     useEffect(() => {
-        if (!isLoaded || !origin || !destination) return;
+        if (!isLoaded || !origin) return;
+
+        // Determine Effective Destination & Waypoints
+        // If ignoreDestinationForRoute is TRUE, we start with NO destination (unless found in waypoints).
+        // If FALSE, we default to the provided destination prop.
+        let effectiveDestination = ignoreDestinationForRoute ? '' : destination;
+        let effectiveWaypointsStr = waypointsInput;
+
+        // Logic: If ignoring Form Destination AND we have waypoints, use the LAST waypoint as Map Destination.
+        if (ignoreDestinationForRoute && waypointsInput && waypointsInput.trim().length > 0) {
+            const parts = waypointsInput.split(';').map(p => p.trim()).filter(p => p !== '');
+            if (parts.length > 0) {
+                effectiveDestination = parts[parts.length - 1]; // Last point is Dest
+                effectiveWaypointsStr = parts.slice(0, parts.length - 1).join(';'); // Rest are intermediate
+            }
+        }
+
+        if (!effectiveDestination) {
+            // If we have no destination to route to, clear the map
+            setDirections(null);
+            return;
+        }
 
         const service = new google.maps.DirectionsService();
 
         // Parse waypoints
-        const waypointsArr: google.maps.DirectionsWaypoint[] = waypointsInput
-            ? waypointsInput.split(';')
+        const waypointsArr: google.maps.DirectionsWaypoint[] = effectiveWaypointsStr
+            ? effectiveWaypointsStr.split(';')
                 .map(p => p.trim())
                 .filter(p => p !== '')
                 .map(p => ({ location: p, stopover: true }))
@@ -51,7 +71,7 @@ export default function InteractiveMap({ origin, destination, waypointsInput, on
         service.route(
             {
                 origin: origin,
-                destination: destination,
+                destination: effectiveDestination,
                 waypoints: waypointsArr,
                 travelMode: google.maps.TravelMode.DRIVING,
             },
@@ -63,7 +83,7 @@ export default function InteractiveMap({ origin, destination, waypointsInput, on
                 }
             }
         );
-    }, [isLoaded, origin, destination, waypointsInput]);
+    }, [isLoaded, origin, destination, waypointsInput, ignoreDestinationForRoute]);
 
     // 2. Handle User Drag Interaction
     const onDirectionsChanged = useCallback(() => {
@@ -93,8 +113,11 @@ export default function InteractiveMap({ origin, destination, waypointsInput, on
                     });
                 }
 
-                // 2. Add end_location (full stopovers), BUT skip the very last one (Destination)
-                if (!isLastLeg) {
+                // 2. Add end_location (full stopovers).
+                // If ignoreDestinationForRoute is TRUE, we must INCLUDE the last leg's end_location because
+                // it represents the last "Waypoint" in our list (which is acting as the Map Destination).
+                // If FALSE (default), we SKIP the last leg's end because it's the Form Destination.
+                if (ignoreDestinationForRoute || !isLastLeg) {
                     const point = leg.end_location;
                     newPoints.push(`${point.lat().toFixed(5)},${point.lng().toFixed(5)}`);
                 }
@@ -107,7 +130,7 @@ export default function InteractiveMap({ origin, destination, waypointsInput, on
         if (newString !== waypointsInput) {
             onWaypointsChanged(newString);
         }
-    }, [waypointsInput, onWaypointsChanged]);
+    }, [waypointsInput, onWaypointsChanged, ignoreDestinationForRoute]);
 
     if (loadError) return <div className="p-4 bg-red-50 text-red-500 rounded-xl border border-red-200 text-sm">Lỗi tải bản đồ. Vui lòng kiểm tra API Key.</div>;
     if (!isLoaded) return <div className="w-full h-full bg-slate-100 animate-pulse flex items-center justify-center text-slate-400 rounded-xl">Đang tải bản đồ...</div>;

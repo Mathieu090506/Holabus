@@ -90,7 +90,7 @@ export default async function TripDetailPage(props: { params: Promise<{ id: stri
 
                             <span className="flex items-center gap-2 text-slate-600 font-medium bg-white/50 px-3 py-1.5 rounded-lg border border-slate-100/50">
                                 <Calendar className="w-4 h-4 text-slate-400" />
-                                {departureDate.toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })}
+                                Dự kiến sáng thứ 7 (07/02/2026)
                             </span>
 
 
