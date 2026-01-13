@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { bookTicket } from '@/actions/booking-actions'; // Lưu ý: Cần file này ở bước 2
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner'; 
+import { toast } from 'sonner';
 import { Loader2, Ticket } from 'lucide-react';
 
 export default function BookingButton({ tripId, price }: { tripId: string, price: number }) {
@@ -12,32 +12,7 @@ export default function BookingButton({ tripId, price }: { tripId: string, price
 
   const handleBooking = async () => {
     setIsLoading(true);
-
-    try {
-      // Gọi Server Action để đặt vé
-      const result = await bookTicket(tripId, "random");
-
-      if (result.error) {
-        // Nếu lỗi (Spam, chưa login...)
-        toast.error("Không thể đặt vé", {
-          description: result.error,
-          duration: 4000,
-        });
-      } else if (result.success) {
-        // Nếu thành công
-        toast.success("Đặt chỗ thành công!", {
-          description: "Đang chuyển đến trang thanh toán...",
-        });
-        
-        setTimeout(() => {
-          router.push(`/payment/${result.bookingId}`);
-        }, 1000);
-      }
-    } catch (err) {
-      toast.error("Lỗi kết nối", { description: "Vui lòng thử lại sau." });
-    } finally {
-      setIsLoading(false);
-    }
+    router.push(`/trips/${tripId}`);
   };
 
   return (

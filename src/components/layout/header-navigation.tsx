@@ -7,24 +7,25 @@ import { siteConfig } from '@/config/site';
 export default function HeaderNavigation() {
     return (
         <nav className="hidden md:flex items-center gap-6 text-lg font-medium text-slate-500">
-            <Link
-                href="/my-tickets"
-                className="hover:text-slate-900 transition-colors"
-            >
-                Chuyến đi
-            </Link>
+
             <Link
                 href="/about"
                 className="hover:text-slate-900 transition-colors"
             >
                 Về dự án
             </Link>
+
             <Link
-                href="/support"
+                href="#contact-footer"
                 className="hover:text-slate-900 transition-colors"
+                onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('contact-footer')?.scrollIntoView({ behavior: 'smooth' });
+                }}
             >
-                Hỗ trợ
+                Liên hệ
             </Link>
+
         </nav>
     );
 }

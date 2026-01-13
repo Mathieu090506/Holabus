@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     siteName: 'Hola Bus',
     images: [
       {
-        url: '/tet-atmosphere.png',
+        url: '/anh-co.jpg',
         width: 1200,
         height: 630,
         alt: 'Hola Bus - Vé Xe Tết 2026',
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Hola Bus - Vé Xe Tết 2026',
     description: 'Ưu đãi vé xe giảm tới 50% cho sinh viên, về nhà đón Tết sum vầy.',
-    images: ['/tet-atmosphere.png'],
+    images: ['/anh-co.jpg'],
   },
   viewport: {
     width: 'device-width',
@@ -60,9 +60,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    icon: '/anh-co.jpg?v=2',
+    shortcut: '/anh-co.jpg?v=2',
+    apple: '/anh-co.jpg?v=2',
   },
   manifest: '/site.webmanifest',
 };
@@ -101,6 +101,10 @@ const jsonLd = {
     },
   ],
 };
+import { Toaster } from 'sonner';
+
+// ... (existing imports)
+
 export default function RootLayout({
   children,
 }: {
@@ -113,14 +117,9 @@ export default function RootLayout({
         {/* Đặt Header ở đây */}
         <SiteHeader />
 
-        {/* Header dùng position:absolute nên nó sẽ nằm đè lên children.
-            Điều này HOÀN HẢO cho trang chủ vì ta muốn nó đè lên Banner Tết.
-            
-            TUY NHIÊN: Với các trang con (như Admin, Login), nội dung có thể bị che mất.
-            Nếu bị che, ở các trang con bạn chỉ cần thêm class `pt-20` vào thẻ bao ngoài cùng là được.
-        */}
         {children}
         <LuckyMoneyEffect />
+        <Toaster position="top-center" richColors />
         <Script
           id="json-ld"
           type="application/ld+json"

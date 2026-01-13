@@ -20,21 +20,7 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
 
   const router = useRouter();
 
-  // Nếu chưa đăng nhập
-  if (!user) {
-    return (
-      <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 text-center">
-        <Ticket className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-        <h3 className="font-bold text-slate-700 mb-2">Đăng nhập để đặt vé</h3>
-        <button
-          onClick={() => router.push('/login')}
-          className="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 transition"
-        >
-          Đăng nhập ngay
-        </button>
-      </div>
-    );
-  }
+
 
   // Xử lý khi bấm nút Đặt vé
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -47,8 +33,12 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
     const fullName = formData.get('fullName') as string;
 
     const phoneNumber = formData.get('phone') as string;
-    const studentId = formData.get('studentId') as string;
+    const email = formData.get('email') as string;
     const notes = formData.get('notes') as string;
+    const seatNotes = formData.get('seatNotes') as string;
+
+    // Combine notes
+    const finalNotes = `Điểm xuống: ${notes || 'Không có'}. \nLưu ý ghế: ${seatNotes || 'Không có'}`;
 
     // 👇 2. THÊM VALIDATE TÊN
     if (!fullName || fullName.trim().length < 2) {
@@ -57,23 +47,42 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
       return;
     }
 
-    if (!phoneNumber || phoneNumber.length < 9) {
-      toast.error("Số điện thoại không hợp lệ");
+    // Regex validate số điện thoại VN: 10 số, bắt đầu bằng 0
+    const phoneRegex = /^0\d{9}$/;
+    if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
+      toast.error("Số điện thoại không hợp lệ", { description: "Vui lòng nhập đúng 10 số, bắt đầu bằng số 0." });
       setLoading(false);
       return;
     }
+
+    // Validate Email (nếu có nhập)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && !emailRegex.test(email)) {
+      toast.error("Email không hợp lệ", { description: "Vui lòng kiểm tra lại định dạng email." });
+      setLoading(false);
+      return;
+    }
+
+    if (!notes || notes.trim().length === 0) {
+      toast.error("Vui lòng nhập điểm xuống xe mong muốn");
+      setLoading(false);
+      return;
+    }
+
+    const honeypot = formData.get('website_url') as string;
 
     try {
       console.log("🚀 Đang gửi yêu cầu đặt vé...");
 
       const result = await bookTicket(
         tripId,
-        seatType,
+        'request', // Default to request
         {
-          fullName: fullName, // 👈 3. TRUYỀN TÊN MỚI VÀO ĐÂY
+          fullName: fullName,
           phone: phoneNumber,
-          studentId: studentId,
-          notes: notes
+          studentId: email, // Dùng trường studentId để lưu email tạm thời
+          notes: finalNotes, // Combined notes
+          honeypot: honeypot // Pass honeypot to server
         }
       );
 
@@ -97,6 +106,13 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+
+      {/* --- HONEYPOT (CHỐNG BOT) --- */}
+      {/* Bot sẽ tự động điền vào các ô này, người thường thì không thấy. Nếu có dữ liệu => Chặn */}
+      <div className="opacity-0 absolute -z-10 w-0 h-0 overflow-hidden">
+        <input type="text" name="website_url" tabIndex={-1} autoComplete="off" />
+        <input type="text" name="fax_number" tabIndex={-1} autoComplete="off" />
+      </div>
 
       {/* 1. THÔNG TIN CÁ NHÂN */}
       <div className="space-y-3">
@@ -124,21 +140,22 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
               type="tel"
               required
               placeholder="Nhập số điện thoại..."
-              defaultValue={user.user_metadata.phone_number || ''}
+              defaultValue={user?.user_metadata?.phone_number || ''}
               className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 outline-none transition"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Mã Sinh Viên (Nếu có)</label>
+          <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Email nhận vé</label>
           <div className="relative">
             <BookOpen className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
             <input
-              name="studentId"
-              type="text"
-              placeholder="VD: HE15xxxx"
+              name="email"
+              type="email"
+              placeholder="VD: name@example.com"
               className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 outline-none transition"
+              defaultValue={user?.email || ''}
             />
           </div>
         </div>
@@ -149,73 +166,37 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
       {/* THÊM TRƯỜNG GHI CHÚ (ĐIỂM XUỐNG XE) */}
       <div>
         <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">
-          Điểm xuống xe mong muốn (Note)
+          Điểm xuống xe mong muốn (Note) <span className="text-red-500">*</span>
         </label>
         <div className="relative">
           <textarea
             name="notes"
+            required
             rows={3}
             placeholder="Ví dụ: Xuống ở ngã tư Hàng Xanh, gần BigC..."
             className="w-full p-4 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 outline-none transition text-sm"
           />
         </div>
         <p className="text-[10px] text-slate-400 mt-1 ml-1">
-          * Tài xế sẽ cố gắng hỗ trợ nếu thuận tiện lộ trình.
+          * BẮT BUỘC: Tài xế sẽ căn cứ vào đây để trả khách.
         </p>
       </div>
 
       <div className="border-t border-dashed border-slate-200"></div>
 
-      {/* 2. CHỌN VỊ TRÍ GHẾ (ĐÃ KHÔI PHỤC) */}
+      {/* 2. GHI CHÚ CHỖ NGỒI (SAY XE) */}
       <div>
-        <label className="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">
-          Chọn vị trí ghế mong muốn
+        <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">
+          Lưu ý chỗ ngồi (Ai say xe?)
         </label>
-        <div className="grid grid-cols-3 gap-2">
-          {/* Option 1: Say xe */}
-          <button
-            type="button"
-            onClick={() => setSeatType('front')}
-            className={`relative p-3 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${seatType === 'front'
-              ? 'border-orange-500 bg-orange-50 text-orange-700 ring-1 ring-orange-500'
-              : 'border-slate-200 bg-white text-slate-500 hover:border-orange-300'
-              }`}
-          >
-            <Armchair className="w-5 h-5" />
-            <span className="text-[10px] font-bold">Say xe</span>
-            <span className="text-[9px] font-normal opacity-70">(Ngồi đầu)</span>
-            {seatType === 'front' && <CheckCircle2 className="w-4 h-4 text-orange-600 absolute top-1 right-1" />}
-          </button>
-
-          {/* Option 2: Cửa sổ */}
-          <button
-            type="button"
-            onClick={() => setSeatType('window')}
-            className={`relative p-3 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${seatType === 'window'
-              ? 'border-orange-500 bg-orange-50 text-orange-700 ring-1 ring-orange-500'
-              : 'border-slate-200 bg-white text-slate-500 hover:border-orange-300'
-              }`}
-          >
-            <div className="border-2 border-current w-4 h-4 rounded-sm"></div>
-            <span className="text-[10px] font-bold">Cửa sổ</span>
-            <span className="text-[9px] font-normal opacity-70">(Ngắm cảnh)</span>
-            {seatType === 'window' && <CheckCircle2 className="w-4 h-4 text-orange-600 absolute top-1 right-1" />}
-          </button>
-
-          {/* Option 3: Ngẫu nhiên */}
-          <button
-            type="button"
-            onClick={() => setSeatType('random')}
-            className={`relative p-3 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${seatType === 'random'
-              ? 'border-orange-500 bg-orange-50 text-orange-700 ring-1 ring-orange-500'
-              : 'border-slate-200 bg-white text-slate-500 hover:border-orange-300'
-              }`}
-          >
-            <Ticket className="w-5 h-5" />
-            <span className="text-[10px] font-bold">Ngẫu nhiên</span>
-            <span className="text-[9px] font-normal opacity-70">(Tùy ý)</span>
-            {seatType === 'random' && <CheckCircle2 className="w-4 h-4 text-orange-600 absolute top-1 right-1" />}
-          </button>
+        <div className="relative">
+          <Armchair className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
+          <input
+            name="seatNotes"
+            type="text"
+            placeholder="VD: Bạn A say xe xin ngồi đầu, người già..."
+            className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 outline-none transition"
+          />
         </div>
       </div>
 

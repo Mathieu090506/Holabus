@@ -70,7 +70,7 @@ export default function MobileNav({ user }: { user: any }) {
 
                             <div className="border-t border-slate-100 my-4"></div>
 
-                            {user ? (
+                            {user && (
                                 <>
                                     <div className="px-3 mb-2 flex items-center gap-3">
                                         {user.user_metadata.avatar_url ? (
@@ -102,14 +102,6 @@ export default function MobileNav({ user }: { user: any }) {
                                         <User className="w-5 h-5" /> Trang quản trị
                                     </Link>
                                 </>
-                            ) : (
-                                <Link
-                                    href="/login"
-                                    onClick={() => setOpen(false)}
-                                    className="flex items-center gap-3 p-3 rounded-xl text-slate-600 hover:text-orange-600 hover:bg-orange-50 font-bold transition"
-                                >
-                                    <LogIn className="w-5 h-5" /> Đăng nhập
-                                </Link>
                             )}
                         </nav>
 

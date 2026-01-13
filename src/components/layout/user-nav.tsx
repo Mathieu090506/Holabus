@@ -26,14 +26,7 @@ export default function UserNav({ user }: { user: any }) {
   };
 
   if (!user) {
-    return (
-      <Link
-        href="/login"
-        className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition-all text-sm shadow-sm hover:shadow-md"
-      >
-        Đăng nhập
-      </Link>
-    );
+    return null;
   }
 
   return (

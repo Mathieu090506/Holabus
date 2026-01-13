@@ -4,23 +4,23 @@ import { Star, Quote } from 'lucide-react';
 
 const testimonials = [
     {
-        name: "Minh Anh",
+        name: "Vũ Nhật Ánh K20",
         role: "Đi tháng 1/2023",
-        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=faces",
+        avatar: "/Ánh.jpg",
         rating: 5,
-        quote: "Xe giường nằm thoải mái đến bất ngờ cho chuyến đi dài về Huế! Đặt vé siêu dễ dàng và nhân viên rất nhiệt tình."
+        quote: "Ở Hòa Lạc mà có chuyến xe về thẳng nhà thế này thì quá tiện, không phải lỉnh kỉnh đồ đạc ra bến xe Mỹ Đình nữa. Xe giường nằm êm ru, ngủ một giấc là tới nơi."
     },
     {
-        name: "Tuấn Kiệt",
+        name: "Nguyễn Liên Minh Sơn K20",
         role: "Đi tháng 2/2024",
-        avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=150&h=150&fit=crop&crop=faces",
+        avatar: "/Sơn.jpg",
         rating: 5,
-        quote: "Tôi lo vé tăng giá, nhưng HolaBus đã giữ mức giá tốt cho tôi từ nhiều tuần trước. Chuyến đi Đà Nẵng rất suôn sẻ."
+        quote: "Tôi lo vé tăng giá, nhưng HolaBus đã giữ mức giá tốt cho tôi từ nhiều tuần trước. Chuyến đi Hải Phòng rất suôn sẻ."
     },
     {
-        name: "Cô Lan",
+        name: "Nguyễn Thục Anh K20",
         role: "Đi tháng 1/2023",
-        avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=faces",
+        avatar: "/thục.jpg",
         rating: 5,
         quote: "Dịch vụ đáng tin cậy. Xe xuất bến đúng giờ. Tôi khuyên mọi người nên dùng nếu muốn có kỳ nghỉ Tết không lo âu."
     }
@@ -68,10 +68,7 @@ export default function TestimonialsSection() {
                                 "{item.quote}"
                             </p>
 
-                            {/* Footer Date */}
-                            <p className="text-slate-400 text-xs font-semibold uppercase tracking-wide">
-                                {item.role}
-                            </p>
+
                         </div>
                     ))}
                 </div>
