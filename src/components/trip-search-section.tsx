@@ -381,7 +381,7 @@ export default function TripSearchSection({ trips, user, destinationImages = {} 
                                     {filteredTrips.slice(0, visibleCount).map((trip) => (
                                         <TripCard
                                             key={trip.id}
-                                            trip={trip}
+                                            trips={[trip]}
                                             destinationImages={destinationImages}
                                         />
                                     ))}

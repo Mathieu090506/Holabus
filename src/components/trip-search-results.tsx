@@ -157,7 +157,7 @@ export default function TripSearchResults({ trips, destinationImages = {} }: { t
                                     {groupedTrips.map((groupTrips, index) => (
                                         <div
                                             key={groupTrips[0].destination}
-                                            className={index >= 4 && !isExpanded ? 'hidden md:block' : ''}
+                                            className={`h-full ${index >= 4 && !isExpanded ? 'hidden md:block' : ''}`}
                                         >
                                             <TripCard
                                                 trips={groupTrips}

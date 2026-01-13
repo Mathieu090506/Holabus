@@ -47,7 +47,7 @@ export default function TripCard({ trips, destinationImages = {} }: { trips: any
                 <div
                     role="button"
                     onClick={handleClick}
-                    className={`group block w-full bg-white rounded-2xl overflow-hidden border-2 transition-all duration-300 flex flex-col relative cursor-pointer
+                    className={`group block w-full bg-white rounded-2xl overflow-hidden border-2 transition-all duration-300 flex flex-col relative cursor-pointer h-full
                         ${isExpanded ? 'border-[#D0021B] shadow-xl ring-4 ring-red-50 z-10' : 'border-yellow-300 hover:border-yellow-500 hover:shadow-lg'}
                     `}
                 >

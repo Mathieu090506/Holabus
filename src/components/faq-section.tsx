@@ -7,23 +7,30 @@ import { Plus, Minus } from 'lucide-react';
 const FAQS = [
     {
         question: "Xe có hỗ trợ trung chuyển/đón trả tận nơi không?",
-        answer: "Đa số các chuyến xe của HolaBus đều có hỗ trợ xe trung chuyển tại các khu vực trung tâm. Bạn vui lòng kiểm tra kỹ thông tin chuyến đi hoặc ghi chú điểm đón/trả khi đặt vé."
+        answer: "Xe của Hola Bus sẽ hỗ trợ đón bạn tại các địa điểm sau: Cây xăng 39, Ngã 3 Tân Xã và trường Đại học FPT."
     },
     {
-        question: "Làm thế nào để đặt vé xe HolaBus?",
-        answer: "Bạn chỉ cần tìm chuyến đi mong muốn trên trang chủ, chọn ghế ngồi, điền thông tin và thanh toán. Vé điện tử sẽ được gửi về email và số điện thoại của bạn ngay lập tức."
+        question: "Làm thế nào để mua vé xe Hola Bus?",
+        answer: "Bạn chỉ cần tìm tỉnh/thành mình muốn đặt vé, điền đầy đủ thông tin cá nhân (bao gồm Tên, SĐT, email và điểm xuống xe mong muốn), chọn “Xác nhận đặt vé” và thanh toán. Vé điện tử sẽ được gửi về email bạn ngay lập tức."
+    },
+
+
+    {
+        question: "Xe có đưa về tới tận nhà không?",
+        answer: "Không. Vì đặc thù của tuyến xe và địa hình, chúng mình sẽ đưa bạn tới một địa điểm nhất định. Nhưng đừng lo, vì các tuyến đường không cách quá xa nhà bạn đâu."
+    },
+
+    {
+        question: "Tôi có thể được chọn chỗ ngồi không?",
+        answer: "Có. Bạn có thể ghi chú lại khi đăng kí nếu bạn có mong muốn được xếp chỗ đặc biệt, BTC sẽ cố gắng sắp xếp chỗ ngồi như bạn mong muốn."
     },
     {
-        question: "Tôi có thể hủy hoặc đổi trả vé không?",
-        answer: "Chính sách hủy/đổi vé phụ thuộc vào từng nhà xe và thời điểm bạn yêu cầu. Thông thường, bạn có thể hủy vé trước 24h khởi hành để được hoàn tiền (có thể trừ phí). Vui lòng liên hệ Hotline để được hỗ trợ cụ thể."
+        question: "Tôi có cần tạo tài khoản để đặt vé không?",
+        answer: "Không. Bạn có thể đăng kí ngay khi vào web."
     },
     {
-        question: "Tôi có cần in vé giấy ra không?",
-        answer: "Không cần thiết. Bạn chỉ cần xuất trình mã vé điện tử hoặc QR code trên điện thoại cho tài xế hoặc nhân viên nhà xe khi lên xe."
-    },
-    {
-        question: "Giá vé Tết có tăng so với thường ngày không?",
-        answer: "Giá vé dịp Tết có thể có điều chỉnh nhẹ theo quy định của Sở GTVT và các nhà xe để bù đắp chi phí chiều rỗng. Tuy nhiên, HolaBus cam kết niêm yết giá công khai, minh bạch, không thu thêm phụ phí ngoài luồng."
+        question: "Giá vé hiển thị có phát sinh phụ phí không?",
+        answer: "Không. Chúng mình cam kết giá bạn thanh toán trên hệ thống là giá cuối cùng và không phát sinh thêm phụ phí."
     }
 ];
 

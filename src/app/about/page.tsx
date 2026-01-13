@@ -447,18 +447,11 @@ export default function AboutPage() {
                                 answer: "Không. Vì đặc thù của tuyến xe và địa hình, chúng mình sẽ đưa bạn tới một địa điểm nhất định. Nhưng đừng lo, vì các tuyến đường không cách quá xa nhà bạn đâu."
                             },
 
-                            {
-                                question: "Tôi có thể được chọn chỗ ngồi không?",
-                                answer: "Có. Bạn có thể ghi chú lại khi đăng kí nếu bạn có mong muốn được xếp chỗ đặc biệt, BTC sẽ cố gắng sắp xếp chỗ ngồi như bạn mong muốn."
-                            },
+
 
                             {
                                 question: "Giá vé hiển thị có phát sinh phụ phí không?",
                                 answer: "Không. Chúng mình cam kết giá bạn thanh toán trên hệ thống là giá cuối cùng và không phát sinh thêm phụ phí."
-                            },
-                            {
-                                question: "Có chương trình khuyến mãi hay mã giảm giá không?",
-                                answer: "Có. Chúng mình còn rất nhiều chương trình khuyến mãi đang chờ đón bạn. Hãy tới bàn truyền thông off hoặc theo dõi trên fanpage để biết thêm thông tin nhé!"
                             }
                         ].map((item, index) => (
                             <FAQItem key={index} question={item.question} answer={item.answer} index={index} />

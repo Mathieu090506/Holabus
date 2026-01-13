@@ -3,26 +3,41 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { Redis } from '@upstash/redis'
 import { Ratelimit } from '@upstash/ratelimit'
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL || '',
-  token: process.env.UPSTASH_REDIS_REST_TOKEN || '',
-})
+// Initialize Redis & Ratelimit conditionally
+const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
+const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-const ratelimit = new Ratelimit({
-  redis: redis,
-  limiter: Ratelimit.slidingWindow(20, "10 s"),
-  analytics: true,
-})
+let redis: Redis | null = null;
+let ratelimit: Ratelimit | null = null;
+
+if (redisUrl && redisToken) {
+  try {
+    redis = new Redis({
+      url: redisUrl,
+      token: redisToken,
+    });
+
+    ratelimit = new Ratelimit({
+      redis: redis,
+      limiter: Ratelimit.slidingWindow(20, "10 s"),
+      analytics: true,
+    });
+  } catch (e) {
+    console.warn("Failed to initialize Redis/Ratelimit:", e);
+  }
+}
 
 export async function middleware(request: NextRequest) {
 
-    const ip = request.headers.get('x-forwarded-for') || request.ip || '127.0.0.1';
-    
-    // Bỏ qua các file tĩnh (ảnh, css...) để tiết kiệm request Redis
-    if (!request.nextUrl.pathname.match(/\.(png|jpg|jpeg|svg|css|js|ico)$/)) {
+  const ip = request.headers.get('x-forwarded-for') || request.ip || '127.0.0.1';
+
+  // Bỏ qua các file tĩnh (ảnh, css...) để tiết kiệm request Redis
+  if (!request.nextUrl.pathname.match(/\.(png|jpg|jpeg|svg|css|js|ico)$/)) {
+    // Chỉ chạy Rate Limit nếu có cấu hình Redis hợp lệ
+    if (ratelimit) {
       try {
         const { success } = await ratelimit.limit(ip);
-        
+
         if (!success) {
           // ⛔ PHÁT HIỆN SPAM -> TRẢ VỀ LỖI 429 NGAY LẬP TỨC
           return new NextResponse('🚦 Bạn thao tác quá nhanh! Vui lòng chờ một chút.', { status: 429 });
@@ -32,6 +47,7 @@ export async function middleware(request: NextRequest) {
         // Nếu Redis lỗi thì vẫn cho qua (Fail Open) để không chặn người dùng thật
       }
     }
+  }
 
   let response = NextResponse.next({
     request: { headers: request.headers },
