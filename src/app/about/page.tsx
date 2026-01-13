@@ -19,7 +19,9 @@ import {
     Menu,
     X,
     Bus,
-    Mail
+    Mail,
+    Plus,
+    Minus
 } from 'lucide-react';
 
 // --- COMPONENTS ---
@@ -97,12 +99,8 @@ export default function AboutPage() {
             <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-100">
                 <div className="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollTo('home')}>
-                        {/* Logo Placeholder */}
-                        <div className="w-10 h-10 bg-[#D0021B] rounded-lg flex items-center justify-center text-white font-black text-xl">
-                            H
-                        </div>
-                        <span className="font-black text-xl md:text-2xl tracking-tighter text-slate-900">
-                            HOLA BUS <span className="text-[#D0021B]">2026</span>
+                        <span className="font-black text-xl md:text-3xl tracking-tighter leading-none">
+                            <span className="text-[#D0021B]">HOLA</span><span className="text-slate-900">BUS</span> <span className="text-[#D0021B]">2026</span>
                         </span>
                     </div>
 
@@ -419,8 +417,40 @@ export default function AboutPage() {
 
 
 
-            {/* 9️⃣ SECTION: GALLERY */}
+            {/* 9️⃣ SECTION: FAQ - CÂU HỎI THƯỜNG GẶP */}
+            <section id="faq" className="py-24 px-4 md:px-8 bg-slate-50">
+                <div className="max-w-4xl mx-auto">
+                    <motion.div {...fadeInUp} className="text-center mb-16">
+                        <SectionHeading>Câu hỏi thường gặp</SectionHeading>
+                        <SectionText>
+                            Giải đáp các thắc mắc phổ biến về đặt vé và hành trình
+                        </SectionText>
+                    </motion.div>
 
+                    <div className="space-y-4">
+                        {[
+                            {
+                                question: "Xe có hỗ trợ trung chuyển/đón trả tận nơi không?",
+                                answer: "Xe của Hola Bus sẽ hỗ trợ đón bạn tại các địa điểm sau: Cây xăng 39, Ngã 3 Tân Xã và trường Đại học FPT."
+                            },
+                            {
+                                question: "Làm thế nào để mua vé xe Hola Bus?",
+                                answer: "Bạn chỉ cần tìm tỉnh/thành mình muốn đặt vé, điền đầy đủ thông tin cá nhân (bao gồm Tên, SĐT, email và điểm xuống xe mong muốn), chọn “Xác nhận đặt vé” và thanh toán. Vé điện tử sẽ được gửi về email bạn ngay lập tức."
+                            },
+                            {
+                                question: "Tôi có thể được chọn chỗ ngồi không?",
+                                answer: "Có. Bạn có thể ghi chú lại khi đăng kí nếu bạn có mong muốn được xếp chỗ đặc biệt, BTC sẽ cố gắng sắp xếp chỗ ngồi như bạn mong muốn."
+                            },
+                            {
+                                question: "Giá vé hiển thị có phát sinh phụ phí không?",
+                                answer: "Không. Chúng mình cam kết giá bạn thanh toán trên hệ thống là giá cuối cùng và không phát sinh thêm phụ phí."
+                            }
+                        ].map((item, index) => (
+                            <FAQItem key={index} question={item.question} answer={item.answer} index={index} />
+                        ))}
+                    </div>
+                </div>
+            </section>
 
             {/* 🔟 BIG CTA */}
             <section className="py-24 px-4 bg-[#D0021B] text-white text-center relative overflow-hidden">
@@ -497,6 +527,39 @@ export default function AboutPage() {
             </section>
 
         </main>
+    );
+}
+
+function FAQItem({ question, answer, index }: { question: string, answer: string, index: number }) {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="group"
+        >
+            <div className={`transition-all duration-200 bg-white border border-slate-100 rounded-2xl overflow-hidden ${isOpen ? 'shadow-md ring-1 ring-slate-200' : 'hover:shadow-sm'}`}>
+                <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="w-full flex items-center justify-between p-6 text-left"
+                >
+                    <span className="font-bold text-lg text-slate-900">{question}</span>
+                    <span className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors ${isOpen ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'}`}>
+                        {isOpen ? <Minus size={18} /> : <Plus size={18} />}
+                    </span>
+                </button>
+                <div
+                    className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                        }`}
+                >
+                    <div className="p-6 pt-0 text-slate-600 leading-relaxed border-t border-slate-50">
+                        {answer}
+                    </div>
+                </div>
+            </div>
+        </motion.div>
     );
 }
 

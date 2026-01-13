@@ -1,5 +1,6 @@
 // ... imports
 import SiteHeader from '@/components/layout/site-header'; // Import file mới
+import HeaderWrapper from '@/components/layout/header-wrapper';
 import LuckyMoneyEffect from '@/components/effects/lucky-money-effect';
 import "./globals.css";
 
@@ -115,7 +116,9 @@ export default function RootLayout({
       <body className="antialiased text-slate-800">
 
         {/* Đặt Header ở đây */}
-        <SiteHeader />
+        <HeaderWrapper>
+          <SiteHeader />
+        </HeaderWrapper>
 
         {children}
         <LuckyMoneyEffect />

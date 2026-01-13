@@ -6,6 +6,10 @@ import { Plus, Minus } from 'lucide-react';
 
 const FAQS = [
     {
+        question: "Xe có hỗ trợ trung chuyển/đón trả tận nơi không?",
+        answer: "Đa số các chuyến xe của HolaBus đều có hỗ trợ xe trung chuyển tại các khu vực trung tâm. Bạn vui lòng kiểm tra kỹ thông tin chuyến đi hoặc ghi chú điểm đón/trả khi đặt vé."
+    },
+    {
         question: "Làm thế nào để đặt vé xe HolaBus?",
         answer: "Bạn chỉ cần tìm chuyến đi mong muốn trên trang chủ, chọn ghế ngồi, điền thông tin và thanh toán. Vé điện tử sẽ được gửi về email và số điện thoại của bạn ngay lập tức."
     },
@@ -16,10 +20,6 @@ const FAQS = [
     {
         question: "Tôi có cần in vé giấy ra không?",
         answer: "Không cần thiết. Bạn chỉ cần xuất trình mã vé điện tử hoặc QR code trên điện thoại cho tài xế hoặc nhân viên nhà xe khi lên xe."
-    },
-    {
-        question: "Xe có hỗ trợ trung chuyển/đón trả tận nơi không?",
-        answer: "Đa số các chuyến xe của HolaBus đều có hỗ trợ xe trung chuyển tại các khu vực trung tâm. Bạn vui lòng kiểm tra kỹ thông tin chuyến đi hoặc ghi chú điểm đón/trả khi đặt vé."
     },
     {
         question: "Giá vé Tết có tăng so với thường ngày không?",

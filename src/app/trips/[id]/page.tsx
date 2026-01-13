@@ -128,8 +128,8 @@ export default async function TripDetailPage(props: { params: Promise<{ id: stri
                                 <div className="relative flex gap-6 group">
                                     <div className="relative z-10 w-3 h-3 rounded-full bg-blue-500 ring-4 ring-white mt-1.5 box-content group-hover:scale-110 transition-transform"></div>
                                     <div className="flex-1 bg-slate-50 rounded-xl p-5 border border-slate-100 hover:border-blue-200 transition-colors">
-                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
 
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                                             <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded uppercase tracking-wider">
                                                 Khởi hành
                                             </span>
@@ -137,9 +137,7 @@ export default async function TripDetailPage(props: { params: Promise<{ id: stri
                                         <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 mb-1">
                                             {trip.origin}
                                         </h3>
-                                        <p className="text-slate-500 text-sm flex items-center gap-2">
-                                            <MapPin className="w-3 h-3" /> Điểm đón: {trip.origin}
-                                        </p>
+
                                     </div>
                                 </div>
 
@@ -170,9 +168,7 @@ export default async function TripDetailPage(props: { params: Promise<{ id: stri
                                         <div key={index} className="relative flex gap-6 group">
                                             <div className="relative z-10 w-2 h-2 rounded-full bg-slate-300 ring-4 ring-white mt-5 ml-0.5 group-hover:bg-orange-400 transition-colors"></div>
                                             <div className="flex-1 bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-orange-200 transition-colors">
-                                                <div className="inline-flex items-center gap-2 mb-1">
-                                                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Điểm dừng {index + 1}</span>
-                                                </div>
+
                                                 <h4 className="text-base font-bold text-slate-700">{point}</h4>
                                             </div>
                                         </div>
@@ -183,17 +179,16 @@ export default async function TripDetailPage(props: { params: Promise<{ id: stri
                                 <div className="relative flex gap-6 group">
                                     <div className="relative z-10 w-3 h-3 rounded-full bg-slate-900 ring-4 ring-white mt-1.5 box-content group-hover:scale-110 transition-transform"></div>
                                     <div className="flex-1 bg-slate-50 rounded-xl p-5 border border-slate-100 hover:border-slate-300 transition-colors">
+
                                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                                             <span className="text-xs font-bold text-slate-500 bg-slate-200 px-2 py-1 rounded uppercase tracking-wider">
-                                                Điểm kết thúc
+                                                Điểm đến
                                             </span>
                                         </div>
                                         <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 mb-1">
                                             {trip.destination}
                                         </h3>
-                                        <p className="text-slate-500 text-sm flex items-center gap-2">
-                                            <MapPin className="w-3 h-3" /> Trả khách tận nơi
-                                        </p>
+
                                     </div>
                                 </div>
                             </div>
