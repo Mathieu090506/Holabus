@@ -131,7 +131,10 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
                                     <input
                                         name="origin"
                                         value={origin}
-                                        onChange={(e) => setOrigin(e.target.value)}
+                                        onChange={(e) => {
+                                            setOrigin(e.target.value);
+                                            setWaypoints(''); // 👈 Reset đường kẻ map khi đổi địa điểm
+                                        }}
                                         className="w-full pl-10 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition"
                                         placeholder="VD: ĐH FPT Hòa Lạc"
                                         required
@@ -146,7 +149,10 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
                                     <input
                                         name="destination"
                                         value={destination}
-                                        onChange={(e) => setDestination(e.target.value)}
+                                        onChange={(e) => {
+                                            setDestination(e.target.value);
+                                            setWaypoints(''); // 👈 Reset đường kẻ map khi đổi địa điểm
+                                        }}
                                         className="w-full pl-10 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition"
                                         placeholder="VD: Nam Định (BigC)"
                                         required
@@ -340,10 +346,9 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
                         {/* Fallback component loading... is handled inside InteractiveMap */}
                         <InteractiveMap
                             origin={origin}
-                            destination={""} // 👈 Force EMPTY to completely decouple 'Destination' Input from Map
+                            destination={destination} // 👈 Synced with Input
                             waypointsInput={waypoints}
                             onWaypointsChanged={(newVal: string) => setWaypoints(newVal)}
-                            ignoreDestinationForRoute={true}
                         />
                     </div>
 

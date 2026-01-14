@@ -108,8 +108,8 @@ export async function updateTrip(tripId: number, formData: FormData) {
       return { error: error.message };
     }
 
-    revalidatePath('/admin');
-    revalidatePath('/');
+    revalidatePath('/', 'layout'); // 👈 Force revalidate toàn bộ site
+    revalidatePath(`/trips/${tripId}`); // 👈 Revalidate đúng trang chi tiết chuyến này
     return { success: true };
 
   } catch (err: any) {

@@ -21,12 +21,15 @@ export default function InteractiveMap({ origin, destination, waypointsInput, on
 
     const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
     const rendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
+    const lastDerivedWaypointsRef = useRef<string>(waypointsInput);
 
+    // Memoize options
     // Memoize options
     const mapOptions = useMemo(() => ({
         streetViewControl: false,
-        mapTypeControl: false,
-        fullscreenControl: false,
+        mapTypeControl: true, // Show Map Type
+        fullscreenControl: true, // Show Fullscreen
+        zoomControl: true, // Show Zoom
     }), []);
 
     const rendererOptions = useMemo(() => ({
@@ -35,59 +38,97 @@ export default function InteractiveMap({ origin, destination, waypointsInput, on
 
     // 1. Fetch Route from API (Standard Source of Truth)
     useEffect(() => {
-        if (!isLoaded || !origin) return;
+        if (!isLoaded || !origin || !destination) return;
 
-        // Determine Effective Destination & Waypoints
-        // If ignoreDestinationForRoute is TRUE, we start with NO destination (unless found in waypoints).
-        // If FALSE, we default to the provided destination prop.
-        let effectiveDestination = ignoreDestinationForRoute ? '' : destination;
-        let effectiveWaypointsStr = waypointsInput;
-
-        // Logic: If ignoring Form Destination AND we have waypoints, use the LAST waypoint as Map Destination.
-        if (ignoreDestinationForRoute && waypointsInput && waypointsInput.trim().length > 0) {
-            const parts = waypointsInput.split(';').map(p => p.trim()).filter(p => p !== '');
-            if (parts.length > 0) {
-                effectiveDestination = parts[parts.length - 1]; // Last point is Dest
-                effectiveWaypointsStr = parts.slice(0, parts.length - 1).join(';'); // Rest are intermediate
-            }
-        }
-
-        if (!effectiveDestination) {
-            // If we have no destination to route to, clear the map
-            setDirections(null);
+        // SKIP if the waypoints prop matches what we just calculated/dragged ourselves
+        // BUT ONLY if we already have a calculated route (directions).
+        // If directions is null (initial load), we MUST fetch.
+        if (directions && waypointsInput === lastDerivedWaypointsRef.current) {
             return;
         }
 
-        const service = new google.maps.DirectionsService();
+        // Debounce API calls to prevent "jumping" and rate limits
+        const timeoutId = setTimeout(() => {
+            let effectiveDestination = ignoreDestinationForRoute ? '' : destination;
+            let effectiveWaypointsStr = waypointsInput;
 
-        // Parse waypoints
-        const waypointsArr: google.maps.DirectionsWaypoint[] = effectiveWaypointsStr
-            ? effectiveWaypointsStr.split(';')
-                .map(p => p.trim())
-                .filter(p => p !== '')
-                .map(p => ({ location: p, stopover: true }))
-            : [];
-
-        service.route(
-            {
-                origin: origin,
-                destination: effectiveDestination,
-                waypoints: waypointsArr,
-                travelMode: google.maps.TravelMode.DRIVING,
-            },
-            (result, status) => {
-                if (status === google.maps.DirectionsStatus.OK && result) {
-                    setDirections(result);
-                } else {
-                    console.error(`Google Maps Directions Error: ${status}`);
+            if (ignoreDestinationForRoute && waypointsInput && waypointsInput.trim().length > 0) {
+                const parts = waypointsInput.split(';').map(p => p.trim()).filter(p => p !== '');
+                if (parts.length > 0) {
+                    effectiveDestination = parts[parts.length - 1];
+                    effectiveWaypointsStr = parts.slice(0, parts.length - 1).join(';');
                 }
             }
-        );
-    }, [isLoaded, origin, destination, waypointsInput, ignoreDestinationForRoute]);
+
+            if (!effectiveDestination) {
+                setDirections(null);
+                return;
+            }
+
+            const service = new google.maps.DirectionsService();
+
+            let waypointsArr: google.maps.DirectionsWaypoint[] = effectiveWaypointsStr
+                ? effectiveWaypointsStr.split(';')
+                    .map(p => p.trim())
+                    .filter(p => p !== '')
+                    .map(p => ({ location: p, stopover: true }))
+                : [];
+
+            if (waypointsArr.length > 25) {
+                const step = Math.ceil(waypointsArr.length / 25);
+                waypointsArr = waypointsArr.filter((_, index) => index % step === 0).slice(0, 25);
+            }
+
+            service.route(
+                {
+                    origin: origin,
+                    destination: effectiveDestination,
+                    waypoints: waypointsArr,
+                    travelMode: google.maps.TravelMode.DRIVING,
+                    optimizeWaypoints: false
+                },
+                (result, status) => {
+                    if (status === google.maps.DirectionsStatus.OK && result) {
+                        setDirections(result);
+
+                        if (result.routes && result.routes[0] && result.routes[0].legs) {
+                            const route = result.routes[0];
+                            const legs = route.legs;
+                            const newPoints: string[] = [];
+
+                            legs.forEach((leg, index) => {
+                                if (leg.via_waypoints && leg.via_waypoints.length > 0) {
+                                    leg.via_waypoints.forEach((via: any) => {
+                                        const lat = typeof via.lat === 'function' ? via.lat() : via.lat;
+                                        const lng = typeof via.lng === 'function' ? via.lng() : via.lng;
+                                        if (lat && lng) newPoints.push(`${Number(lat).toFixed(5)},${Number(lng).toFixed(5)}`);
+                                    });
+                                }
+                                const point = leg.end_location;
+                                newPoints.push(`${point.lat().toFixed(5)},${point.lng().toFixed(5)}`);
+                            });
+
+                            const newString = newPoints.join(';');
+                            // Update Ref so next render doesn't trigger loop
+                            lastDerivedWaypointsRef.current = newString;
+
+                            if (newString !== effectiveWaypointsStr) {
+                                onWaypointsChanged(newString);
+                            }
+                        }
+                    } else {
+                        console.error(`Google Maps Directions Error: ${status}`);
+                    }
+                }
+            );
+        }, 800);
+
+        return () => clearTimeout(timeoutId);
+
+    }, [isLoaded, origin, destination, waypointsInput, ignoreDestinationForRoute, onWaypointsChanged]);
 
     // 2. Handle User Drag Interaction
     const onDirectionsChanged = useCallback(() => {
-        // Guard: renderer must exist
         if (!rendererRef.current) return;
 
         const result = rendererRef.current.getDirections();
@@ -99,12 +140,8 @@ export default function InteractiveMap({ origin, destination, waypointsInput, on
 
         if (legs) {
             legs.forEach((leg, index) => {
-                const isLastLeg = index === legs.length - 1;
-
-                // 1. Add via_waypoints (dragged points that are not full stopovers yet)
                 if (leg.via_waypoints && leg.via_waypoints.length > 0) {
                     leg.via_waypoints.forEach((via: any) => {
-                        // via is directly a LatLng object in DirectionsLeg
                         const lat = typeof via.lat === 'function' ? via.lat() : via.lat;
                         const lng = typeof via.lng === 'function' ? via.lng() : via.lng;
                         if (lat && lng) {
@@ -112,21 +149,16 @@ export default function InteractiveMap({ origin, destination, waypointsInput, on
                         }
                     });
                 }
-
-                // 2. Add end_location (full stopovers).
-                // If ignoreDestinationForRoute is TRUE, we must INCLUDE the last leg's end_location because
-                // it represents the last "Waypoint" in our list (which is acting as the Map Destination).
-                // If FALSE (default), we SKIP the last leg's end because it's the Form Destination.
-                if (ignoreDestinationForRoute || !isLastLeg) {
-                    const point = leg.end_location;
-                    newPoints.push(`${point.lat().toFixed(5)},${point.lng().toFixed(5)}`);
-                }
+                const point = leg.end_location;
+                newPoints.push(`${point.lat().toFixed(5)},${point.lng().toFixed(5)}`);
             });
         }
 
         const newString = newPoints.join(';');
 
-        // Bubble up to parent
+        // Update Ref to signal that this visual state is intentional and shouldn't trigger a re-fetch
+        lastDerivedWaypointsRef.current = newString;
+
         if (newString !== waypointsInput) {
             onWaypointsChanged(newString);
         }

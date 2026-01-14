@@ -145,8 +145,6 @@ export default function TripCard({ trips, destinationImages = {} }: { trips: any
                                         <div className="font-bold text-red-600 text-base">{formatPrice(t.price)}</div>
                                         <div className="text-xs text-gray-500 font-medium flex items-center gap-1 mt-1">
                                             <Zap className="w-3 h-3 text-yellow-500" />
-                                            {new Date(t.departure_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
-                                            <span className="text-gray-300">|</span>
                                             {new Date(t.departure_time).toLocaleDateString('vi-VN', { day: 'numeric', month: 'numeric' })}
                                         </div>
                                     </div>

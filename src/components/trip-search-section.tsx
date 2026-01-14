@@ -23,7 +23,7 @@ const HERO_SLIDES = [
     },
     {
         id: 3,
-        image: '/tet-bg-v4.png',
+        image: '/anhnenchinh.jpg',
         title: <>Du Xuân <br /> <span className="text-[#FFD700]">Rộn Ràng</span></>,
         subtitle: 'Trải nghiệm hành trình trọn vẹn và ý nghĩa cùng Hola Bus.'
     }
@@ -235,7 +235,7 @@ export default function TripSearchSection({ trips, user, destinationImages = {} 
                                 src={HERO_SLIDES[currentSlide].image}
                                 alt="Banner"
                                 fill
-                                className="object-cover object-center"
+                                className={`object-center ${HERO_SLIDES[currentSlide].id === 3 ? 'object-contain bg-[#FFFBE6]' : 'object-cover'}`}
                                 priority={currentSlide === 0}
                             />
                             {/* Overlay */}
@@ -243,7 +243,7 @@ export default function TripSearchSection({ trips, user, destinationImages = {} 
                             {/* <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent"></div> */}
 
                             {/* Content */}
-                            <div className="absolute inset-0 max-w-[1280px] mx-auto px-4 md:px-6 pointer-events-none">
+                            <div className={`absolute inset-0 max-w-[1280px] mx-auto px-4 md:px-6 pointer-events-none ${HERO_SLIDES[currentSlide].id === 3 ? 'hidden' : ''}`}>
                                 <div className="h-full flex flex-col justify-center text-white max-w-2xl pointer-events-auto pl-2 md:pl-0 pb-12">
                                     <motion.div
                                         initial={{ opacity: 0, y: 30 }}

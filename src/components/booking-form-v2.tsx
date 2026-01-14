@@ -81,8 +81,7 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
           fullName: fullName,
           phone: phoneNumber,
           studentId: email, // Dùng trường studentId để lưu email tạm thời
-          notes: finalNotes, // Combined notes
-          honeypot: honeypot // Pass honeypot to server
+          notes: finalNotes // Combined notes
         }
       );
 
@@ -166,7 +165,7 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
       {/* THÊM TRƯỜNG GHI CHÚ (ĐIỂM XUỐNG XE) */}
       <div>
         <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">
-          Điểm xuống xe mong muốn (Note) <span className="text-red-500">*</span>
+          Điểm xuống mong muốn trước sát nhập <span className="text-red-500">*</span>
         </label>
         <div className="relative">
           <textarea

@@ -13,17 +13,17 @@ const HERO_SLIDES = [
         id: 1,
         image: '/tet-atmosphere.png',
         title: <>Khám phá Tết <br /> <span className="text-[#FFD700]">Diệu Kỳ</span></>,
-        subtitle: 'Ưu đãi vé xe giảm tới 50% cho sinh viên, về nhà đón Tết sum vầy.'
+        subtitle: 'Vui tết cùng HOLABUS.'
     },
     {
         id: 2,
         image: '/tet-bg-2025.png',
         title: <>Về Nhà <br /> <span className="text-[#FFD700]">Đón Tết</span></>,
-        subtitle: 'Hàng ngàn chuyến xe an toàn, chất lượng đang chờ đón bạn.'
+        subtitle: 'Hàng ngàn chuyến xe tiện lợi, chất lượng đang chờ đón bạn.'
     },
     {
         id: 3,
-        image: '/tet-bg-v4.png',
+        image: '/anhnenchinh.jpg',
         title: <>Du Xuân <br /> <span className="text-[#FFD700]">Rộn Ràng</span></>,
         subtitle: 'Trải nghiệm hành trình trọn vẹn và ý nghĩa cùng Hola Bus.'
     }

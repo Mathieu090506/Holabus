@@ -111,16 +111,18 @@ export async function POST(req: Request) {
                                 console.error(emailDebug);
                             } else {
                                 const { data: emailData, error: emailError } = await resend.emails.send({
-                                    from: 'HOLA BUS <onboarding@resend.dev>',
+                                    from: 'HOLA BUS <booking@holabus.com.vn>',
                                     to: emailNhanVe,
                                     subject: `[HOLA BUS] Vé điện tử: ${paymentCode}`,
                                     react: TicketEmail({
                                         customerName: booking.full_name || profile?.full_name || 'Khách hàng',
+                                        studentId: booking.student_id || profile?.student_id || '',
+                                        phoneNumber: booking.phone_number || profile?.phone_number || '',
                                         busRoute: trip ? `${trip.origin} - ${trip.destination}` : 'Chuyến đi',
-                                        departureTime: trip ? new Date(trip.departure_time).toLocaleString('vi-VN') : '',
+                                        departureTime: 'Sáng thứ 7 (07/02/2026)', // ⚠️ FIXED TIME AS REQUESTED
                                         ticketCode: paymentCode,
-                                        seatType: booking.seat_preference,
-                                        price: booking.amount
+                                        price: booking.amount,
+                                        note: booking.more // <--- Thêm ghi chú vào email
                                     }),
                                 });
 

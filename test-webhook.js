@@ -1,50 +1,49 @@
-// Nodejs v18+ đã có fetch built-in
+// Node 18+ supports fetch natively
 
-const { hrtime } = require("process");
+const WEBHOOK_SECRET = 'HOLA_BUS_SECRET_2026_MEOWMEOWMEOW';
+const URL = 'http://localhost:3000/api/webhook';
 
-// Nếu chạy lỗi 'require not defined' hoặc 'fetch not defined', hãy dùng: node --experimental-fetch test-webhook.js (với Node cũ)
-// Hoặc đổi tên thành .mjs
+// Lấy mã đơn từ tham số dòng lệnh
+const paymentCode = process.argv[2];
+const amount = process.argv[3] || 1000000; // Default amount huge to ensure payment success
 
-// CẤU HÌNH
-const API_URL = 'http://localhost:3000/api/webhook';
-const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET; // <--- ĐIỀN TOKEN TRONG .env.local CỦA BẠN VÀO ĐÂY
+if (!paymentCode) {
+    console.log("❌ Vui lòng nhập mã đơn hàng (Payment Code)!");
+    console.log("👉 Ví dụ: node test-webhook.js HOLA12345 200000");
+    process.exit(1);
+}
 
-async function run() {
-    // Giả lập 1 giao dịch từ Casso
-    const payload = {
-        error: 0,
-        message: "success",
-        data: [
-            {
-                id: Math.floor(Math.random() * 1000000),
-                tid: "TEST_" + Date.now(),
-                description: "CK HOLA12345 DEMO", // <--- Thay HOLA12345 bằng mã đơn thật để test update DB
-                amount: 100000,
-                cusum_balance: 5000000,
-                when: new Date().toISOString(),
-                bank_sub_acc_id: "00000"
-            }
-        ]
-    };
+const payload = {
+    error: 0,
+    data: [
+        {
+            id: Math.floor(Math.random() * 1000000),
+            tid: "GD" + Math.floor(Math.random() * 1000000),
+            description: `${paymentCode} TESTING PAYMENT`,
+            amount: parseInt(amount),
+            cusum_balance: 10000000,
+            when: new Date().toISOString(),
+            bank_sub_acc_id: "0123456789"
+        }
+    ]
+};
 
-    console.log("🚀 Đang gửi Webhook giả lập tới:", API_URL);
-    console.log("📦 Payload:", JSON.stringify(payload, null, 2));
+console.log(`🚀 Đang gửi Webhook test cho đơn: ${paymentCode} (Số tiền: ${amount})...`);
 
+(async () => {
     try {
-        const res = await fetch(API_URL, {
+        const response = await fetch(URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'secure-token': WEBHOOK_SECRET, // Giả lập header từ Casso
+                'secure-token': WEBHOOK_SECRET
             },
             body: JSON.stringify(payload)
         });
 
-        const data = await res.json();
-        console.log("✅ Kết quả:", res.status, data);
-    } catch (err) {
-        console.error("❌ Lỗi kết nối:", err);
+        const data = await response.json();
+        console.log("✅ Kết quả Server trả về:", JSON.stringify(data, null, 2));
+    } catch (error) {
+        console.error("❌ Lỗi kết nối:", error.message);
     }
-}
-
-run();
+})();

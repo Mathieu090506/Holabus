@@ -71,7 +71,7 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ c
                     <div className="bg-slate-50 p-6 rounded-2xl border-2 border-dashed border-slate-200 mb-8 relative group">
                         <div className="bg-white p-3 rounded-xl shadow-sm inline-block mb-3">
                             <img
-                                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${ticket.payment_code}`}
+                                src={`https://quickchart.io/qr?text=${encodeURIComponent(ticket.payment_code)}&size=300&ecLevel=H&margin=1`}
                                 alt="QR Ticket"
                                 className="w-40 h-40 object-contain"
                             />
@@ -96,14 +96,15 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ c
                             </div>
                         </div>
 
+                        {/* NEW: Khởi hành cố định */}
                         <div className="flex items-start gap-4">
-                            <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center shrink-0">
-                                <CheckCircle className="w-5 h-5 text-red-600" />
+                            <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center shrink-0">
+                                <Clock className="w-5 h-5 text-orange-600" />
                             </div>
                             <div>
-                                <p className="text-sm text-slate-400 font-medium">Lưu ý</p>
-                                <h3 className="font-bold text-red-600 text-lg">
-                                    Quý khách lưu vé để checkin
+                                <p className="text-sm text-slate-400 font-medium">Khởi hành</p>
+                                <h3 className="font-bold text-orange-600 text-lg">
+                                    Sáng thứ 7 (07/02/2026)
                                 </h3>
                             </div>
                         </div>
@@ -117,7 +118,22 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ c
                                 <h3 className="font-bold text-slate-800 text-lg">
                                     {ticket.full_name}
                                 </h3>
-                                <p className="text-xs text-slate-500">{ticket.phone_number}</p>
+                                <div className="text-sm text-slate-500 flex flex-col">
+                                    <span>MSSV: {ticket.student_id}</span>
+                                    <span>SĐT: {ticket.phone_number}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-4">
+                            <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center shrink-0">
+                                <CheckCircle className="w-5 h-5 text-red-600" />
+                            </div>
+                            <div>
+                                <p className="text-sm text-slate-400 font-medium">Lưu ý</p>
+                                <h3 className="font-bold text-red-600 text-base">
+                                    Quý khách lưu vé để sai soát vé
+                                </h3>
                             </div>
                         </div>
                     </div>

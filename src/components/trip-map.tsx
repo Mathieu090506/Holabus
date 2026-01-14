@@ -40,7 +40,14 @@ export default function TripMap({ origin, destination, waypoints }: TripMapProps
 
       if (points.length > 1) {
         // Nếu còn điểm khác thì làm điểm trung gian
-        const intermediatePoints = points.slice(0, points.length - 1);
+        let intermediatePoints = points.slice(0, points.length - 1);
+
+        // ⚠️ Limit Google Maps: Too many waypoints will break the Embed API
+        if (intermediatePoints.length > 20) {
+          const step = Math.ceil(intermediatePoints.length / 20);
+          intermediatePoints = intermediatePoints.filter((_, index) => index % step === 0).slice(0, 20);
+        }
+
         const encodedPoints = intermediatePoints.map(p => encodeURIComponent(p)).join('|');
         waypointsParam = `&waypoints=${encodedPoints}`;
       }
