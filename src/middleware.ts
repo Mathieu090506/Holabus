@@ -19,7 +19,7 @@ if (redisUrl && redisToken) {
 
     ratelimit = new Ratelimit({
       redis: redis,
-      limiter: Ratelimit.slidingWindow(20, "10 s"),
+      limiter: Ratelimit.slidingWindow(70, "10 s"),
       analytics: true,
     });
   } catch (e) {
