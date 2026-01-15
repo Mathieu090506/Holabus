@@ -179,21 +179,33 @@ export async function checkInTicket(paymentCode: string) {
   try {
     const supabase = createAdminClient();
 
-    const { data: booking, error } = await supabase
+    // 1. Tìm tất cả vé có mã này (đề phòng trùng mã do random)
+    const { data: bookings, error } = await supabase
       .from('bookings')
       .select('*, trips(destination, departure_time)')
-      .eq('payment_code', paymentCode)
-      .single();
+      .eq('payment_code', paymentCode);
 
-    if (error || !booking) {
+    if (error || !bookings || bookings.length === 0) {
       return { error: 'Vé không tồn tại hoặc mã sai!' };
     }
 
-    if (booking.status === 'PENDING') return { error: 'Vé CHƯA THANH TOÁN!' };
+    // 2. Tìm vé hợp lệ ưu tiên (Chưa check-in)
+    // Nếu trùng mã, ưu tiên xử lý vé chưa check-in trước
+    let booking = bookings.find(b => !b.check_in_at);
+
+    // Nếu tất cả đều đã check-in, lấy vé đầu tiên để hiện thông tin
+    if (!booking) {
+      booking = bookings[0];
+    }
+
+    // 3. Kiểm tra trạng thái
+    if (booking.status === 'PENDING') return { error: 'Vé CHƯA THANH TOÁN (Pending)!' };
     if (booking.status === 'CANCELLED') return { error: 'Vé ĐÃ BỊ HỦY!' };
 
+    // 4. Update Check-in
     const checkInTime = new Date().toISOString();
 
+    // Chỉ update 1 dòng theo ID duy nhất
     const { error: updateError } = await supabase
       .from('bookings')
       .update({ check_in_at: checkInTime })
@@ -205,8 +217,8 @@ export async function checkInTicket(paymentCode: string) {
       success: true,
       booking: {
         ...booking,
-        trip_destination: booking.trips.destination,
-        trip_time: booking.trips.departure_time,
+        trip_destination: (booking.trips as any)?.destination,
+        trip_time: (booking.trips as any)?.departure_time,
         check_in_at: checkInTime
       }
     };

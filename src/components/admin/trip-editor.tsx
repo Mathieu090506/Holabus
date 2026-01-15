@@ -413,7 +413,7 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
                                             // 2. Map dữ liệu
                                             const rows = bookings.map(b => [
                                                 b.payment_code,
-                                                b.full_name || 'Khách vãng lai',
+                                                b.full_name || b.email || 'Khách hàng',
                                                 b.email || '',
                                                 "'" + (b.phone_number || ''), // Thêm dấu ' để Excel không tự format số 0
                                                 (b.amount || 0).toLocaleString('vi-VN') + 'đ',
@@ -459,7 +459,7 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
 
                                                     {/* CỘT 1: THÔNG TIN KHÁCH */}
                                                     <td className="p-3">
-                                                        <div className="font-bold text-slate-800">{bk.full_name || 'Khách vãng lai'}</div>
+                                                        <div className="font-bold text-slate-800">{bk.full_name || bk.email || 'Khách hàng'}</div>
                                                         <div className="text-slate-500 text-xs">{bk.phone_number}</div>
                                                     </td>
 
@@ -676,7 +676,7 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
                                             <tr key={bk.id} className="hover:bg-blue-50 transition-colors">
                                                 <td className="p-4 text-center text-slate-400 font-mono">{index + 1}</td>
                                                 <td className="p-4 font-mono font-bold text-blue-600">{bk.payment_code}</td>
-                                                <td className="p-4 font-bold text-slate-800">{bk.full_name || '---'}</td>
+                                                <td className="p-4 font-bold text-slate-800">{bk.full_name || bk.email || 'Khách hàng'}</td>
                                                 <td className="p-4 text-slate-600">{bk.phone_number}</td>
                                                 <td className="p-4 text-slate-500 max-w-[200px] truncate" title={bk.email}>{bk.email || '-'}</td>
                                                 <td className="p-4 text-slate-600 font-mono">{bk.student_id || '-'}</td>

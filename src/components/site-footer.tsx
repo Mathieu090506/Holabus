@@ -11,9 +11,16 @@ export default function SiteFooter() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     {/* Brand Column - Spans 2 cols */}
                     <div className="lg:col-span-2 space-y-6">
-                        <h4 className="text-white font-black text-2xl uppercase tracking-wide">HOLA BUS 2026</h4>
-                        <p className="leading-relaxed text-sm max-w-sm">
-                            Dự án phi lợi nhuận hỗ trợ sinh viên FPT University về quê ăn Tết an toàn, tiết kiệm.
+                        <div className="relative h-32 w-80 -ml-6 -mt-4">
+                            <Image
+                                src="/logo1.png"
+                                alt="Hola Bus 2026"
+                                fill
+                                className="object-contain object-left"
+                            />
+                        </div>
+                        <p className="leading-relaxed text-sm max-w-sm font-medium -mt-8">
+                            Dự án giúp sinh viên FPT về quê ăn Tết tiện lợi
                         </p>
 
                         <div className="flex items-center gap-4">
@@ -71,7 +78,7 @@ export default function SiteFooter() {
                                 <Phone className="shrink-0 text-[#D0021B]" size={20} />
                                 <div>
                                     <span className="block text-white font-bold text-base">0376 875 810</span>
-                                    <span className="text-slate-500 text-xs uppercase font-bold">Ms. Anh Hồng (Trưởng phòng dịch vụ)</span>
+                                    <span className="text-slate-500 text-xs uppercase font-bold">Ms. Ánh Hồng (Trưởng phòng dịch vụ)</span>
                                 </div>
                             </li>
                             <li className="flex items-start gap-3">
