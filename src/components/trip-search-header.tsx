@@ -105,7 +105,7 @@ export default function TripSearchHeader({ trips = [] }: { trips?: any[] }) {
         <div className="relative bg-[#FFFBE6] pb-8 md:pb-16 pt-0">
 
             {/* Static Banner Container - Full Width */}
-            <div className="relative w-full h-[400px] md:h-[600px] bg-slate-900 overflow-hidden shadow-sm">
+            <div className="relative w-full h-[56.25vw] md:h-[600px] bg-slate-900 overflow-hidden shadow-sm">
                 {/* Background Image */}
                 <NextImage
                     src="/Banner website.png"
