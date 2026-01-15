@@ -31,6 +31,25 @@ export async function middleware(request: NextRequest) {
 
   const ip = request.headers.get('x-forwarded-for') || request.ip || '127.0.0.1';
 
+  // --- SEO REDIRECTS (WWW & Index) ---
+  const url = request.nextUrl.clone();
+  const host = request.headers.get('host');
+  const pathname = url.pathname;
+
+  // 1. Redirect WWW to Non-WWW (Canonical)
+  if (host && host.startsWith('www.')) {
+    const newHost = host.replace('www.', '');
+    url.host = newHost;
+    url.protocol = 'https';
+    return NextResponse.redirect(url, 301);
+  }
+
+  // 2. Redirect index.html / index.php / home to root
+  if (pathname === '/index.html' || pathname === '/index.php' || pathname === '/home') {
+    url.pathname = '/';
+    return NextResponse.redirect(url, 301);
+  }
+
   // Bỏ qua các file tĩnh (ảnh, css...) để tiết kiệm request Redis
   if (!request.nextUrl.pathname.match(/\.(png|jpg|jpeg|svg|css|js|ico)$/)) {
     // Chỉ chạy Rate Limit nếu có cấu hình Redis hợp lệ
