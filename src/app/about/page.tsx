@@ -23,6 +23,7 @@ import {
     Plus,
     Minus
 } from 'lucide-react';
+import SiteFooter from '@/components/site-footer';
 
 // --- COMPONENTS ---
 
@@ -180,9 +181,6 @@ export default function AboutPage() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <div className="inline-block bg-yellow-400 text-slate-900 font-black px-4 py-1 rounded-sm text-xs uppercase tracking-widest mb-6">
-                            Dự án Phi Lợi Nhuận
-                        </div>
                         <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight">
                             Hola Bus 2026 <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
@@ -396,7 +394,7 @@ export default function AboutPage() {
 
             {/* 7️⃣ SECTION: NEW JOURNEY 2026 */}
             <section id="journey" className="relative h-[80vh] flex items-center justify-center bg-fixed bg-center bg-cover"
-                style={{ backgroundImage: "url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2069')" }}
+                style={{ backgroundImage: "url('/tetimg.jpg')" }}
             >
                 <div className="absolute inset-0 bg-slate-900/70"></div>
                 <div className="relative z-10 text-center max-w-4xl px-4 text-white">
@@ -472,60 +470,9 @@ export default function AboutPage() {
             </section>
 
             {/* 1️⃣1️⃣ FOOTER LIÊN HỆ */}
-            <section id="contact" className="py-16 px-4 bg-slate-900 text-slate-400 border-t border-slate-800">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-12">
-                    <div className="col-span-2">
-                        <h4 className="text-white font-black text-2xl mb-6">HOLA BUS 2026</h4>
-                        <p className="mb-6 max-w-sm">
-                            Dự án phi lợi nhuận hỗ trợ sinh viên FPT University về quê ăn Tết an toàn, tiết kiệm.
-                        </p>
-                        <div className="flex gap-4">
-                            <a href="#" className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center hover:scale-110 transition">
-                                <Facebook size={20} />
-                            </a>
-                            {/* Add more socials if needed */}
-                        </div>
-                    </div>
-
-                    <div>
-                        <h4 className="text-white font-bold text-lg mb-6 uppercase">Liên Hệ</h4>
-                        <ul className="space-y-4">
-                            <li className="flex items-start gap-3">
-                                <Phone className="shrink-0 text-[#D0021B]" size={20} />
-                                <div>
-                                    <span className="block text-white font-bold">0943 597 513</span>
-                                    <span className="text-sm">Ms. Mai Linh (Điều phối tổng)</span>
-                                </div>
-                            </li>
-                            <li className="flex items-start gap-3">
-                                <Phone className="shrink-0 text-[#D0021B]" size={20} />
-                                <div>
-                                    <span className="block text-white font-bold">0376 875 810</span>
-                                    <span className="text-sm">Ms. Ánh Hồng (Trưởng phòng dịch vụ)</span>
-                                </div>
-                            </li>
-                            <li className="flex items-start gap-3">
-                                <Mail className="shrink-0 text-[#D0021B]" size={20} />
-                                <div>
-                                    <span className="block text-white font-bold">holabus2026@gmail.com</span>
-                                    <span className="text-sm">Email hỗ trợ</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div>
-                        <h4 className="text-white font-bold text-lg mb-6 uppercase">Địa chỉ</h4>
-                        <p className="flex items-start gap-3">
-                            <MapPin className="shrink-0 text-[#D0021B]" size={20} />
-                            <span>Đại học FPT Hà Nội,<br />Khu Công nghệ cao Hòa Lạc, Km29 Đại lộ Thăng Long, Hà Nội.</span>
-                        </p>
-                    </div>
-                </div>
-                <div className="text-center mt-16 pt-8 border-t border-slate-800 text-sm">
-                    © 2026 Hola Bus. Made by Nguyễn Dương Công Thành and Đoàn Thế Long.
-                </div>
-            </section>
+            <div id="contact">
+                <SiteFooter />
+            </div>
 
         </main>
     );

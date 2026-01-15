@@ -107,7 +107,7 @@ const jsonLd = {
   '@type': 'TravelAgency',
   name: 'Hola Bus',
   url: 'https://holabus.com.vn',
-  image: 'https://holabus.com.vn/anh-co.jpg',
+  image: 'https://holabus.com.vn/anh-co.png',
   description:
     'Nền tảng đặt vé xe khách trực tuyến uy tín hàng đầu Việt Nam.',
   telephone: '+84123456789',

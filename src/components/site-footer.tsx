@@ -20,7 +20,7 @@ export default function SiteFooter() {
                             />
                         </div>
                         <p className="leading-relaxed text-sm max-w-sm font-medium -mt-8">
-                            Dự án giúp sinh viên FPT về quê ăn Tết tiện lợi
+                            Dự án được xây dựng để giải quyết nhu cầu đi lại dịp Tết của sinh viên FPT, góp phần mang lại hành trình về quê thuận lợi và thoải mái hơn.
                         </p>
 
                         <div className="flex items-center gap-4">

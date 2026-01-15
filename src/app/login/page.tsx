@@ -56,8 +56,8 @@ export default async function LoginPage(props: {
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6 lg:p-12 text-white">
-          <h2 className="text-2xl lg:text-4xl font-black mb-2 lg:mb-4">Về nhà đón Tết</h2>
-          <p className="text-sm lg:text-lg font-medium opacity-90">Sum vầy bên gia đình cùng Hola Bus.</p>
+          <h2 className="text-2xl lg:text-4xl font-black mb-2 lg:mb-4"></h2>
+          <p className="text-sm lg:text-lg font-medium opacity-90"></p>
         </div>
       </div>
 

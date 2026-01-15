@@ -8,26 +8,8 @@ import TripCard from './trip-card';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- CONSTANTS ---
-const HERO_SLIDES = [
-    {
-        id: 1,
-        image: '/tet-atmosphere.png',
-        title: <>Khám phá Tết <br /> <span className="text-[#FFD700]">Diệu Kỳ</span></>,
-        subtitle: 'Ưu đãi vé xe giảm tới 50% cho sinh viên, về nhà đón Tết sum vầy.'
-    },
-    {
-        id: 2,
-        image: '/tet-bg-2025.png',
-        title: <>Về Nhà <br /> <span className="text-[#FFD700]">Đón Tết</span></>,
-        subtitle: 'Hàng ngàn chuyến xe an toàn, chất lượng đang chờ đón bạn.'
-    },
-    {
-        id: 3,
-        image: '/anhnenchinh.jpg',
-        title: <>Du Xuân <br /> <span className="text-[#FFD700]">Rộn Ràng</span></>,
-        subtitle: 'Trải nghiệm hành trình trọn vẹn và ý nghĩa cùng Hola Bus.'
-    }
-];
+// --- CONSTANTS ---
+// specific constants removed as we only have a static banner now.
 
 // --- UTILS ---
 function normalizeString(str: string) {
@@ -171,20 +153,6 @@ export default function TripSearchSection({ trips, user, destinationImages = {} 
         }
     };
 
-    // Slider State
-    const [currentSlide, setCurrentSlide] = useState(0);
-
-    // Auto-advance Slider
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-        }, 5000); // Change every 5 seconds
-        return () => clearInterval(timer);
-    }, []);
-
-    const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-    const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
-
     // Debounce Logic
     useEffect(() => {
         if (searchTerm !== debouncedSearchTerm) {
@@ -216,77 +184,19 @@ export default function TripSearchSection({ trips, user, destinationImages = {} 
     return (
         <div className="min-h-screen bg-[#FFFBE6] font-sans pb-20">
 
-            {/* 1. HERO SECTION (Slider - Full Width) */}
+            {/* 1. HERO SECTION (Static Banner - Full Width) */}
             <div className="relative bg-[#FFFBE6] pb-8 md:pb-16 pt-0">
 
-                {/* Banner Slider Container - Full Width */}
-                <div className="relative w-full h-[400px] md:h-[600px] bg-slate-900 overflow-hidden shadow-sm group">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={currentSlide}
-                            className="absolute inset-0"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 1 }}
-                        >
-                            {/* Background Image */}
-                            <NextImage
-                                src={HERO_SLIDES[currentSlide].image}
-                                alt="Banner"
-                                fill
-                                className={`object-center ${HERO_SLIDES[currentSlide].id === 3 ? 'object-contain bg-[#FFFBE6]' : 'object-cover'}`}
-                                priority={currentSlide === 0}
-                            />
-                            {/* Overlay */}
-                            {/* Overlay Removed */}
-                            {/* <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent"></div> */}
-
-                            {/* Content */}
-                            <div className={`absolute inset-0 max-w-[1280px] mx-auto px-4 md:px-6 pointer-events-none ${HERO_SLIDES[currentSlide].id === 3 ? 'hidden' : ''}`}>
-                                <div className="h-full flex flex-col justify-center text-white max-w-2xl pointer-events-auto pl-2 md:pl-0 pb-12">
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 30 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.8, delay: 0.2 }}
-                                    >
-                                        <h1 className="text-4xl md:text-7xl font-black mb-6 leading-tight drop-shadow-2xl text-yellow-50">
-                                            {HERO_SLIDES[currentSlide].title}
-                                        </h1>
-                                        <p className="text-lg md:text-2xl font-bold opacity-90 mb-8 drop-shadow-xl text-yellow-100 max-w-lg shadow-black">
-                                            {HERO_SLIDES[currentSlide].subtitle}
-                                        </p>
-                                    </motion.div>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </AnimatePresence>
-
-                    {/* Slider Controls (Arrows) - Hidden on mobile, visible on group hover for desktop */}
-                    <button
-                        onClick={prevSlide}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur-md text-white transition-all opacity-0 group-hover:opacity-100 md:flex hidden"
-                    >
-                        <ChevronLeft className="w-8 h-8" />
-                    </button>
-                    <button
-                        onClick={nextSlide}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur-md text-white transition-all opacity-0 group-hover:opacity-100 md:flex hidden"
-                    >
-                        <ChevronRight className="w-8 h-8" />
-                    </button>
-
-                    {/* Dots Indicators */}
-                    <div className="absolute bottom-24 md:bottom-28 left-0 right-0 flex justify-center gap-3 z-20">
-                        {HERO_SLIDES.map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setCurrentSlide(index)}
-                                className={`w-3 h-3 rounded-full transition-all ${index === currentSlide ? 'bg-[#D0021B] w-8' : 'bg-white/50 hover:bg-white'
-                                    }`}
-                            />
-                        ))}
-                    </div>
+                {/* Static Banner Container - Full Width */}
+                <div className="relative w-full h-[400px] md:h-[600px] bg-slate-900 overflow-hidden shadow-sm">
+                    {/* Background Image */}
+                    <NextImage
+                        src="/Banner website.png"
+                        alt="Banner"
+                        fill
+                        className="object-cover object-center"
+                        priority
+                    />
                 </div>
 
                 {/* SEARCH WIDGET (Floating Overlap) */}
