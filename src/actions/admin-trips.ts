@@ -47,6 +47,7 @@ export async function createTrip(formData: FormData) {
       waypoints: formData.get('waypoints') as string,
       tags: formData.get('tags') as string,
       google_sheet_url: formData.get('google_sheet_url') as string,
+      vehicle_type: formData.get('vehicle_type') as string,
     };
 
     console.log("🚀 Đang tạo chuyến xe:", tripData);
@@ -94,6 +95,7 @@ export async function updateTrip(tripId: number, formData: FormData) {
       waypoints: formData.get('waypoints') as string,
       tags: formData.get('tags') as string, // 👇 Tag hiển thị
       google_sheet_url: formData.get('google_sheet_url') as string, // 👇 Link Google Sheet
+      vehicle_type: formData.get('vehicle_type') as string,
     };
 
     console.log("🚀 Đang update chuyến:", tripId, updates);

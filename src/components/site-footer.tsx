@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Facebook, Phone, MapPin, Mail } from 'lucide-react';
 
 export default function SiteFooter() {
@@ -34,6 +35,24 @@ export default function SiteFooter() {
                             >
                                 <Facebook size={20} />
                             </a>
+
+                            <div className="relative h-10 w-32 hover:opacity-90 transition-opacity">
+                                <Image
+                                    src="/Logo_FPT_Education (1).png"
+                                    alt="FPT Education"
+                                    fill
+                                    className="object-contain"
+                                />
+                            </div>
+
+                            <div className="relative h-12 w-12 hover:scale-110 transition-transform">
+                                <Image
+                                    src="/logo ko chữ.png"
+                                    alt="Hola Bus Logo"
+                                    fill
+                                    className="object-contain"
+                                />
+                            </div>
                         </div>
                     </div>
 

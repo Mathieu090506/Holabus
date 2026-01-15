@@ -116,10 +116,10 @@ export async function POST(req: Request) {
                                     subject: `[HOLA BUS] Vé điện tử: ${paymentCode}`,
                                     react: TicketEmail({
                                         customerName: booking.full_name || profile?.full_name || 'Khách hàng',
-                                        studentId: booking.student_id || profile?.student_id || '',
+                                        email: emailNhanVe || '',
                                         phoneNumber: booking.phone_number || profile?.phone_number || '',
                                         busRoute: trip ? `${trip.origin} - ${trip.destination}` : 'Chuyến đi',
-                                        departureTime: 'Sáng thứ 7 (07/02/2026)', // ⚠️ FIXED TIME AS REQUESTED
+                                        departureTime: 'Sáng thứ 7 - 07/02/2026', // ⚠️ FIXED TIME AS REQUESTED
                                         ticketCode: paymentCode,
                                         price: booking.amount,
                                         note: booking.more // <--- Thêm ghi chú vào email

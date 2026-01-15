@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
@@ -7,18 +8,13 @@ import { Plus, Minus } from 'lucide-react';
 const FAQS = [
     {
         question: "Xe có hỗ trợ trung chuyển/đón trả tận nơi không?",
-        answer: "Xe của Hola Bus sẽ hỗ trợ đón bạn tại các địa điểm sau: Cây xăng 39, Ngã 3 Tân Xã và trường Đại học FPT."
+        answer: "Xe của Hola Bus sẽ hỗ trợ đón bạn tại các điểm trong Hòa Lạc, Và sẽ trả bạn tại điểm bạn muốn xuống thuộc dọc trục đường mà xe đi."
     },
     {
         question: "Làm thế nào để mua vé xe Hola Bus?",
         answer: "Bạn chỉ cần tìm tỉnh/thành mình muốn đặt vé, điền đầy đủ thông tin cá nhân (bao gồm Tên, SĐT, email và điểm xuống xe mong muốn), chọn “Xác nhận đặt vé” và thanh toán. Vé điện tử sẽ được gửi về email bạn ngay lập tức."
     },
 
-
-    {
-        question: "Xe có đưa về tới tận nhà không?",
-        answer: "Không. Vì đặc thù của tuyến xe và địa hình, chúng mình sẽ đưa bạn tới một địa điểm nhất định. Nhưng đừng lo, vì các tuyến đường không cách quá xa nhà bạn đâu."
-    },
 
     {
         question: "Tôi có thể được chọn chỗ ngồi không?",
@@ -55,8 +51,16 @@ export default function FaqSection({ faqs }: FaqSectionProps) {
     };
 
     return (
-        <section className="py-20 px-4 bg-white">
-            <div className="max-w-3xl mx-auto">
+        <section className="py-20 px-4 bg-white relative overflow-hidden">
+            <div className="absolute inset-0 z-0 opacity-20 pointer-events-none select-none">
+                <Image
+                    src="/đường-ngang1.png"
+                    alt=""
+                    fill
+                    className="object-cover"
+                />
+            </div>
+            <div className="max-w-3xl mx-auto relative z-10">
                 {/* Header */}
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">

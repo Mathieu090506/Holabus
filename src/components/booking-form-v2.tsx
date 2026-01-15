@@ -152,7 +152,8 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
             <input
               name="email"
               type="email"
-              placeholder="VD: name@example.com"
+              required // <--- BẮT BUỘC ĐỂ GỬI VÉ
+              placeholder="Nhập email để nhận vé (Bắt buộc)"
               className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 outline-none transition"
               defaultValue={user?.email || ''}
             />

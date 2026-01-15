@@ -23,6 +23,12 @@ export async function bookTicket(
     // ---------------------------------------------------------
     // 🛡️ 1. HONEYPOT CHECK (BẪY NGỌT)
     // ---------------------------------------------------------
+
+    // 1. Kiểm tra đăng nhập (Lấy user trước để validate)
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // ---------------------------------------------------------
+    // 🛡️ 1. VALIDATE INPUT (SAFE & SECURE MODE)
     // Nếu các trường ẩn này có dữ liệu -> Chắc chắn là Bot -> Chặn ngay
     // The `extraData` type does not include `website_url` or `fax_number`.
     // If these fields were submitted by a bot, they would likely be part of a direct FormData submission
@@ -95,10 +101,16 @@ export async function bookTicket(
     if (cleanNotes.length > 500) return { error: "Ghi chú quá dài." };
     if (!isSafeInput(cleanNotes)) return { error: "Ghi chú không được chứa Link hoặc <Script>." };
 
-    // D. Validate StudentID / Email
+    // D. Validate StudentID / Email (Hiện tại đang dùng trường này để lưu Email khách vãng lai)
     const cleanStudentId = extraData.studentId ? extraData.studentId.trim() : '';
-    if (cleanStudentId.length > 100) return { error: "Email/MSSV quá dài." };
-    if (!isSafeInput(cleanStudentId)) return { error: "Email/MSSV chứa nội dung không an toàn." };
+    // Nếu không có user login, bắt buộc phải có Email hợp lệ
+    // Regex đơn giản cho email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!user && !cleanStudentId) return { error: "Vui lòng nhập Email để nhận vé." };
+    if (cleanStudentId && !emailRegex.test(cleanStudentId)) return { error: "Email không hợp lệ. Vui lòng kiểm tra lại." };
+
+    if (cleanStudentId.length > 100) return { error: "Email quá dài." };
 
 
     // ---------------------------------------------------------
@@ -133,8 +145,6 @@ export async function bookTicket(
     //   return { error: "Số điện thoại không hợp lệ (10 số, đầu 0)" };
     // }
 
-    // 1. Kiểm tra đăng nhập
-    const { data: { user } } = await supabase.auth.getUser();
     // 2. Chống Spam: Chỉ check nếu đã đăng nhập
     if (user) {
       const thirtySecondsAgo = new Date(Date.now() - 30 * 1000).toISOString();
@@ -177,9 +187,9 @@ export async function bookTicket(
 
       // Các trường thông tin từ Form
       seat_preference: seatPreference, // Vị trí ghế
-      full_name: extraData.fullName,
-      email: user?.email || extraData.studentId, // Ưu tiên email login, fallback sang email nhập tay
-      phone_number: extraData.phone,   // SĐT người dùng nhập
+      // Logic Email: Ưu tiên Email nhập tay từ form (để Admin/User có thể điền mail nhận vé khác)
+      // Nếu không nhập thì mới lấy Email login mặc định
+      email: extraData.studentId ? extraData.studentId : (user?.email || null),
       student_id: extraData.studentId,
       more: `${extraData.notes} \n[Client IP: ${ip}]` // 👈 LƯU IP VÀO ĐÂY ĐỂ TRACKING
     } as any).select().single() as any;

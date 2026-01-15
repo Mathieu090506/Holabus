@@ -18,7 +18,7 @@ import {
 // Định nghĩa kiểu dữ liệu đầu vào cho Email
 interface TicketEmailProps {
   customerName: string;
-  studentId: string;    // MSSV
+  email: string;        // Email khách hàng
   phoneNumber: string;  // SĐT
   busRoute: string;     // VD: Hà Nội - Nam Định
   departureTime: string; // VD: Sáng thứ 7 (07/02/2026)
@@ -29,7 +29,7 @@ interface TicketEmailProps {
 
 export const TicketEmail = ({
   customerName,
-  studentId,
+  email,
   phoneNumber,
   busRoute,
   departureTime,
@@ -51,12 +51,31 @@ export const TicketEmail = ({
           {/* HEADER LOGO */}
           <Section style={headerSection}>
             <Heading style={brandName}>🚌 HOLA BUS</Heading>
-            <Text style={subBrand}>Hệ thống vé xe Tết sinh viên FPT</Text>
+            <Text style={subBrand}>MANG TẾT VỀ NHÀ-cHẲNG NGẠI ĐƯỜNG XA</Text>
           </Section>
 
           {/* MAIN CONTENT */}
           <Section style={contentSection}>
-            <Heading style={h1}>THANH TOÁN THÀNH CÔNG</Heading>
+            <Section style={{ textAlign: 'center' as const, marginBottom: '20px' }}>
+              <Img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Eo_circle_green_white_checkmark.svg/64px-Eo_circle_green_white_checkmark.svg.png"
+                width="24"
+                height="24"
+                style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '10px' }}
+                alt="Success"
+              />
+              <Text style={{
+                display: 'inline-block',
+                color: '#15803d', // Green text
+                fontSize: '22px',
+                fontWeight: 'bold',
+                verticalAlign: 'middle',
+                margin: '0',
+                fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif',
+              }}>
+                THANH TOÁN THÀNH CÔNG
+              </Text>
+            </Section>
             <Text style={heroText}>
               Xin chào <b>{customerName}</b>,<br />
               Vé của bạn đã được xác nhận. Vui lòng lưu email này để lên xe.
@@ -82,8 +101,8 @@ export const TicketEmail = ({
               </Row>
               <Row style={rowSpacing}>
                 <Column>
-                  <Text style={label}>MSSV</Text>
-                  <Text style={{ ...value, wordBreak: 'break-all' }}>{studentId || 'N/A'}</Text>
+                  <Text style={label}>EMAIL</Text>
+                  <Text style={{ ...value, wordBreak: 'break-all' }}>{email || 'N/A'}</Text>
                 </Column>
                 <Column>
                   <Text style={label}>SỐ ĐIỆN THOẠI</Text>
@@ -112,7 +131,7 @@ export const TicketEmail = ({
               </Row>
               <Row style={rowSpacing}>
                 <Column colSpan={2}>
-                  <Text style={label}>KHỞI HÀNH</Text>
+                  <Text style={label}>KHỞI HÀNH (DỰ KIẾN)</Text>
                   <Text style={highlightValue}>{departureTime}</Text>
                 </Column>
               </Row>
@@ -134,10 +153,25 @@ export const TicketEmail = ({
           </Section>
 
           {/* FOOTER */}
-          <Text style={footer}>
-            HOLA BUS System © 2026<br />
-            Hỗ trợ: <Link href="mailto:support@fpt.edu.vn" style={{ color: '#ea580c' }}>support@fpt.edu.vn</Link>
-          </Text>
+          <Section style={footer}>
+            <Text style={{ margin: '0 0 10px', fontStyle: 'italic', color: '#64748b' }}>
+              Đây là email tự động, vui lòng không trả lời email này.
+            </Text>
+
+            <Link href="https://facebook.com/HolaBusFPTU.CSKH" style={{ display: 'inline-block', marginBottom: '10px' }}>
+              <Img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/1024px-2021_Facebook_icon.svg.png"
+                width="24"
+                height="24"
+                alt="Facebook HolaBus"
+              />
+            </Link>
+
+            <Text style={{ margin: '0' }}>
+              HOLA BUS System © 2026<br />
+              Phản hồi qua mail: <Link href="mailto:holabus2026@gmail.com" style={{ color: '#ea580c' }}>holabus2026@gmail.com</Link>
+            </Text>
+          </Section>
         </Container>
       </Body>
     </Html>

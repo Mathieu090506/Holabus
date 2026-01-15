@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Star, Zap, Ticket } from 'lucide-react';
+import { Star, Zap, Ticket, BedDouble, Bus } from 'lucide-react';
 
 // Maps city names to image URLs fallback
 const CITY_IMAGES: Record<string, string> = {
@@ -111,6 +111,12 @@ export default function TripCard({ trips, destinationImages = {} }: { trips: any
                             <span className="bg-[#FFF0F0] text-[#D0021B] text-[12px] px-2 py-1 rounded-[4px] font-normal">
                                 Book now for today
                             </span>
+                            {mainTrip.vehicle_type && (
+                                <span className="flex items-center gap-1 bg-blue-50 text-blue-600 text-[12px] px-2 py-1 rounded-[4px] font-bold border border-blue-100 uppercase">
+                                    {mainTrip.vehicle_type === 'Giường nằm' ? <BedDouble size={14} /> : <Bus size={14} />}
+                                    XE {mainTrip.vehicle_type.toUpperCase()}
+                                </span>
+                            )}
                         </div>
                         {mainTrip.tags && (
                             <div className="flex items-center gap-1.5 mb-2 text-[13px]">

@@ -1,8 +1,10 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/utils/supabase/server';
 import UserNav from './user-nav';
 import MobileNav from './mobile-nav';
 import HeaderNavigation from './header-navigation';
+import BookingButton from './booking-button';
 import { Plane, Search, Bell } from 'lucide-react';
 
 export default async function SiteHeader() {
@@ -18,10 +20,14 @@ export default async function SiteHeader() {
                     <div className="flex items-center gap-8 md:gap-12 flex-shrink-0">
                         {/* LOGO "HOLA BUS" */}
                         <Link href="/" className="flex items-center gap-1 group">
-                            <span className="font-black text-3xl tracking-tighter leading-none">
-                                <span className="text-red-600">HOLA</span>
-                                <span className="text-slate-900">BUS</span>
-                            </span>
+                            <Image
+                                src="/logo1.png"
+                                alt="Hola Bus Logo"
+                                width={200}
+                                height={70}
+                                className="h-16 w-auto object-contain"
+                                priority
+                            />
                         </Link>
 
                         {/* NAV LINKS */}
@@ -30,6 +36,14 @@ export default async function SiteHeader() {
 
                     {/* RIGHT SIDE: USER NAV */}
                     <div className="flex items-center gap-2 md:gap-6 flex-1 justify-end">
+
+                        {/* Decor Images */}
+                        <div className="hidden md:flex items-center gap-2 mr-2 select-none">
+                            <div className="relative w-20 h-20">
+                                <Image src="/mascot1.png" alt="Mascot" fill className="object-contain" priority />
+                            </div>
+                            <BookingButton />
+                        </div>
 
                         {/* User UserNav */}
                         <div className="hidden md:block">

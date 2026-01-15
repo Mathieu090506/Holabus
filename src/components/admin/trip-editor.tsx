@@ -5,7 +5,7 @@ import RouteMap from '@/components/trip-map';
 import InteractiveMap from './interactive-map';
 import { createTrip, updateTrip, deleteTrip, deleteBooking } from '@/actions/admin-trips'; // Import thêm deleteBooking
 import { useRouter } from 'next/navigation';
-import { Save, Trash2, MapPin, Clock, DollarSign, Users, Ticket, UserX, UserCheck, Armchair } from 'lucide-react';
+import { Save, Trash2, MapPin, Clock, DollarSign, Users, Ticket, UserX, UserCheck, Armchair, Bus } from 'lucide-react';
 
 // Props nhận vào: trip (thông tin chuyến), bookings (danh sách vé đã đặt)
 export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: any[] }) {
@@ -17,6 +17,7 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
     const [destination, setDestination] = useState(trip?.destination || '');
     const [waypoints, setWaypoints] = useState(trip?.waypoints || '');
     const [tags, setTags] = useState(trip?.tags || '');
+    const [vehicleType, setVehicleType] = useState(trip?.vehicle_type || '');
     // const [googleSheetUrl, setGoogleSheetUrl] = useState(trip?.google_sheet_url || ''); // Bỏ Google Sheet
     const [loading, setLoading] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState<any>(null);
@@ -211,6 +212,27 @@ export default function TripEditor({ trip, bookings }: { trip?: any, bookings?: 
                                 </p>
                             </div>
                         </div>
+                        {/* LOẠI XE (NEW) */}
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Loại xe</label>
+                            <div className="relative">
+                                <Bus className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
+                                <select
+                                    name="vehicle_type"
+                                    value={vehicleType}
+                                    onChange={(e) => setVehicleType(e.target.value)}
+                                    className="w-full pl-10 p-3 border border-slate-300 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 appearance-none bg-white font-bold text-slate-700"
+                                >
+                                    <option value="">-- Không chọn --</option>
+                                    <option value="Giường nằm">Xe Giường nằm</option>
+                                    <option value="Bus thường">Xe Bus thường</option>
+                                </select>
+                                <div className="absolute right-3 top-3 pointer-events-none">
+                                    <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                </div>
+                            </div>
+                        </div>
+
                         {/* SỐ LƯỢNG VÉ (CAPACITY) */}
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">Số lượng vé (Ghế)</label>

@@ -65,24 +65,26 @@ export default async function Home() {
         <TripSearchHeader trips={trips || []} />
 
         {/* 4. TRIP RESULTS - Fetched Data */}
-        <Suspense fallback={
-          <div className="min-h-screen bg-[#FFFBE6] pb-20 font-sans">
-            {/* Trip List Skeleton */}
-            <div className="max-w-[1280px] mx-auto px-4 mt-24">
-              <div className="w-48 h-10 bg-red-100/50 rounded-lg mb-8 animate-pulse" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="h-[400px] bg-white rounded-2xl border-2 border-yellow-100 shadow-sm animate-pulse" />
-                ))}
+        <div id="trip-list-section" className="scroll-mt-28">
+          <Suspense fallback={
+            <div className="min-h-screen bg-[#FFFBE6] pb-20 font-sans">
+              {/* Trip List Skeleton */}
+              <div className="max-w-[1280px] mx-auto px-4 mt-24">
+                <div className="w-48 h-10 bg-red-100/50 rounded-lg mb-8 animate-pulse" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="h-[400px] bg-white rounded-2xl border-2 border-yellow-100 shadow-sm animate-pulse" />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        }>
-          <TripSearchResults
-            trips={trips || []}
-            destinationImages={destinationImages}
-          />
-        </Suspense>
+          }>
+            <TripSearchResults
+              trips={trips || []}
+              destinationImages={destinationImages}
+            />
+          </Suspense>
+        </div>
       </SearchProvider>
 
       {/* 5. FAQ SECTION */}

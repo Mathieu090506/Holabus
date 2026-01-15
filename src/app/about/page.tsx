@@ -431,7 +431,7 @@ export default function AboutPage() {
                         {[
                             {
                                 question: "Xe có hỗ trợ trung chuyển/đón trả tận nơi không?",
-                                answer: "Xe của Hola Bus sẽ hỗ trợ đón bạn tại các địa điểm sau: Cây xăng 39, Ngã 3 Tân Xã và trường Đại học FPT."
+                                answer: "Xe của Hola Bus sẽ hỗ trợ đón bạn tại các điểm trong Hòa Lạc, Và sẽ trả bạn tại điểm bạn muốn xuống thuộc dọc trục đường mà xe đi."
                             },
                             {
                                 question: "Làm thế nào để mua vé xe Hola Bus?",
@@ -442,13 +442,6 @@ export default function AboutPage() {
                                 question: "Tôi có cần in vé giấy ra không?",
                                 answer: "Không! Ngay sau khi thanh toán thành công, bạn sẽ nhận được một mã vé điện tử (QR code) để chúng mình hỗ trợ xác nhận khi lên xe. Hãy lưu giữ kĩ nha!"
                             },
-                            {
-                                question: "Xe có đưa về tới tận nhà không?",
-                                answer: "Không. Vì đặc thù của tuyến xe và địa hình, chúng mình sẽ đưa bạn tới một địa điểm nhất định. Nhưng đừng lo, vì các tuyến đường không cách quá xa nhà bạn đâu."
-                            },
-
-
-
                             {
                                 question: "Giá vé hiển thị có phát sinh phụ phí không?",
                                 answer: "Không. Chúng mình cam kết giá bạn thanh toán trên hệ thống là giá cuối cùng và không phát sinh thêm phụ phí."

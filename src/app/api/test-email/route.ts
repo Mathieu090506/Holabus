@@ -9,7 +9,7 @@ export async function GET(request: Request) {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: 'HOLA BUS <onboarding@resend.dev>',
+      from: 'HOLA BUS <booking@holabus.com.vn>',
       to: toEmail,
       subject: 'Test Email HolaBus ' + new Date().toLocaleTimeString(),
       html: `<p>Xin chào! Đây là email test gửi tới <strong>${toEmail}</strong>.</p><p>Nếu bạn nhận được mail này thì Resend đã hoạt động ngon lành!</p>`
