@@ -106,10 +106,11 @@ export default function TripSearchHeader({ trips = [] }: { trips?: any[] }) {
 
             {/* Static Banner Container - Full Width */}
             <div className="relative w-full h-[56.25vw] md:h-[600px] bg-slate-900 overflow-hidden shadow-sm">
+                <h1 className="sr-only">Hola Bus - Đặt Vé Xe Tết 2026 Uy Tín, Giá Rẻ, Đón Trả Tận Nơi</h1>
                 {/* Background Image */}
                 <NextImage
                     src="/Banner website.png"
-                    alt="Banner"
+                    alt="Hola Bus Banner - Vé Xe Tết 2026"
                     fill
                     className="object-cover object-center"
                     priority

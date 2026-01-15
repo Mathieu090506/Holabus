@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: '/admin/',
         },
-        sitemap: 'https://holabus.vn/sitemap.xml',
+        sitemap: 'https://holabus.com.vn/sitemap.xml',
     }
 }
