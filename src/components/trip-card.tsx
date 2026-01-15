@@ -139,7 +139,7 @@ export default function TripCard({ trips, destinationImages = {} }: { trips: any
                             <p className="text-sm font-black text-slate-800 uppercase mb-0.5">LỘ TRÌNH</p>
                             <p className="text-xs text-slate-500 font-medium">(Chọn địa điểm bạn <span className="text-red-600 font-bold">muốn xuống</span>)</p>
                         </div>
-                        {trips.map(t => (
+                        {[...trips].sort((a, b) => a.price - b.price).map(t => (
                             <Link
                                 key={t.id}
                                 href={`/trips/${t.id}`}

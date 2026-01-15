@@ -6,7 +6,7 @@ import { Facebook, Phone, MapPin, Mail } from 'lucide-react';
 
 export default function SiteFooter() {
     return (
-        <footer id="contact-footer" className="bg-[#020617] pt-24 pb-12 border-t border-slate-800 font-sans text-slate-400 mt-20">
+        <footer id="contact-footer" className="bg-[#020617] pt-24 pb-12 border-t border-slate-800 font-sans text-slate-400">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     {/* Brand Column - Spans 2 cols */}

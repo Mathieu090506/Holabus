@@ -187,6 +187,8 @@ export async function bookTicket(
 
       // Các trường thông tin từ Form
       seat_preference: seatPreference, // Vị trí ghế
+      full_name: extraData.fullName, // 👈 Thêm tên khách hàng
+      phone_number: extraData.phone,   // 👈 Thêm số điện thoại
       // Logic Email: Ưu tiên Email nhập tay từ form (để Admin/User có thể điền mail nhận vé khác)
       // Nếu không nhập thì mới lấy Email login mặc định
       email: extraData.studentId ? extraData.studentId : (user?.email || null),

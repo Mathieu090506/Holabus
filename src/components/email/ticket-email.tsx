@@ -57,13 +57,7 @@ export const TicketEmail = ({
           {/* MAIN CONTENT */}
           <Section style={contentSection}>
             <Section style={{ textAlign: 'center' as const, marginBottom: '20px' }}>
-              <Img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Eo_circle_green_white_checkmark.svg/64px-Eo_circle_green_white_checkmark.svg.png"
-                width="24"
-                height="24"
-                style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '10px' }}
-                alt="Success"
-              />
+
               <Text style={{
                 display: 'inline-block',
                 color: '#15803d', // Green text
@@ -99,11 +93,14 @@ export const TicketEmail = ({
                   <Text style={value}>{customerName}</Text>
                 </Column>
               </Row>
+
               <Row style={rowSpacing}>
                 <Column>
                   <Text style={label}>EMAIL</Text>
                   <Text style={{ ...value, wordBreak: 'break-all' }}>{email || 'N/A'}</Text>
                 </Column>
+              </Row>
+              <Row style={rowSpacing}>
                 <Column>
                   <Text style={label}>SỐ ĐIỆN THOẠI</Text>
                   <Text style={value}>{phoneNumber || 'N/A'}</Text>
@@ -174,7 +171,7 @@ export const TicketEmail = ({
           </Section>
         </Container>
       </Body>
-    </Html>
+    </Html >
   );
 };
 
