@@ -245,7 +245,7 @@ export default function TripSearchSection({ trips, user, destinationImages = {} 
                         {/* Quick Suggestions */}
                         <div className="mt-5 flex flex-wrap gap-3 items-center text-sm">
                             <span className="text-gray-400 font-medium mr-1">Phổ biến:</span>
-                            {['Quảng Ngãi', 'Đà Nẵng', 'Hà Nội', 'Sài Gòn', 'Đà Lạt'].map(city => (
+                            {['Nam Định', 'Hải Phòng', 'Hà Nội', 'Hưng Yên', 'Quảng Ninh'].map(city => (
                                 <button
                                     key={city}
                                     onClick={() => handleSearchScroll(city)}

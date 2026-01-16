@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    'Đặt vé xe Tết 2026 uy tín tại Hola Bus. Hàng ngàn chuyến xe đi khắp các tỉnh thành: Hải Phòng, Quảng Ngãi, Hà Nội, Nam Định. Với hàng ngàn ưu đãi.',
+    'Đặt vé xe Tết 2026 uy tín tại Hola Bus. Hàng ngàn chuyến xe đi khắp các tỉnh thành: Nam Định, Hải Phòng, Hà Nội, Hưng Yên, Quảng Ninh. Với hàng ngàn ưu đãi.',
 
   keywords: [
     'vé xe tết',
