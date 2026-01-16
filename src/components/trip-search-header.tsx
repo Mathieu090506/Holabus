@@ -115,6 +115,7 @@ export default function TripSearchHeader({ trips = [] }: { trips?: any[] }) {
                     className="object-cover object-center"
                     priority
                     sizes="100vw"
+                    quality={60}
                 />
             </div>
 

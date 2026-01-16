@@ -1,10 +1,18 @@
 'use client'
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Facebook, Phone, MapPin, Mail } from 'lucide-react';
 
 export default function SiteFooter() {
+    // Obfuscate email to prevent spam harvesting
+    const [email, setEmail] = useState('...');
+
+    useEffect(() => {
+        setEmail('holabus2026@gmail.com');
+    }, []);
+
     return (
         <footer id="contact-footer" className="bg-[#020617] pt-24 pb-12 border-t border-slate-800 font-sans text-slate-400">
             <div className="max-w-7xl mx-auto px-4">
@@ -17,6 +25,7 @@ export default function SiteFooter() {
                                 alt="Hola Bus 2026"
                                 fill
                                 className="object-contain object-left"
+                                sizes="320px"
                             />
                         </div>
                         <p className="leading-relaxed text-sm max-w-sm font-medium -mt-8">
@@ -49,6 +58,7 @@ export default function SiteFooter() {
                                     alt="FPT Education"
                                     fill
                                     className="object-contain"
+                                    sizes="128px"
                                 />
                             </div>
 
@@ -58,6 +68,7 @@ export default function SiteFooter() {
                                     alt="Hola Bus Logo"
                                     fill
                                     className="object-contain"
+                                    sizes="48px"
                                 />
                             </div>
                         </div>
@@ -89,7 +100,7 @@ export default function SiteFooter() {
                             <li className="flex items-start gap-3">
                                 <Mail className="shrink-0 text-[#D0021B]" size={20} />
                                 <div>
-                                    <span className="block text-white font-bold text-base">holabus2026@gmail.com</span>
+                                    <span className="block text-white font-bold text-base">{email}</span>
                                     <span className="text-slate-500 text-xs uppercase font-bold">Email Hỗ trợ</span>
                                 </div>
                             </li>

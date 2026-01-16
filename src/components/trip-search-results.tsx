@@ -69,13 +69,13 @@ function TetCountdown() {
                 </h3>
 
                 <div className="flex flex-wrap justify-center items-start">
-                    <TimeUnit value={timeLeft.days} label="Days" />
+                    <TimeUnit value={timeLeft.days} label="Ngày" />
                     <Separator />
-                    <TimeUnit value={timeLeft.hours} label="Hours" />
+                    <TimeUnit value={timeLeft.hours} label="Giờ" />
                     <Separator />
-                    <TimeUnit value={timeLeft.minutes} label="Minutes" />
+                    <TimeUnit value={timeLeft.minutes} label="Phút" />
                     <Separator />
-                    <TimeUnit value={timeLeft.seconds} label="Seconds" />
+                    <TimeUnit value={timeLeft.seconds} label="Giây" />
                 </div>
             </div>
         </div>
@@ -130,7 +130,7 @@ export default function TripSearchResults({ trips, destinationImages = {} }: { t
             {/* 3. PROMO / TRIP LIST SECTION */}
             <div
                 className="relative py-12 md:py-16 overflow-hidden bg-cover bg-right-top bg-no-repeat"
-                style={{ backgroundImage: "url('/tet-section-bg.png')" }}
+
                 id="search-results-anchor"
             >
                 <div className="max-w-[1280px] mx-auto px-4 relative z-10">
@@ -175,7 +175,7 @@ export default function TripSearchResults({ trips, destinationImages = {} }: { t
                                             onClick={() => setIsExpanded(!isExpanded)}
                                             className="w-[200px] h-[48px] border border-[#D0021B] text-[#D0021B] hover:bg-red-50 rounded-lg flex items-center justify-center font-bold bg-white transition-all font-sans"
                                         >
-                                            {isExpanded ? 'See less' : 'See all'}
+                                            {isExpanded ? 'Thu gọn' : 'Xem tất cả'}
                                         </button>
                                     </div>
                                 )}

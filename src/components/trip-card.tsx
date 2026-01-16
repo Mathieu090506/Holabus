@@ -75,7 +75,7 @@ export default function TripCard({ trips, destinationImages = {} }: { trips: any
                         alt={mainTrip.destination}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                     />
                     {isMultiple && (
                         <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md text-white text-xs font-bold px-2 py-1 rounded-lg border border-white/20">
@@ -91,7 +91,7 @@ export default function TripCard({ trips, destinationImages = {} }: { trips: any
                 <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
                         <div className="text-[13px] text-gray-500 mb-1 font-normal truncate">
-                            Transport • {mainTrip.destination}
+                            Xe khách • {mainTrip.destination}
                         </div>
                         <h3 className="text-[16px] font-bold text-gray-900 leading-[1.3] line-clamp-2 group-hover:text-black">
                             {mainTrip.origin} đi <span className="text-[#D0021B] text-[19px] uppercase">{mainTrip.destination}</span>
@@ -109,7 +109,7 @@ export default function TripCard({ trips, destinationImages = {} }: { trips: any
                     <>
                         <div className="flex flex-wrap gap-2 mb-3">
                             <span className="bg-[#FFF0F0] text-[#D0021B] text-[12px] px-2 py-1 rounded-[4px] font-normal">
-                                Book now for today
+                                Đặt vé ngay hôm nay
                             </span>
                             {mainTrip.vehicle_type && (
                                 <span className="flex items-center gap-1 bg-blue-50 text-blue-600 text-[12px] px-2 py-1 rounded-[4px] font-bold border border-blue-100 uppercase">

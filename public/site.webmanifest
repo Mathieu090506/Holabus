@@ -1,0 +1,19 @@
+{
+    "name": "Hola Bus",
+    "short_name": "Hola Bus",
+    "icons": [
+        {
+            "src": "/anh-co.jpg",
+            "sizes": "192x192",
+            "type": "image/jpeg"
+        },
+        {
+            "src": "/anh-co.jpg",
+            "sizes": "512x512",
+            "type": "image/jpeg"
+        }
+    ],
+    "theme_color": "#D0021B",
+    "background_color": "#FFFBE6",
+    "display": "standalone"
+}

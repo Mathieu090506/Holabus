@@ -38,6 +38,10 @@ export const metadata: Metadata = {
     'xe khách bắc nam',
     'xe tết về quê',
     'vé xe sinh viên',
+    'xe khách hà nội ninh bình',
+    'xe khách hà nội quảng ninh',
+    'đặt vé xe online',
+    'lựa chọn chuyến xe',
   ],
 
   authors: [{ name: 'Hola Bus Team' }],
