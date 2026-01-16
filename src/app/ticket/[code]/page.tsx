@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
-import PrintButton from '@/components/print-button';
+import DownloadButton from '@/components/download-button';
 import { Calendar, Clock, ArrowLeft, Bus, CheckCircle, MapPin, Printer, Share2, MessageCircle, Download, User, Luggage, Armchair } from 'lucide-react';
 import TripMap from '@/components/trip-map';
 
@@ -54,7 +54,7 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ c
 
     return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-            <div className="max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 relative">
+            <div id="ticket-container" className="max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 relative">
                 {/* Decorative Top */}
                 <div className="h-2 bg-gradient-to-r from-orange-400 to-red-500"></div>
 
@@ -119,7 +119,7 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ c
                                     {ticket.full_name}
                                 </h3>
                                 <div className="text-sm text-slate-500 flex flex-col">
-                                    <span>MSSV: {ticket.student_id}</span>
+                                    <span>Email: {ticket.email || ticket.student_id}</span>
                                     <span>SĐT: {ticket.phone_number}</span>
                                 </div>
                             </div>
@@ -139,11 +139,11 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ c
                     </div>
 
                     {/* Actions */}
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-3 no-print">
                         <Link href="/" className="col-span-1 block w-full py-3 rounded-xl border border-slate-200 font-bold text-slate-600 hover:bg-slate-50 transition">
                             Về trang chủ
                         </Link>
-                        <PrintButton />
+                        <DownloadButton targetId="ticket-container" fileName={`ticket-${ticket.payment_code}`} />
                     </div>
                 </div>
 
