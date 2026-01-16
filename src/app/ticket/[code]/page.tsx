@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
-import DownloadButton from '@/components/download-button';
+
 import { Calendar, Clock, ArrowLeft, Bus, CheckCircle, MapPin, Printer, Share2, MessageCircle, Download, User, Luggage, Armchair } from 'lucide-react';
 import TripMap from '@/components/trip-map';
 
@@ -139,11 +139,10 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ c
                     </div>
 
                     {/* Actions */}
-                    <div className="grid grid-cols-2 gap-3 no-print">
-                        <Link href="/" className="col-span-1 block w-full py-3 rounded-xl border border-slate-200 font-bold text-slate-600 hover:bg-slate-50 transition">
+                    <div className="mt-8">
+                        <Link href="/" className="block w-full py-4 rounded-xl bg-orange-600 text-white font-bold text-lg hover:bg-orange-700 transition shadow-lg shadow-orange-100">
                             Về trang chủ
                         </Link>
-                        <DownloadButton targetId="ticket-container" fileName={`ticket-${ticket.payment_code}`} />
                     </div>
                 </div>
 
