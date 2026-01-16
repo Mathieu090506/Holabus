@@ -71,14 +71,19 @@ export default function SiteFooter() {
                                 <Phone className="shrink-0 text-[#D0021B]" size={20} />
                                 <div>
                                     <span className="block text-white font-bold text-base">0943 597 513</span>
-                                    <span className="text-slate-500 text-xs uppercase font-bold">Ms. Mai Linh (Điều phối tổng)</span>
+                                    <span className="text-slate-500 text-xs uppercase font-bold">Ms. Mai Linh</span>
                                 </div>
                             </li>
                             <li className="flex items-start gap-3">
                                 <Phone className="shrink-0 text-[#D0021B]" size={20} />
                                 <div>
                                     <span className="block text-white font-bold text-base">0376 875 810</span>
-                                    <span className="text-slate-500 text-xs uppercase font-bold">Ms. Ánh Hồng (Trưởng phòng dịch vụ)</span>
+                                    <span className="text-slate-500 text-xs uppercase font-bold">Ms. Ánh Hồng</span>
+                                </div>
+                            </li>
+                            <li className="flex items-start gap-3">
+                                <div className="ml-8">
+                                    <span className="text-slate-500 text-xs uppercase font-bold">Vũ Anh Tuấn (Marketing & truyền thông)</span>
                                 </div>
                             </li>
                             <li className="flex items-start gap-3">

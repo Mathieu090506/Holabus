@@ -29,7 +29,7 @@ if (redisUrl && redisToken) {
 
 export async function middleware(request: NextRequest) {
 
-  const ip = request.headers.get('x-forwarded-for') || request.ip || '127.0.0.1';
+  const ip = request.headers.get('x-forwarded-for') || (request as any).ip || '127.0.0.1';
 
   // --- SEO REDIRECTS (WWW & Index) ---
   const url = request.nextUrl.clone();
@@ -113,6 +113,12 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/my-tickets') && !user) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
+
+  // 5. SET CANONICAL LINK HEADER (SEO)
+  // Ensures every page has a correct self-referencing canonical URL via HTTP Header
+  const canonicalDomain = 'https://holabus.com.vn';
+  const finalPathname = pathname === '/' ? '' : pathname;
+  response.headers.set('Link', `<${canonicalDomain}${finalPathname}>; rel="canonical"`);
 
   return response
 }

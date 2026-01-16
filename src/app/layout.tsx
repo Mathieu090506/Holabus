@@ -88,9 +88,7 @@ export const metadata: Metadata = {
     },
   },
 
-  alternates: {
-    canonical: 'https://holabus.com.vn',
-  },
+
 
   icons: {
     icon: '/anh-co.jpg',
