@@ -18,6 +18,8 @@ export const viewport: Viewport = {
   themeColor: '#ffffff',
 };
 
+import { Analytics } from "@vercel/analytics/react";
+
 // ================== METADATA ==================
 export const metadata: Metadata = {
   metadataBase: new URL('https://holabus.com.vn'),
@@ -186,6 +188,7 @@ export default function RootLayout({
             gtag('config', 'G-placeholder');
           `}
         </Script>
+        <Analytics />
       </body>
     </html>
   );
