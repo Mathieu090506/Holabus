@@ -132,7 +132,7 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ c
                             <div>
                                 <p className="text-sm text-slate-400 font-medium">Lưu ý</p>
                                 <h3 className="font-bold text-red-600 text-base">
-                                    Quý khách lưu vé để sai soát
+                                    Quý khách lưu vé để soát vé khi lên xe
                                 </h3>
                             </div>
                         </div>
