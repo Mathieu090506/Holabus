@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { createAdminClient } from '@/utils/supabase/admin';
 import { updateSiteConfig } from '@/actions/config';
 import Link from 'next/link';
