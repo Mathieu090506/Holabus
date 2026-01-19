@@ -32,3 +32,6 @@ BEGIN
 END;
 $$;
 
+
+-- 7. [MỚI] Thêm cột assigned_to vào bảng coupons để tracking vé đã được quay trúng
+ALTER TABLE coupons ADD COLUMN IF NOT EXISTS assigned_to uuid;

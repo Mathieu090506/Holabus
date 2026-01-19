@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Loader2, Ticket, User, Phone, BookOpen, Armchair, CheckCircle2 } from 'lucide-react';
 
+import { validateCoupon } from '@/actions/tet-wheel';
+
 type Props = {
   tripId: string;
   price: number;
@@ -18,7 +20,36 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
   // State quản lý lựa chọn ghế (Mặc định là Random)
   const [seatType, setSeatType] = useState('random');
 
+  // Coupon State
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [discountMessage, setDiscountMessage] = useState('');
+
   const router = useRouter();
+
+  const handleApplyCoupon = async () => {
+    setLoading(true);
+    setDiscountMessage('');
+    try {
+      const res = await validateCoupon(couponCode);
+      if (res.success) {
+        setAppliedCoupon(couponCode);
+        setDiscountPercent(res.discountPercent || 0);
+        setDiscountMessage(res.message || 'Hợp lệ');
+        toast.success("Áp dụng mã giảm giá thành công!");
+      } else {
+        setDiscountMessage(res.message || 'Mã không hợp lệ');
+        toast.error(res.message);
+      }
+    } catch (error) {
+      toast.error("Lỗi khi kiểm tra mã");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
 
 
 
@@ -81,7 +112,8 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
           fullName: fullName,
           phone: phoneNumber,
           studentId: email, // Dùng trường studentId để lưu email tạm thời
-          notes: finalNotes // Combined notes
+          notes: finalNotes, // Combined notes
+          couponCode: appliedCoupon || undefined, // Send coupon if applied
         }
       );
 
@@ -160,6 +192,49 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
           </div>
         </div>
       </div>
+
+      {/* COUPON SECTION */}
+      <div className="bg-orange-50 p-4 rounded-xl border border-orange-100">
+        <label className="block text-xs font-bold text-orange-600 uppercase mb-2">Mã Giảm Giá (Tết 2025)</label>
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Ticket className="absolute left-3 top-3 w-5 h-5 text-orange-400" />
+            <input
+              type="text"
+              value={couponCode}
+              onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+              disabled={!!appliedCoupon}
+              placeholder="Nhập mã..."
+              className="w-full pl-10 pr-4 py-3 bg-white border border-orange-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 outline-none uppercase"
+            />
+            {appliedCoupon && (
+              <CheckCircle2 className="absolute right-3 top-3 w-5 h-5 text-green-500" />
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={handleApplyCoupon}
+            disabled={!!appliedCoupon || !couponCode}
+            className="bg-orange-600 text-white px-4 py-2 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-orange-700 transition"
+          >
+            {appliedCoupon ? 'Đã áp dụng' : 'Áp dụng'}
+          </button>
+        </div>
+        {discountMessage && (
+          <p className={`text-xs mt-2 font-medium ${appliedCoupon ? 'text-green-600' : 'text-red-500'}`}>
+            {discountMessage}
+          </p>
+        )}
+
+        {appliedCoupon && (
+          <div className="mt-2 flex justify-between items-center text-sm font-bold text-slate-700 border-t border-orange-200 pt-2">
+            <span>Giảm giá ({discountPercent}%):</span>
+            <span className="text-red-600">-{Math.round(price * (discountPercent / 100)).toLocaleString()}đ</span>
+          </div>
+        )}
+      </div>
+
+
 
       <div className="border-t border-dashed border-slate-200"></div>
 

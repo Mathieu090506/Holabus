@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server';
+import { createAdminClient } from '@/utils/supabase/admin';
 import { headers } from 'next/headers';
 
 // Định nghĩa kiểu dữ liệu cho thông tin bổ sung
@@ -10,6 +11,7 @@ type BookingExtraData = {
   phone: string;
   studentId: string;
   notes: string;
+  couponCode?: string;
 };
 
 export async function bookTicket(
@@ -174,6 +176,48 @@ export async function bookTicket(
       return { error: "Rất tiếc, chuyến xe đã hết vé (Sold Out)!" };
     }
 
+    // 3.5. XỬ LÝ MÃ GIẢM GIÁ (COUPON)
+    let finalPrice = (trip as any).price;
+    let discountNote = "";
+
+    if (extraData.couponCode) {
+      const adminSupabase = createAdminClient();
+      const code = extraData.couponCode.trim().toUpperCase();
+      const { data: coupon } = await adminSupabase
+        .from('coupons')
+        .select('*')
+        .eq('code', code)
+        .single();
+
+      if (!coupon) {
+        return { error: "Mã giảm giá không tồn tại." };
+      }
+      if (coupon.is_used) {
+        return { error: "Mã giảm giá đã được sử dụng." };
+      }
+
+      // [NEW Logic] Mã phải được quay trúng (assigned_to != null) mới được dùng
+      // Ngoại lệ: Nếu mã được tạo bởi admin cho chiến dịch public (assigned_to = null nhưng có flag đặc biệt?)
+      // Hiện tại theo yêu cầu: "phải được quay trúng thì mới được dùng"
+      if (!coupon.assigned_to) {
+        return { error: "Mã này chưa được kích hoạt qua vòng quay may mắn." };
+      }
+
+      // Optional: Check owner if user is logged in?
+      // if (user && coupon.assigned_to !== user.id) { 
+      //    return { error: "Mã giảm giá này không thuộc về bạn." };
+      // }
+
+      // Áp dụng giảm giá
+      const discountPercent = coupon.discount_value;
+      const discountAmount = finalPrice * (discountPercent / 100);
+      finalPrice = finalPrice - discountAmount;
+      discountNote = ` - Coupon: ${code} (-${discountPercent}%)`;
+
+      // Đánh dấu đã dùng
+      await adminSupabase.from('coupons').update({ is_used: true }).eq('code', code);
+    }
+
     // 4. Tạo mã thanh toán ngẫu nhiên (VD: HOLA8392)
     const paymentCode = `HOLA${Math.floor(1000 + Math.random() * 9000)}`;
 
@@ -182,7 +226,7 @@ export async function bookTicket(
       user_id: user?.id || null, // Cho phép guest booking (nếu DB hỗ trợ null)
       trip_id: tripId,
       status: 'PENDING',
-      amount: trip ? (trip as any).price : 0,
+      amount: finalPrice, // Sử dụng giá đã giảm
       payment_code: paymentCode,
 
       // Các trường thông tin từ Form
@@ -193,7 +237,7 @@ export async function bookTicket(
       // Nếu không nhập thì mới lấy Email login mặc định
       email: extraData.studentId ? extraData.studentId : (user?.email || null),
       student_id: extraData.studentId,
-      more: `${extraData.notes} \n[Client IP: ${ip}]` // 👈 LƯU IP VÀO ĐÂY ĐỂ TRACKING
+      more: `${extraData.notes}${discountNote} \n[Client IP: ${ip}]` // 👈 LƯU IP VÀO ĐÂY ĐỂ TRACKING
     } as any).select().single() as any;
 
     if (error) {

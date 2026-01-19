@@ -204,6 +204,12 @@ export default async function AdminDashboard() {
                             <Users className="w-4 h-4" /> <span className="hidden sm:inline">Khách hàng</span><span className="inline sm:hidden">Khách</span>
                         </Link>
                         <Link
+                            href="/admin/coupons"
+                            className="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-orange-700 transition flex items-center gap-2 shadow-lg flex-1 md:flex-none justify-center"
+                        >
+                            <Ticket className="w-4 h-4" /> <span className="hidden sm:inline">Mã giảm giá</span><span className="inline sm:hidden">Coupons</span>
+                        </Link>
+                        <Link
                             href="/admin/trips/new"
                             className="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-800 transition flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex-1 md:flex-none justify-center"
                         >
