@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 
 import { createClient } from '@/utils/supabase/server';
-import { ALLOWED_EMAILS } from '@/actions/tet-wheel';
+import { ALLOWED_EMAILS } from '@/utils/constants';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {

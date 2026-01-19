@@ -23,8 +23,7 @@ const WHEEL_CONFIG = [
     { id: 'candy', label: 'KẸO / BÁNH', description: '1 cái kẹo hoặc bánh', percent: 0, probability: 0.33, color: '#FF0000', text_color: '#FFFFFF' },   // 33%
 ];
 
-// Danh sách email admin được phép quay (có thể cấu hình thêm)
-export const ALLOWED_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim());
+import { ALLOWED_EMAILS } from '@/utils/constants';
 
 export async function getWheelConfig() {
     return WHEEL_CONFIG.map(({ probability, ...rest }) => rest);
