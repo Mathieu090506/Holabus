@@ -4,12 +4,27 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 
+import { createClient } from '@/utils/supabase/server';
+import { ALLOWED_EMAILS } from '@/actions/tet-wheel';
+import { redirect } from 'next/navigation';
+
 export const metadata: Metadata = {
     title: 'Vòng Quay Holabus - Tết 2025',
     description: 'Thử vận may đầu năm cùng Hola Bus',
 };
 
-export default function TetWheelPage() {
+export default async function TetWheelPage() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        redirect('/login?next=/tet-wheel');
+    }
+
+    if (!user.email || !ALLOWED_EMAILS.includes(user.email)) {
+        redirect('/');
+    }
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#A50000] to-[#500000] relative overflow-x-hidden">
 

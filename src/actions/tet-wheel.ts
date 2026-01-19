@@ -24,11 +24,7 @@ const WHEEL_CONFIG = [
 ];
 
 // Danh sách email admin được phép quay (có thể cấu hình thêm)
-const ALLOWED_EMAILS = [
-    'duongthanh09052006@gmail.com',
-    'h.anh.30.12.2005@gmail.com',
-    'minhthang2005.cv@gmail.com'
-];
+export const ALLOWED_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim());
 
 export async function getWheelConfig() {
     return WHEEL_CONFIG.map(({ probability, ...rest }) => rest);
@@ -71,6 +67,11 @@ export async function spinTetWheel() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user || !user.email) {
         return { success: false, message: 'Bạn cần đăng nhập để thực hiện quay thưởng.' };
+    }
+
+    // Check if user is in the allowed admin list
+    if (!ALLOWED_EMAILS.includes(user.email)) {
+        return { success: false, message: 'Chỉ Admin mới được phép tham gia vòng quay này.' };
     }
 
     // 2. FETCH AVAILABLE COUPONS (Limit to 200 to ensure we have a good pool while keeping it fast)
