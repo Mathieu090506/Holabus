@@ -3,6 +3,7 @@ import './globals.css';
 
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import SiteHeader from '@/components/layout/site-header';
 import HeaderWrapper from '@/components/layout/header-wrapper';
@@ -164,6 +165,9 @@ export default function RootLayout({
 
         {/* TOAST */}
         <Toaster position="top-center" richColors />
+
+        {/* VERCEL SPEED INSIGHTS */}
+        <SpeedInsights />
 
         {/* JSON-LD */}
         <Script
