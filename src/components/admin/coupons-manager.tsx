@@ -75,7 +75,7 @@ export default function CouponsManager({ initialCoupons }: { initialCoupons: Cou
                 <form onSubmit={handleCreate} className="p-6 bg-slate-50 border-b border-slate-100 animate-in slide-in-from-top-2">
                     <div className="flex flex-col md:flex-row gap-4 items-end">
                         <div className="flex-1 w-full">
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Mã Coupon (VD: TET2025)</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Mã Coupon (VD: TET2026)</label>
                             <input
                                 type="text"
                                 required

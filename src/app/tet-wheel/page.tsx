@@ -9,7 +9,7 @@ import { ALLOWED_EMAILS } from '@/utils/constants';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-    title: 'Vòng Quay Holabus - Tết 2025',
+    title: 'Vòng Quay Holabus - Tết 2026',
     description: 'Thử vận may đầu năm cùng Hola Bus',
 };
 
@@ -56,7 +56,7 @@ export default async function TetWheelPage() {
 
                 {/* Footer Decor */}
                 <div className="mt-12 text-center text-white/50 text-sm">
-                    <p>© 2025 Hola Bus Team. All rights reserved.</p>
+                    <p>© 2026 Hola Bus Team. All rights reserved.</p>
                 </div>
             </main>
 

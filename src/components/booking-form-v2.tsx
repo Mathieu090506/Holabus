@@ -195,7 +195,7 @@ export default function BookingFormV2({ tripId, price, user }: Props) {
 
       {/* COUPON SECTION */}
       <div className="bg-orange-50 p-4 rounded-xl border border-orange-100">
-        <label className="block text-xs font-bold text-orange-600 uppercase mb-2">Mã Giảm Giá (Tết 2025)</label>
+        <label className="block text-xs font-bold text-orange-600 uppercase mb-2">Mã Giảm Giá (Tết 2026)</label>
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Ticket className="absolute left-3 top-3 w-5 h-5 text-orange-400" />
