@@ -257,3 +257,15 @@ export async function bookTicket(
     return { error: "Lỗi không xác định: " + err.message };
   }
 }
+
+export async function checkBookingStatus(bookingId: string) {
+  const adminSupabase = createAdminClient();
+  const { data, error } = await adminSupabase
+    .from('bookings')
+    .select('status, payment_code')
+    .eq('id', bookingId)
+    .single();
+
+  if (error || !data) return null;
+  return data;
+}
