@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/server';
+import { createAdminClient } from '@/utils/supabase/admin';
 import { notFound, redirect } from 'next/navigation';
 import { CheckCircle, Clock, ArrowLeft, Copy, CreditCard, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
@@ -17,7 +17,8 @@ type Props = {
 export default async function PaymentPage({ params }: Props) {
     // 1. Giải nén params (Bắt buộc await trong Next.js 15/16)
     const { id } = await params;
-    const supabase = await createClient();
+    // Sử dụng Admin Client để Guest cũng có thể xem trang thanh toán (Bypass RLS)
+    const supabase = createAdminClient();
 
     // 2. Lấy thông tin đơn hàng + Kèm thông tin chuyến xe (Join table)
     const { data: bookingData, error } = await supabase
@@ -33,12 +34,30 @@ export default async function PaymentPage({ params }: Props) {
         .eq('id', id)
         .single();
 
+    // 🔴 DEBUG LOGGING
+    console.log(`🔍 [PaymentPage] Checking Ticket ID: ${id}`);
+    if (error) console.error("❌ [PaymentPage] Supabase Error:", error);
+    if (!bookingData) console.error("❌ [PaymentPage] Booking Not Found (Null Data)");
+
     // Cast to any to avoid TS errors
     const booking = bookingData as any;
 
-    // Nếu không tìm thấy đơn hoặc lỗi -> Trả về 404
+    // Nếu không tìm thấy đơn hoặc lỗi -> Hiển thị lỗi chi tiết thay vì 404
     if (error || !booking) {
-        return notFound();
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center">
+                <h1 className="text-2xl font-bold text-red-600 mb-2">Không tìm thấy vé!</h1>
+                <p className="text-gray-600 mb-4">Có thể vé đã bị xóa hoặc mã vé không tồn tại.</p>
+                <div className="bg-gray-100 p-4 rounded text-left text-xs font-mono mb-4 max-w-lg overflow-auto">
+                    <p><strong>Ticket ID:</strong> {id}</p>
+                    <p><strong>Error:</strong> {error ? error.message : "Data is null"}</p>
+                    <p><strong>Hint:</strong> Nếu bạn vừa đặt vé, hãy thử tải lại trang.</p>
+                </div>
+                <Link href="/" className="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold">
+                    Về trang chủ
+                </Link>
+            </div>
+        );
     }
 
     // --- LOGIC MỚI: KIỂM TRA HẾT HẠN (10 PHÚT) ---
