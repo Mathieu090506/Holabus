@@ -222,8 +222,12 @@ export async function bookTicket(
     const paymentCode = `HOLA${Math.floor(1000 + Math.random() * 9000)}`;
 
     // 5. INSERT VÀO DATABASE
-    const { data, error } = await supabase.from('bookings').insert({
-      user_id: user?.id || null, // Cho phép guest booking (nếu DB hỗ trợ null)
+    // Sử dụng Admin Client để Insert đảm bảo Guest cũng có thể đặt vé (Bypass RLS)
+    // và có thể Select() được dữ liệu trả về ngay lập tức.
+    const adminSupabaseForBooking = createAdminClient();
+
+    const { data, error } = await adminSupabaseForBooking.from('bookings').insert({
+      user_id: user?.id || null, // Cho phép guest booking
       trip_id: tripId,
       status: 'PENDING',
       amount: finalPrice, // Sử dụng giá đã giảm

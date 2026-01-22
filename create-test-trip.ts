@@ -14,7 +14,7 @@ async function main() {
         tags: 'Mở bán',
         image_url: 'https://via.placeholder.com/300',
         route_details: 'Chuyến xe test hệ thống thanh toán thật.\nVui lòng không đặt nếu không phải Admin.',
-        waypoints: 'Sài Gòn;Hà Nội',
+        waypoints: 'Nam Định;Hải Phòng',
         google_sheet_url: ''
     };
 
