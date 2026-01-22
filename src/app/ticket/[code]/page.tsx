@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/server';
+import { createAdminClient } from '@/utils/supabase/admin';
 import Link from 'next/link';
 
 import { Calendar, Clock, ArrowLeft, Bus, CheckCircle, MapPin, Printer, Share2, MessageCircle, Download, User, Luggage, Armchair } from 'lucide-react';
@@ -22,7 +22,8 @@ function calculateDuration(start: string, end: string) {
 export default async function TicketDetailPage({ params }: { params: Promise<{ code: string }> }) {
     const { code } = await params;
     const ticketCode = code;
-    const supabase = await createClient();
+    // Sử dụng Admin Client để Guest cũng có thể xem trang vé thành công (Bypass RLS)
+    const supabase = createAdminClient();
 
     // 1. Fetch ticket details
     const { data: ticketData } = await supabase
