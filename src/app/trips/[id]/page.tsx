@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { Calendar, ArrowLeft, ArrowRight, MapPin, Clock, User, ShieldCheck, Star, MessageCircle, XCircle, CheckCircle2, Ticket } from 'lucide-react';
 import Link from 'next/link';
 import TripMap from '@/components/trip-map';
+import PickupPointsSection from '@/components/pickup-points-section';
 import BookingFormV2 from '@/components/booking-form-v2';
 import { siteConfig } from '@/config/site';
 
@@ -116,11 +117,20 @@ export default async function TripDetailPage(props: { params: Promise<{ id: stri
                             </div>
                         </div>
 
+                        {/* PICKUP POINTS SECTION */}
+                        <PickupPointsSection />
+
                         {/* ITINERARY CARD */}
                         <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-yellow-200">
-                            <div className="flex justify-between items-center mb-8">
-                                <h2 className="text-xl font-bold text-slate-900">Chi tiết lịch trình</h2>
-                                <span className="text-[#D0021B] font-bold text-base bg-red-50 px-3 py-1 rounded-lg border border-red-100">Dự kiến sáng 07/02/2026</span>
+                            <div className="mb-8">
+                                <h2 className="text-2xl md:text-3xl font-black text-[#D0021B] mb-4 uppercase text-center border-b-2 border-red-100 pb-3">
+                                    CHI TIẾT LỊCH TRÌNH
+                                </h2>
+                                <div className="flex justify-center">
+                                    <span className="text-[#D0021B] font-bold text-base bg-red-50 px-3 py-1 rounded-lg border border-red-100 shadow-sm">
+                                        Dự kiến sáng 07/02/2026
+                                    </span>
+                                </div>
                             </div>
 
                             <div className="relative pl-4 space-y-10 before:absolute before:left-[19px] before:top-3 before:bottom-3 before:w-0.5 before:bg-slate-200 before:border-l-[2px] before:border-dashed before:border-slate-300">

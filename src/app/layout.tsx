@@ -10,6 +10,8 @@ import LuckyMoneyEffect from '@/components/effects/lucky-money-effect';
 
 import { Toaster } from 'sonner';
 
+import CountdownBanner from '@/components/countdown-banner';
+
 // ================== VIEWPORT (Next.js 14+) ==================
 export const viewport: Viewport = {
   width: 'device-width',
@@ -150,6 +152,9 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body className="antialiased text-slate-800">
+
+        {/* COUNTDOWN BANNER */}
+        <CountdownBanner />
 
         {/* HEADER */}
         <HeaderWrapper>
